@@ -1,0 +1,354 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+   padding:0;
+   height:100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+footer {
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}
+
+#container {
+  min-height:100%;
+  position:relative;
+}
+
+.displayProp {
+  display: none;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.quesHeight{
+  overflow: scroll;
+  max-height: 500px;
+  width: 75%;
+    margin-left: 14%;
+}
+
+/* Popup style */
+.popup-box {
+  position: fixed;
+  /* background: #00000050; */
+  /* width: 100%; */
+  /* height: 100vh; */
+  top: 0;
+  /* left: 0; */
+  right: 0;
+  z-index: 98;
+}
+ 
+.box {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  height: auto;
+  /* max-height: 70vh; */
+  margin-top: calc(100vh - 85vh - 20px);
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid #999;
+  overflow: auto;
+}
+ 
+.close-icon {
+  content: 'x';
+  cursor: pointer;
+  position: fixed;
+  right: calc(15% - 30px);
+  top: calc(100vh - 85vh - 33px);
+  background: #ededed;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  line-height: 20px;
+  text-align: center;
+  border: 1px solid #999;
+  font-size: 20px;
+}
+
+.overViewSection {
+  min-height: 600px;
+  border-left: 1px solid #6366f1;
+  border-right: 1px solid #6366f1;
+  border-bottom: 1px solid #6366f1;
+  text-align: left;
+}
+
+/* course details css */
+.cource-details-section{
+  border-bottom: 1px solid #6366f1;
+}
+
+.cource-details-section .bg-gray-100 {
+  --tw-bg-opacity: 1;
+   background:none;
+    color: #000;
+    border: none;
+}
+.cource-details-section .bg-blue-400{
+  border: 1px solid #6366f1;
+  color: #6366f1;
+  margin-bottom: -1px;
+  background: #fff;
+  border-bottom: none;
+}
+
+.h-1 {
+   font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.02rem;
+    font-size: 2rem;
+    height: auto;
+}
+
+.bt-spinner{
+  position: relative;
+}
+
+.bt-spinner::before {
+  width: 50px;
+  content: "";
+  height: 50px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid #222;
+  border-top-color: #009688;
+  -webkit-animation: 1s spin linear infinite;
+  animation: 1s spin linear infinite;
+  position: absolute;
+  right: -30px;
+  top: 0px;
+}
+.col.d-tree-head i {
+  color: #6366f1;
+}
+.d-tree-node button.flex{
+  border: none;
+  background: #6366f1;
+  margin: 11px 0 0 28px;
+}
+.col.d-tree-head {
+  cursor: pointer;
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spinBack {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-720deg);
+    transform: rotate(-720deg);
+  }
+}
+
+
+
+.line {
+  padding-bottom: 10px;
+    border-bottom: 1px solid #cfc9c975;
+}
+
+.h-3 {
+  font-weight: 400;
+    line-height: 1;
+    letter-spacing: -.02rem;
+    font-size: 1.5rem;
+    height: auto;
+}
+
+.treeview > .toggle {
+  pointer-events: all;
+  cursor: pointer;
+}
+.treeview > .toggle:hover {
+  color: #63b1de;
+  fill: #63b1de;
+}
+
+/* .treeview > svg{
+  display: -webkit-inline-box;
+} */
+
+.treeview > span {
+  /* font-size: 0.7em !important; */
+}
+
+.pcolumn {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: auto; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.prow:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.vKeyboard {
+    background-color: #F4F4F4;
+    padding: 5px;
+    text-align: center;
+  }
+
+  .vKeyboardSplKeys {
+    background-color: #DEDBE4;
+    border: 1px solid #666666;
+    display: inline-block;
+    color: #000000;
+    font-family: arial;
+    font-weight: bold;
+    padding: 3px 6px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.vKeyboardKeys {
+  width: 24px;
+  background-color: #EEEEEE;
+  border: 1px solid #666666;
+  display: inline-block;
+  color: #000000;
+  font-family: arial;
+  font-weight: bold;
+  padding: 3px 8px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.bg-grey-500 {
+  background-color: #323333;
+}
+
+.anal-tab {
+  justify-content: center;
+  margin: 30px 0px 30px 0px;
+}
+
+.grp-sec {
+  border: 1px solid #323333;
+}
+
+.grp-nma {
+  margin: 11px 0px;
+  font-weight: bold;
+}
+
+.grp-sec-name{
+  margin-left: 7px;
+  font-weight: bold;
+  font-size: xx-large;
+}
+
+.grp-sec-data {
+  margin-top: 10px;
+  border-top: 1px dashed;
+  padding: 5px;
+}
+
+.container-center {
+    width: 1240px; /* Can be in percentage also. */
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+}
+
+.w-fullimg {
+  width: auto;
+}
+
+
+
+.highcharts-data-label {
+  font-weight: normal;
+}
+
+.highlight .highcharts-data-label-box {
+  fill: red;
+  stroke-width: 2px;
+  stroke: black;
+}
+
+.highcharts-data-label-box {
+  fill: #a4edba;
+  stroke: gray;
+  stroke-width: 1px;
+}
+
+.highlight.highcharts-data-label text {
+  font-weight: bold;
+  fill: white;
+}
+
+.importantNote {
+  color: red;
+  z-index: 101;
+  font-size: 20px;
+  background: #fde073;
+  text-align: center;
+  line-height: 2.5;
+  overflow: hidden; 
+  -webkit-box-shadow: 0 0 5px red;
+  -moz-box-shadow:    0 0 5px red;
+  box-shadow:         0 0 5px red;
+}
+.importantNote b {
+  /* animation: blinker 1s linear infinite; */
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
