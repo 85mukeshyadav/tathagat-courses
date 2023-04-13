@@ -43,10 +43,8 @@ const MyCourses = () => {
 	return (
 		<div className="bg-white">
 			{
-				<div className=" mx-auto py-16 px-4 sm:py-24 sm:px-6 ">
-					<h2 className="text-gray-500  text-3xl font-semibold mb-4">
-						My Courses
-					</h2>
+				<div className="mx-auto py-16 px-4 sm:py-24 sm:px-6">
+					<p className="text-gray-500 text-5xl font-bold mb-10">My Courses</p>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-2">
 						{data.map((res, i) => (
 							<Link
@@ -56,8 +54,8 @@ const MyCourses = () => {
 							>
 								<div className="max-w-6xl mx-auto">
 									<div className="flex items-center justify-center">
-										<div className="w-full xl:py-6 px-3">
-											<div className="mb-5 bg-white hover:shadow-xl border-gray-50 border-4 rounded-lg overflow-hidden">
+										<div className="w-full xl:py-6 px-3 mb-6 md:mb-0 lg:mb-0 xl:mb-0">
+											<div className="mb-5 bg-white hover:shadow-xl transition-shadow ease-in-out shadow-md border border-slate-100 rounded-lg overflow-hidden">
 												<div
 													className="bg-cover bg-center h-56 p-4"
 													style={{
@@ -67,30 +65,33 @@ const MyCourses = () => {
 																: "url(https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80)",
 													}}
 												>
-													<div className="flex justify-end">
-														<svg
-															className="h-6 w-6 text-white fill-current"
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-														>
-															<path d="M12.76 3.76a6 6 0 0 1 8.48 8.48l-8.53 8.54a1 1 0 0 1-1.42 0l-8.53-8.54a6 6 0 0 1 8.48-8.48l.76.75.76-.75zm7.07 7.07a4 4 0 1 0-5.66-5.66l-1.46 1.47a1 1 0 0 1-1.42 0L9.83 5.17a4 4 0 1 0-5.66 5.66L12 18.66l7.83-7.83z"></path>
-														</svg>
+													<div className="flex justify-between items-center">
+														<div className="flex bg-blue-200 w-14 h-10 items-center justify-center rounded-md">
+															<p className="font-bold text-xl text-blue-700">
+																₹{res?.packagePrice}
+															</p>
+														</div>
+														<div className="flex">
+															<div className="h-10 w-10 flex bg-red-200 justify-center items-center rounded-full">
+																<svg
+																	className="h-6 w-6 text-red-500 fill-current"
+																	xmlns="http://www.w3.org/2000/svg"
+																	// viewBox="0 0 30 30"
+																>
+																	<path d="M12.76 3.76a6 6 0 0 1 8.48 8.48l-8.53 8.54a1 1 0 0 1-1.42 0l-8.53-8.54a6 6 0 0 1 8.48-8.48l.76.75.76-.75zm7.07 7.07a4 4 0 1 0-5.66-5.66l-1.46 1.47a1 1 0 0 1-1.42 0L9.83 5.17a4 4 0 1 0-5.66 5.66L12 18.66l7.83-7.83z"></path>
+																</svg>
+															</div>
+														</div>
 													</div>
 												</div>
 												<div className="p-4">
 													<p className="uppercase tracking-wide text-xl font-bold text-gray-700">
 														{res.PackageName}
 													</p>
-													<p
-														style={{ display: "none" }}
-														className="text-xl text-gray-900"
-													>
-														Rs {res?.packagePrice}
+													<p className="uppercase tracking-wide text-md font-bold text-gray-700">
+														{res.courseName}
 													</p>
-													<p
-														style={{ display: "none" }}
-														className="text-gray-700"
-													>
+													<p className="text-cyan-700">
 														8.5k+ Students Enrolled{" "}
 													</p>
 												</div>

@@ -51,8 +51,8 @@ const Homepage = () => {
 						</div>
 						<main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-18 lg:px-8 xl:mt-16">
 							<div className="sm:text-center lg:text-left">
-								<h1 className="text-4xl text-left tracking-tight font-extrabold text-gray-700 sm:text-5xl md:text-6xl">
-									<span className="block text-3xl leading-8 ">
+								<h1 className="text-4xl text-left font-extrabold text-gray-700 sm:text-5xl md:text-6xl">
+									<span className="block text-3xl">
 										{" "}
 										One Destination for Complete{" "}
 									</span>
@@ -105,7 +105,7 @@ const Homepage = () => {
 
 			<div className="bg-indigo-50">
 				<div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-					<h2 className="text-gray-500 text-3xl font-semibold mb-4">
+					<h2 className="text-gray-500 text-5xl font-bold mb-4">
 						Popular Courses
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-2">
@@ -124,7 +124,7 @@ const Homepage = () => {
 									<div className="mx-auto">
 										<div className="flex items-center justify-center">
 											<div className="w-full xl:py-6 px-3">
-												<div className="my-3 bg-white hover:shadow-xl rounded-lg overflow-hidden">
+												<div className="my-3 bg-white hover:shadow-xl transition-shadow ease-in-out rounded-lg overflow-hidden">
 													<div
 														className="bg-cover bg-center h-56 p-4"
 														style={{
@@ -135,7 +135,7 @@ const Homepage = () => {
 														}}
 													>
 														<div className="flex justify-end">
-															<div className="rounded-full text-red-500 bg-red-50 bg-opacity-80 p-2">
+															<div className="rounded-full text-red-500 bg-red-200 bg-opacity-80 p-2">
 																<svg
 																	className="h-6 w-6 rounded-full text-red-500 fill-current"
 																	xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +154,7 @@ const Homepage = () => {
 															style={{ display: "none" }}
 															className="text-xl text-gray-900"
 														>
-															Rs {res?.price}
+															Rs {res?.packagePrice}
 														</p>
 														<p
 															style={{ display: "none" }}
