@@ -52,12 +52,12 @@ const MyCourses = () => {
 								props={res}
 								onClick={() => localStorage.setItem("pkgid", res.packageId)}
 							>
-								<div className="max-w-6xl mx-auto">
+								<div className="max-w-6xl mx-auto sm:my-0 my-4">
 									<div className="flex items-center justify-center">
 										<div className="w-full xl:py-6 px-3 mb-6 md:mb-0 lg:mb-0 xl:mb-0">
 											<div className="mb-5 bg-white hover:shadow-xl transition-shadow ease-in-out shadow-md border border-slate-100 rounded-lg overflow-hidden">
 												<div
-													className="bg-cover bg-center h-56 p-4"
+													className="bg-cover bg-center h-56 p-4 border-b border-gray-200"
 													style={{
 														backgroundImage:
 															res?.thumbnail != undefined
