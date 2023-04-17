@@ -171,7 +171,7 @@ const CourseDetails = (props) => {
 							{
 								data: [100],
 								grouping: false,
-								animation: false,
+								animation: true,
 								enableMouseTracking: false,
 								showInLegend: false,
 								color: "lightskyblue",
@@ -593,16 +593,16 @@ const CourseDetails = (props) => {
 
 				<div className="flex justify-between mb-4">
 					<div className="w-10/12 mr-4 m-8 mt-20 ">
-						<div className="cource-details-section">
-							<ul className="flex">
+						<div className="course-details-section">
+							<ul className="flex items-center mb-2">
 								<button
 									onClick={() => {
 										setCurrentActiveTab("overview");
 									}}
-									className={`flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold ${
-										currentActiveTab == "overview"
-											? "bg-blue-400 text-gray-50"
-											: "bg-gray-100 text-gray-500"
+									className={`flex items-center px-4 h-10 rounded-md font-semibold ${
+										currentActiveTab === "overview"
+											? "bg-blue-400 text-white text-sm sm:text-base"
+											: "text-gray-500 text-sm sm:text-base"
 									} `}
 								>
 									Overview
@@ -630,10 +630,10 @@ const CourseDetails = (props) => {
 											getTestOfRelatedSub(sub.testData, i);
 											setCurrentActiveTab(sub.subjectName);
 										}}
-										className={`flex items-center border-2 ml-2 p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold ${
-											currentActiveTab == sub.subjectName
-												? "bg-blue-400 text-gray-50"
-												: "bg-gray-100 text-gray-500"
+										className={`flex items-center px-4 h-10 rounded-md font-semibold ${
+											currentActiveTab === sub.subjectName
+												? "bg-blue-400 text-gray-50 text-sm sm:text-base"
+												: "text-gray-500 text-sm sm:text-base"
 										}`}
 									>
 										{sub.subjectName}
@@ -649,7 +649,7 @@ const CourseDetails = (props) => {
 								}}
 							>
 								<div className={`line`}>
-									<div className="text-lg font-bold lg:text-2xl">
+									<div className="text-lg font-bold lg:text-2xl mb-2 text-gray-700">
 										About this package
 									</div>
 									<p>{data?.PackageDesc}</p>
@@ -662,7 +662,9 @@ const CourseDetails = (props) => {
 									<div style={{ textAlign: "center" }}>
 										{" "}
 										{getPckRelatedTest.length == 0 ? (
-											<span className="bt-spinner"></span>
+											<div className="flex justify-center items-center">
+												<span className="bt-spinner"></span>
+											</div>
 										) : (
 											""
 										)}
@@ -670,14 +672,17 @@ const CourseDetails = (props) => {
 									<ul>
 										{getPckRelatedTest.map((sub, i) => (
 											<li key={i}>
-												<span className="text-md lg:text-xl font-semibold">
+												<span className="text-md lg:text-xl font-semibold text-gray-700">
 													{sub.subjectName}
 												</span>
-												<span> | </span>
-												<span className="text-md lg:text-xl">
+												<span className="text-md lg:text-xl font-semibold text-gray-700">
+													{" "}
+													|{" "}
+												</span>
+												<span className="text-md lg:text-xl font-semibold text-gray-700">
 													No. of tests Assigned: {sub?.testData.length}
 												</span>
-
+												{console.log(sub.chartOptions)}
 												<HighchartsReact
 													highcharts={Highcharts}
 													options={sub.chartOptions}
@@ -764,7 +769,9 @@ const CourseDetails = (props) => {
 									<div style={{ textAlign: "center" }}>
 										{" "}
 										{sub.chapterData.length == 0 ? (
-											<span className="bt-spinner"></span>
+											<div className="flex justify-center items-center">
+												<span className="bt-spinner"></span>
+											</div>
 										) : (
 											""
 										)}
