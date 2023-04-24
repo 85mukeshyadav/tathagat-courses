@@ -66,7 +66,7 @@ const Score = () => {
 
 	return (
 		<>
-			<main className="w-full h-10 z-10 bg-gray-50 mt-2">
+			<main className="w-full z-10 bg-gray-50 mt-2">
 				{/* <h2 className='my-10 text-lg font-semibold'>Score Summary</h2> */}
 				<div className=" overflow-x-auto">
 					<div>

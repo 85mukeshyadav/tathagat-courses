@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Tree from "./Tree/index";
 // import ExternalInfo from "components/ExternalInfo";
 
@@ -197,6 +197,7 @@ const TreeList = (props) => {
 									id: e.Test_Id,
 									attempt_id: e.attempt_id,
 									index: v,
+									instructions: e?.instructions,
 									children: [],
 								});
 							});
@@ -214,6 +215,7 @@ const TreeList = (props) => {
 							attempt_id: e.attempt_id,
 							id: e.Test_Id,
 							index: cou,
+							instructions: e?.instructions,
 							children: [],
 						};
 						newJ["children"].push(newJl);
@@ -231,6 +233,7 @@ const TreeList = (props) => {
 						attempt_id: e.attempt_id,
 						id: e.Test_Id,
 						index: cou,
+						instructions: e?.instructions,
 						children: [],
 					};
 					treeData.push(newJ);
@@ -266,6 +269,7 @@ const TreeList = (props) => {
 				attempt_id: res.attempt_id,
 				id: res.TestId,
 				index: i,
+				instructions: res?.instructions,
 				children: [],
 			};
 			treeData.push(newJ);
@@ -299,6 +303,7 @@ const TreeList = (props) => {
 				title: "subjectTest",
 				attempt_id: res.attempt_id,
 				id: res.TestId,
+				instructions: res?.instructions,
 				index: i,
 				children: [],
 			};
@@ -333,6 +338,7 @@ const TreeList = (props) => {
 				icon: "fa fa-graduation-cap",
 				title: "chapterTest",
 				attempt_id: res.attempt_id,
+				instructions: res?.instructions,
 				id: res.TestId,
 				index: i,
 				children: [],
@@ -371,6 +377,7 @@ const TreeList = (props) => {
 				title: "topicTest",
 				attempt_id: res.attempt_id,
 				id: res.Test_Id,
+				instructions: res?.instructions,
 				index: i,
 				children: [],
 			};
@@ -392,7 +399,12 @@ const TreeList = (props) => {
 					<p className="mt-3">
 						<div className="row mt-3 d-flex justify-content-center">
 							<div className="col-lg-8 text-left text-dark">
-								<Tree data={treeData} setNodeClick={props.setNodeClick} />
+								{console.log("TREE DATA", treeData)}
+								<Tree
+									data={treeData}
+									setNodeClick={props.setNodeClick}
+									testInstructions={props.testInstructions}
+								/>
 							</div>
 						</div>
 					</p>

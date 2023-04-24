@@ -1,36 +1,22 @@
 //import liraries
-import React, {
-	useEffect,
-	useState,
-	useLayoutEffect,
-	useRef,
-	useContext,
-} from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { FiClock } from "react-icons/fi";
-import moment from "moment";
-import {
-	FaCalculator,
-	FaEquals,
-	FaFile,
-	FaInfo,
-	FaPage4,
-} from "react-icons/fa";
-import Answered from "../assets/Answered.png";
-import notans from "../assets/notans.png";
-import NewCandidateImage from "../assets/NewCandidateImage.jpg";
-import hideNavContext from "../context/AllprojectsContext";
 import axios from "axios";
-import { userInfo } from "../api/checkAuth";
-import Modal from "react-modal";
-import Calculator from "./Calculator/Calculator";
-import QuestionInput from "./Calculator/QuestionInput";
-import useUnload from "./UnLoad";
-import pms from "../assets/pms.pdf";
-import fullLength from "../assets/fullLength.pdf";
-import copyCat from "../assets/copyCat.pdf";
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import moment from "moment";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
+import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
+import { userInfo } from "../api/checkAuth";
+import Answered from "../assets/Answered.png";
+import NewCandidateImage from "../assets/NewCandidateImage.jpg";
+import copyCat from "../assets/copyCat.pdf";
+import fullLength from "../assets/fullLength.pdf";
+import notans from "../assets/notans.png";
+import pms from "../assets/pms.pdf";
+import hideNavContext from "../context/AllprojectsContext";
+import Calculator from "./Calculator/Calculator";
+import QuestionInput from "./Calculator/QuestionInput";
 window.katex = katex;
 
 const customStyles = {
@@ -631,7 +617,9 @@ const Examination = React.memo(() => {
 	};
 
 	const redirectTo = () => {
-		navigate("/courseDetails/myCourse");
+		// navigate("/courseDetails/myCourse");
+		navigate("/exam-finished");
+		// <Link to="/exam-finished" target="_blank" />;
 	};
 
 	const SubmitExam = () => {
@@ -805,7 +793,7 @@ const Examination = React.memo(() => {
 	};
 
 	return (
-		<div className="bg-gray-50 min-h-screen h-full">
+		<div className="bg-gray-50 h-full overflow-hidden">
 			{FinishExam ? <SubmitExam /> : null}
 			{Alert ? (
 				<main className="absolute w-full z-10 bg-[#0000002f] text-gray-900 font-sans overflow-x-hidden">
