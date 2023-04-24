@@ -1,18 +1,18 @@
-import logo from "./logo.svg";
-import "./App.css";
-import Header from "./components/Header";
-import { BrowserRouter as Router } from "react-router-dom";
-import Rout from "./Routes";
+import { MantineProvider } from "@mantine/core";
 import { useEffect, useState } from "react";
-import Signin from "./components/Auth/signin";
-import Signup from "./components/Auth/Signup";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
+import Rout from "./Routes";
+import Header from "./components/Header";
 import Footer from "./components/footer";
 
+import { ModalsProvider } from "@mantine/modals";
 import Lottie from "react-lottie";
 import * as animationData from "./assets/lotties/loader.json";
 import hideNavContext from "./context/AllprojectsContext";
 import AuthContext from "./context/AuthCntx";
-import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 	const [isAuth, setAuth] = useState(false);
@@ -55,29 +55,34 @@ function App() {
 	console.log(isAuth);
 
 	return (
-		<div className="App">
-			<AuthContext.Provider value={Auth}>
-				<hideNavContext.Provider value={nav}>
-					<Router className="relative">
-						{!isStopped ? null : (
-							<div className="fixed w-screen z-50 flex items-center bg-gray-300 opacity-80 h-screen">
-								<Lottie
-									options={defaultOptions}
-									height={80}
-									width={80}
-									// isStopped={isStopped}
-									// isPaused={isStopped}
-									className="absolute top-2/4 transform -translate-x-2/4 mt-auto mb-auto z-50 "
-								/>
-							</div>
-						)}
-						{hidenav ? null : <Header />}
-						<Rout />
-						{hidenav ? null : <Footer />}
-					</Router>
-				</hideNavContext.Provider>
-			</AuthContext.Provider>
-		</div>
+		<MantineProvider withGlobalStyles withNormalizeCSS>
+			<ModalsProvider>
+				<div className="App">
+					<AuthContext.Provider value={Auth}>
+						<hideNavContext.Provider value={nav}>
+							<Router className="relative">
+								{!isStopped ? null : (
+									<div className="fixed w-screen z-50 flex items-center bg-gray-300 opacity-80 h-screen">
+										<Lottie
+											options={defaultOptions}
+											height={80}
+											width={80}
+											// isStopped={isStopped}
+											// isPaused={isStopped}
+											className="absolute top-2/4 transform -translate-x-2/4 mt-auto mb-auto z-50 "
+										/>
+									</div>
+								)}
+								{hidenav ? null : <Header />}
+								<Rout />
+								{hidenav ? null : <Footer />}
+							</Router>
+						</hideNavContext.Provider>
+					</AuthContext.Provider>
+					<ToastContainer />
+				</div>
+			</ModalsProvider>
+		</MantineProvider>
 	);
 }
 
