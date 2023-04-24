@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Page404 from "./components/404";
 import Signin from "./components/Auth/signin";
 import Signup from "./components/Auth/Signup";
@@ -13,6 +13,7 @@ import Exam from "./Exam/examScreen";
 import Review from "./Exam/Review";
 import Analysis from "./components/Course/Analysis";
 import TestExam from "./Exam/TestExam";
+import ExamFinished from "./components/ExamFinished";
 
 /**
  * Routes component containing routes for the whole application
@@ -36,6 +37,7 @@ const Rout = (props) => (
 		<Route exact path="" element={<Homepage />} />
 		<Route exact path="/blogs" element={<Blogs />} />
 		<Route exact path="/test/:pkgid/:testid/:user" element={<TestExam />} />
+		<Route exact path="/exam-finished" element={<ExamFinished />} />
 		{/* <Navigate exacts from='/' to='/login' /> */}
 		<Route exact path="*" element={<Page404 />} />
 	</Routes>
