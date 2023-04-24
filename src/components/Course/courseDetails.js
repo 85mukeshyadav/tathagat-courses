@@ -1,24 +1,15 @@
 //import liraries
 import axios from "axios";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import "highcharts/css/highcharts.css";
 import React, { useContext, useEffect, useState } from "react";
-import {
-	FiBook,
-	FiChevronDown,
-	FiFile,
-	FiMinusCircle,
-	FiPlay,
-	FiVideo,
-} from "react-icons/fi";
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { isLoggedIn } from "../../api/checkAuth";
+import { FiFile, FiVideo } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import hideNavContext from "../../context/AllprojectsContext";
 import AuthContext from "../../context/AuthCntx";
-import styles from "./Coursedetails.module.css";
-import { useParams } from "react-router";
 import TreeList from "../TreeList";
-import "highcharts/css/highcharts.css";
-import HighchartsReact from "highcharts-react-official";
-import Highcharts from "highcharts";
+import styles from "./Coursedetails.module.css";
 // import Tree from 'react-animated-tree';
 
 const treeStyles = {
@@ -63,6 +54,7 @@ const CourseDetails = (props) => {
 	const [desc, setDesc] = useState("");
 	const [courseType, setCourseType] = useState("");
 	const [currentActiveTab, setCurrentActiveTab] = useState("overview");
+	const [instructions, setInstructions] = useState("");
 	const [getTreeCreationData, setTreeCreationData] = useState({});
 	const [getPackDetail, setPackDetail] = useState({});
 	const [getCourseList, setCourseList] = useState([]);
@@ -116,7 +108,7 @@ const CourseDetails = (props) => {
 				localStorage.getItem("pkgid"),
 			{ params: { userId: localStorage.getItem("user") } }
 		);
-		console.log("getPackageDetails", packRes.data);
+		console.log("PACKAGE DETAILS:", packRes.data);
 		//setPackDetail(packRes.data.packageDetails);
 		setData(packRes.data.packageDetails);
 		setCourseList(packRes.data.courseList);
@@ -149,7 +141,7 @@ const CourseDetails = (props) => {
 						chart: {
 							renderTo: "container2",
 							type: "bar",
-							height: 70,
+							height: 50,
 						},
 						credits: false,
 						tooltip: false,
@@ -174,22 +166,19 @@ const CourseDetails = (props) => {
 								animation: true,
 								enableMouseTracking: false,
 								showInLegend: false,
-								color: "lightskyblue",
+								color: "#E4E4E7",
 								pointWidth: 25,
 								borderWidth: 0,
 								borderRadius: 5,
-								borderRadiusTopLeft: "4px",
-								borderRadiusTopRight: "4px",
-								borderRadiusBottomLeft: "4px",
-								borderRadiusBottomRight: "4px",
 								dataLabels: {
 									className: "highlight",
 									format: "150 / 600",
 									enabled: true,
 									align: "right",
 									style: {
-										color: "white",
+										color: "#3F3F46",
 										textOutline: false,
+										padding: "10px",
 									},
 								},
 							},
@@ -199,7 +188,7 @@ const CourseDetails = (props) => {
 								borderRadiusBottomLeft: "4px",
 								borderRadiusBottomRight: "4px",
 								borderRadius: 5,
-								color: "navy",
+								color: "#60A5FA",
 								borderWidth: 0,
 								pointWidth: 25,
 								animation: {
@@ -213,6 +202,7 @@ const CourseDetails = (props) => {
 									style: {
 										color: "white",
 										textOutline: false,
+										padding: "10px",
 									},
 								},
 							},
@@ -325,7 +315,7 @@ const CourseDetails = (props) => {
 			process.env.REACT_APP_API + "/getTestForTree",
 			param
 		);
-		console.log("getTest", getTest.data.testResult);
+		console.log("GET TEST RESP:", getTest.data.testResult);
 		let res = getTest?.data?.testResult;
 
 		let chapterData = res.reduce((agg, curr, i) => {
@@ -338,6 +328,7 @@ const CourseDetails = (props) => {
 					chapterChapterId: curr.chapterChapterId,
 					testData: [],
 					topicData: [],
+					instructions: curr.instructions,
 				};
 
 				newJson["testData"].push(curr);
@@ -372,7 +363,7 @@ const CourseDetails = (props) => {
 		});
 
 		finaTes[index]["chapterData"] = chapterData;
-		console.log(finaTes);
+		console.log("FINAL TEST", finaTes);
 		setPckRelatedTest(finaTes);
 	};
 
@@ -387,6 +378,7 @@ const CourseDetails = (props) => {
 		tree["topicList"] = getTopicList;
 		tree["topicTest"] = getTopicTest;
 		tree["index"] = { ...getIndex };
+		tree["instructions"] = instructions;
 		// console.log("dd", getIndex)
 		setTreeCreationData(tree);
 	}, [
@@ -687,6 +679,11 @@ const CourseDetails = (props) => {
 													highcharts={Highcharts}
 													options={sub.chartOptions}
 												/>
+												{/* <Progress
+													percent={sub?.chartOptions?.series[0]?.data[0]}
+													status="active"
+													// value={sub?.chartOptions?.series[0]?.data[0]}
+												/> */}
 											</li>
 										))}
 									</ul>
@@ -759,6 +756,8 @@ const CourseDetails = (props) => {
 								>
 									<div>
 										{/* <div className={`h-3 mb-4`}>Tests<span className="bt-spinner"></span></div> */}
+										{/* {console.log("SUB TEST DATA", sub.testData)} */}
+										{console.log("SUB CHAPTER DATA", sub.chapterData)}
 										<TreeList
 											subData={sub.testData}
 											chapData={sub.chapterData}
