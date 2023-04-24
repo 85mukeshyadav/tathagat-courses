@@ -1,21 +1,8 @@
 //import liraries
-import React, {
-	useEffect,
-	useState,
-	useLayoutEffect,
-	useRef,
-	useContext,
-} from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { FiClock } from "react-icons/fi";
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import {
-	FaCalculator,
-	FaEquals,
-	FaFile,
-	FaInfo,
-	FaPage4,
-} from "react-icons/fa";
+import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
 import Answered from "../assets/Answered.png";
 import notans from "../assets/notans.png";
 import NewCandidateImage from "../assets/NewCandidateImage.jpg";
@@ -40,11 +27,6 @@ const customStyles = {
 	},
 };
 
-const style = {
-	height: "24rem",
-	width: "15rem",
-};
-
 function Counter(props) {
 	const [count, setCount] = useState(props.time);
 
@@ -66,26 +48,6 @@ function Counter(props) {
 	return <span key={props.time} className="mx-1">{`${h}:${m}:${s} Min`}</span>;
 }
 
-function useInterval(callback, delay) {
-	const savedCallback = useRef();
-
-	// Remember the latest function.
-	useEffect(() => {
-		savedCallback.current = callback;
-	}, [callback]);
-
-	// Set up the interval.
-	useEffect(() => {
-		function tick() {
-			savedCallback.current();
-		}
-		if (delay !== null) {
-			let id = setInterval(tick, delay);
-			return () => clearInterval(id);
-		}
-	}, [delay]);
-}
-
 // create a component
 const Review = React.memo(() => {
 	const options = {
@@ -99,8 +61,7 @@ const Review = React.memo(() => {
 
 	const [Question, setQuestion] = useState([]);
 	const [currentIndex, setcurrentIndex] = useState(0);
-	const { hidenav, sethidenav } = useContext(hideNavContext);
-	const savedCallback = useRef();
+	const { sethidenav } = useContext(hideNavContext);
 	const [count, setCount] = useState(1200);
 	const [Alert, setAlertbox] = useState(false);
 	const [SectionName, setSectionName] = useState();
@@ -166,7 +127,7 @@ const Review = React.memo(() => {
 			let question = [];
 			let correctAnswers = 0;
 			let wrongAnswers = 0;
-			getQuesAns.map((data, index) => {
+			getQuesAns.map((data) => {
 				if (data["ansStatus"] == "C") {
 					correctAnswers = correctAnswers + 1;
 				}
@@ -235,7 +196,7 @@ const Review = React.memo(() => {
 			process.env.REACT_APP_API + "/gettest/" + localStorage.getItem("testid"),
 			options
 		);
-		console.log("rererere", res);
+		console.log("TEST RESP:", res.data);
 		let param = {
 			userId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -326,30 +287,7 @@ const Review = React.memo(() => {
 	}, [selectedSectionnumber]);
 
 	useEffect(() => {
-		let ans = currentQuesStatus.answered.filter((res) => {
-			if (res == 1) {
-				return res;
-			}
-		});
-		let notAns = currentQuesStatus.notAnswered.filter((res) => {
-			if (res == 1) {
-				return res;
-			}
-		});
-
 		let notVisit = currentQuesStatus.notVisited.filter((res) => {
-			if (res == 1) {
-				return res;
-			}
-		});
-
-		let markForRev = currentQuesStatus.markForReview.filter((res) => {
-			if (res == 1) {
-				return res;
-			}
-		});
-
-		let bothAnsMark = currentQuesStatus.bothAnsReview.filter((res) => {
 			if (res == 1) {
 				return res;
 			}
@@ -390,11 +328,6 @@ const Review = React.memo(() => {
 			packageId: localStorage.getItem("pkgid"),
 			section: [...allSectionData],
 		};
-		const res = await axios.post(
-			process.env.REACT_APP_API + "/submitTest",
-			params,
-			options
-		);
 
 		navigate("/myCourses");
 	};
@@ -419,7 +352,7 @@ const Review = React.memo(() => {
 									</th>
 									<th className="text-left p-2">Not visited</th>
 								</tr>
-								{allSectionData.map((res, i) => (
+								{allSectionData.map((res) => (
 									<tr className="bg-gray-200">
 										<td className="text-left p-2">{res.sectionName}</td>
 										<td className="text-left p-2">{res.question.length}</td>
@@ -504,7 +437,7 @@ const Review = React.memo(() => {
 	};
 
 	return (
-		<div className="bg-gray-50 min-h-screen h-full">
+		<div className="bg-gray-50 h-full overflow-hidden">
 			{FinishExam ? <SubmitExam /> : null}
 			{Alert ? (
 				<main className="absolute w-full z-10 bg-[#0000002f] text-gray-900 font-sans overflow-x-hidden">
@@ -746,36 +679,51 @@ const Review = React.memo(() => {
                                                             }}></p> */}
 															{res.questionoption[0] &&
 																res?.questionoption.map((ans, iAns) => {
-																	let newObj = { ...currentQuesStatus };
 																	return (
 																		<div
 																			key={iAns}
 																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																		>
-																			<input
-																				checked={
-																					iAns == getRadio ? "checked" : null
-																				}
-																				type="radio"
-																				name={`ans` + i}
-																				disabled={true}
-																				className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																			/>
-																			<h3
-																				dangerouslySetInnerHTML={{
-																					__html: ans?.option,
-																				}}
-																				className="text-gray-900 group-hover:text-white text-sm font-semibold text-left"
-																			></h3>
-																			{reviewQues[i].answerStatus == "C" &&
-																			iAns == getRadio ? (
-																				<i className={`mr-1 fa fa-check`}> </i>
-																			) : reviewQues[i].answerStatus == "W" &&
-																			  iAns == getRadio ? (
-																				<i className={`mr-1 fa fa-times`}> </i>
-																			) : (
-																				""
+																			{console.log(
+																				"🚀 ~ file: index.js ~ line 687 ~ res.questionoption.map ~ ans",
+																				ans
 																			)}
+																			<div
+																				className={`flex items-center py-2 px-4 rounded-md
+																					${res.correctoption == iAns + 1 && "bg-green-100 "}
+																					${reviewQues[i].answerStatus == "C" && "bg-green-100 "}
+																					${reviewQues[i].answerStatus == "W" && "bg-red-100"}
+																				`}
+																			>
+																				<input
+																					checked={
+																						iAns == getRadio ? "checked" : null
+																					}
+																					type="radio"
+																					name={`ans` + i}
+																					disabled={true}
+																					className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																				/>
+																				<h3
+																					dangerouslySetInnerHTML={{
+																						// remove all br tags & &nbsp; from html
+																						__html: ans?.option
+																							.replace(/<br>/gi, "")
+																							.replace(/&nbsp;/gi, ""),
+																					}}
+																					className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
+																				></h3>
+																				{(reviewQues[i].answerStatus == "C" &&
+																					iAns == getRadio) ||
+																				res.correctoption == iAns + 1 ? (
+																					<i className="mr-1 fa fa-check text-green-500 text-2xl" />
+																				) : (
+																					reviewQues[i].answerStatus == "W" &&
+																					iAns == getRadio && (
+																						<i className="mr-1 fa fa-times text-red-500 text-2xl" />
+																					)
+																				)}
+																			</div>
 																		</div>
 																	);
 																})}
@@ -806,12 +754,14 @@ const Review = React.memo(() => {
 															getViewSolution &&
 															typeof getViewSolution == "object" ? (
 																<div
+																	className="mb-8"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution.q,
 																	}}
 																></div>
 															) : (
 																<div
+																	className="mb-8"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution,
 																	}}
@@ -855,36 +805,51 @@ const Review = React.memo(() => {
 												<>
 													{res.questionoption[0] &&
 														res?.questionoption.map((ans, iAns) => {
-															let newObj = { ...currentQuesStatus };
+															{
+																console.log(
+																	"🚀 ~ file: index.js ~ line 808 ~ res.questionoption.map ~ ans",
+																	res
+																);
+															}
 															return (
 																<div
 																	key={iAns}
 																	className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																>
-																	<input
-																		checked={
-																			iAns == getRadio ? "checked" : null
-																		}
-																		type="radio"
-																		name={`ans` + i}
-																		disabled={true}
-																		className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																	/>
-																	<h3
-																		dangerouslySetInnerHTML={{
-																			__html: ans?.option,
-																		}}
-																		className="text-gray-900 group-hover:text-white text-sm font-semibold text-left"
-																	></h3>
-																	{reviewQues[i].answerStatus == "C" &&
-																	iAns == getRadio ? (
-																		<i className={`mr-1 fa fa-check`}> </i>
-																	) : reviewQues[i].answerStatus == "W" &&
-																	  iAns == getRadio ? (
-																		<i className={`mr-1 fa fa-times`}> </i>
-																	) : (
-																		""
-																	)}
+																	<div
+																		className={`flex items-center py-2 px-4 rounded-md
+																			${res.correctoption == iAns + 1 && "bg-green-100 "}
+																			${reviewQues[i].answerStatus == "C" && iAns == getRadio && "bg-green-100"}
+																			${reviewQues[i].answerStatus == "W" && iAns == getRadio && "bg-red-100"}`}
+																	>
+																		<input
+																			checked={
+																				iAns == getRadio ? "checked" : null
+																			}
+																			type="radio"
+																			name={`ans` + i}
+																			disabled={true}
+																			className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																		/>
+																		<h3
+																			dangerouslySetInnerHTML={{
+																				__html: ans?.option
+																					.replace(/<br>/gi, "")
+																					.replace(/&nbsp;/gi, ""),
+																			}}
+																			className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
+																		></h3>
+																		{(reviewQues[i].answerStatus == "C" &&
+																			iAns == getRadio) ||
+																		res.correctoption == iAns + 1 ? (
+																			<i className="mr-1 fa fa-check text-green-500 text-2xl" />
+																		) : (
+																			reviewQues[i].answerStatus == "W" &&
+																			iAns == getRadio && (
+																				<i className="mr-1 fa fa-times text-red-500 text-2xl" />
+																			)
+																		)}
+																	</div>
 																</div>
 															);
 														})}
@@ -892,10 +857,22 @@ const Review = React.memo(() => {
 											)}
 
 											{/* <div>
-                                    <span style={{position: 'absolute'}}>Correct Answer :- </span><h3 style={{marginLeft: "12%", marginTop: "2px"}} dangerouslySetInnerHTML={{__html:((res.correctoption || res.correctoption == "0")  && res.questionoption[res.correctoption - 1]?.option) || ''}} className="text-gray-900 group-hover:text-white text-sm font-semibold text-left">
-
-                                            </h3>
-                                            </div> */}
+												<span style={{ position: "absolute" }}>
+													Correct Answer :-{" "}
+												</span>
+												<h3
+													style={{ marginLeft: "12%", marginTop: "2px" }}
+													dangerouslySetInnerHTML={{
+														__html:
+															((res.correctoption ||
+																res.correctoption == "0") &&
+																res.questionoption[res.correctoption - 1]
+																	?.option) ||
+															"",
+													}}
+													className="text-gray-900 group-hover:text-white text-sm font-semibold text-left"
+												></h3>
+											</div> */}
 											<div style={{ marginTop: "10px", minHeight: "200px" }}>
 												<button
 													className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
@@ -909,12 +886,14 @@ const Review = React.memo(() => {
 													getViewSolution &&
 													typeof getViewSolution == "object" ? (
 														<div
+															className="mb-8"
 															dangerouslySetInnerHTML={{
 																__html: getViewSolution.q,
 															}}
 														></div>
 													) : (
 														<div
+															className="mb-8"
 															dangerouslySetInnerHTML={{
 																__html: getViewSolution,
 															}}
