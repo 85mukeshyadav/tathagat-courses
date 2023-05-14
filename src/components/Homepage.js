@@ -1,41 +1,39 @@
 //import liraries
-import React, { useEffect, useState, useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import ms from "ms";
+import React, { useContext, useEffect } from "react";
+import { FaChalkboardTeacher, FaLanguage } from "react-icons/fa";
 import {
 	FiArrowRight,
-	FiBarChart,
 	FiBarChart2,
-	FiBook,
 	FiFile,
 	FiSearch,
 	FiVideo,
 } from "react-icons/fi";
-import { FaChalkboardTeacher, FaLanguage } from "react-icons/fa";
-import { Link, Navigate } from "react-router-dom";
-import heroimage from "../assets/heroimage.jpg";
-import examIc from "../assets/examic.png";
-import examnotification from "../assets/exam-notification.png";
+import { Link } from "react-router-dom";
+import apiClient from "../api/apiClient";
 import algebraic from "../assets/algebraic.png";
-import axios from "axios";
+import examnotification from "../assets/exam-notification.png";
+import examIc from "../assets/examic.png";
+import heroimage from "../assets/heroimage.jpg";
 import hideNavContext from "../context/AllprojectsContext";
+import Loader from "./Loader";
+import slugify from "../utils/slugify";
 
 // create a component
 const Homepage = () => {
-	const [data, setData] = useState([]);
 	const { hidenav, sethidenav } = useContext(hideNavContext);
-
-	const _getrandomPkg = async () => {
-		const res = await axios.get(process.env.REACT_APP_API + "/getrndmpkg");
-		console.log(
-			"🚀 ~ file: Homepage.js ~ line 21 ~ const_getrandomPkg= ~ res",
-			res
-		);
-		setData(res.data);
-	};
+	const { data, isLoading } = useQuery({
+		queryKey: ["getrandomPkg"],
+		queryFn: () => apiClient.get("/getrndmpkg").then((res) => res.data),
+		staleTime: ms("24h"),
+	});
 
 	useEffect(() => {
-		_getrandomPkg();
 		sethidenav(false);
 	}, []);
+
+	if (isLoading) return <Loader />;
 
 	return (
 		<>
@@ -111,13 +109,18 @@ const Homepage = () => {
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-2">
 						{data.map((res, i) => (
 							<Link
-								to=""
+								to={
+									res.officialDesc
+										? `/courses/${slugify(res.name)}/${res.packageId}`
+										: ""
+								}
 								props={res}
 								onClick={() => {
-									localStorage.setItem("pkgid", res.packageId);
-									//window.open('https://tathagat.ccavenue.com','_blank').focus();
-									if (res.payment_url)
-										window.open(res.payment_url, "_blank").focus();
+									if (!res.officialDesc) {
+										localStorage.setItem("pkgid", res.packageId);
+										if (res.payment_url)
+											window.open(res.payment_url, "_blank").focus();
+									}
 								}}
 							>
 								<div className="max-w-6xl mx-auto sm:my-0 my-4">

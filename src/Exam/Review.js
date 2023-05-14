@@ -2,7 +2,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
+import {
+	FaEquals,
+	FaFile,
+	FaInfo,
+	FaBookmark,
+	FaRegBookmark,
+} from "react-icons/fa";
 import Answered from "../assets/Answered.png";
 import notans from "../assets/notans.png";
 import NewCandidateImage from "../assets/NewCandidateImage.jpg";
@@ -15,6 +21,8 @@ import pms from "../assets/pms.pdf";
 import fullLength from "../assets/fullLength.pdf";
 import copyCat from "../assets/copyCat.pdf";
 import QuestionInput from "./Calculator/QuestionInput";
+import { Tooltip } from "@mantine/core";
+import { useImmer } from "use-immer";
 
 const customStyles = {
 	content: {
@@ -103,6 +111,7 @@ const Review = React.memo(() => {
 	const [getMode, setMode] = useState("review");
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
+	const [bookmarks, setBookmarks] = useImmer([]);
 
 	// window.addEventListener('beforeunload', function (e) {
 	//     e.preventDefault();
@@ -114,6 +123,20 @@ const Review = React.memo(() => {
 	//     console.log("adasdasdasd")
 	//     e.returnValue = '';
 	//   });
+
+	const handleBookmark = async (id, status) => {
+		const res = await axios.post(process.env.REACT_APP_API + "/addbookmark", {
+			userEmailId: localStorage.getItem("user"),
+			testId: localStorage.getItem("testid"),
+			questionsId: id,
+			status: status,
+		});
+		if (res.status == 200) {
+			console.log("Bookmark added successfully!");
+		} else {
+			console.log("Bookmark not added!");
+		}
+	};
 
 	useEffect(() => {
 		if (count <= 0) {
@@ -621,9 +644,35 @@ const Review = React.memo(() => {
 						</p>
 					</div>
 					<div className="flex justify-between items-center border-b-2 pl-2 w-full">
-						<p className="font-bold text-md sm:text-lg py-2">
-							Q. {currentQuesIndex + 1}
-						</p>
+						<div className="flex items-center">
+							<p className="font-bold text-md sm:text-lg py-2">
+								Q. {currentQuesIndex + 1}
+							</p>
+							<Tooltip label="Add this question to bookmarks">
+								<button
+									onClick={() => {
+										const quesId =
+											data[selectedSectionnumber].QuestionList[currentIndex]
+												.questionId;
+										setBookmarks((draft) => {
+											let newDraft = [...draft];
+											newDraft[currentQuesIndex] = !newDraft[currentQuesIndex];
+											handleBookmark(
+												quesId,
+												!newDraft[currentQuesIndex] ? 0 : 1
+											);
+											return newDraft;
+										});
+									}}
+								>
+									{bookmarks[currentQuesIndex] ? (
+										<FaBookmark className="text-blue-400 text-xl ml-2" />
+									) : (
+										<FaRegBookmark className="text-blue-500 text-xl ml-2" />
+									)}
+								</button>
+							</Tooltip>
+						</div>
 						<p className="py-2 font-semibold text-sm sm:text-lg mr-2">
 							Marks for Correct Answer:{" "}
 							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
@@ -1066,7 +1115,30 @@ const Review = React.memo(() => {
 				</div>
 				<footer className="fixed w-full border-t-2 border-gray-400 p-2 bg-gray-50 flex justify-between bottom-0">
 					<div></div>
-					<div className="flex justify-around items-center w-[37%]">
+					<div className="flex justify-around items-center sm:w-[30%] w-1/2">
+						<button
+							onClick={() => {
+								setViewSection(false);
+								if (currentQuesIndex > 0) {
+									setCurrentQuesIndex(currentQuesIndex - 1);
+									if (Question[currentQuesIndex - 1]["optionType"] == "input") {
+										if (reviewQues[currentQuesIndex - 1].usersAnswer != -1) {
+											setAns(reviewQues[currentQuesIndex - 1].usersAnswer);
+										} else {
+											setAns("");
+										}
+									} else {
+										setRadio(reviewQues[currentQuesIndex - 1].usersAnswer);
+									}
+								}
+							}}
+							className={`bg-blue-500 hover:bg-blue-600 text-white rounded-sm px-4 py-2 ${
+								currentQuesIndex == 0 &&
+								"bg-gray-400 hover:bg-gray-400 cursor-default"
+							}`}
+						>
+							Previous
+						</button>
 						<button
 							onClick={() => {
 								setViewSection(false);
@@ -1082,41 +1154,11 @@ const Review = React.memo(() => {
 										setRadio(reviewQues[currentQuesIndex + 1].usersAnswer);
 									}
 								}
-
-								// let newArry = [...getQuesAns];
-								// let newObj = { ...currentQuesStatus };
-								// let qu = [...Question];
-
-								// console.log("bbbbbbbb", newArry, newObj, '' == 0);
-
-								// newObj['markForReview'][currentQuesIndex] = 0;
-								// newObj['bothAnsReview'][currentQuesIndex] = 0;
-								// if (newArry[currentQuesIndex]['quesAns'] != -1 && newObj['markForReview'][currentQuesIndex] == 0) {
-
-								//     newObj['answered'][currentQuesIndex] = 1;
-								//     newObj['notAnswered'][currentQuesIndex] = 0;
-								//     newObj['notVisited'][currentQuesIndex] = 0;
-								//     newArry[currentQuesIndex]['state'] = 1;
-								//     qu[currentQuesIndex]['state'] = 1;
-
-								// } else if (newArry[currentQuesIndex]['quesAns'] != -1 && newObj['markForReview'][currentQuesIndex] == 1) {
-								//     newObj['answered'][currentQuesIndex] = 1;
-								//     newObj['notAnswered'][currentQuesIndex] = 0;
-								//     newObj['notVisited'][currentQuesIndex] = 0;
-								//     newArry[currentQuesIndex]['state'] = 5;
-								//     qu[currentQuesIndex]['state'] = 5;
-								// } else if (newArry[currentQuesIndex]['quesAns'] == -1 && newObj['markForReview'][currentQuesIndex] == 1) {
-								//     newArry[currentQuesIndex]['state'] = 4;
-								//     qu[currentQuesIndex]['state'] = 4;
-								// } else if (newArry[currentQuesIndex]['quesAns'] == -1) {
-								//     newArry[currentQuesIndex]['state'] = 2;
-								//     qu[currentQuesIndex]['state'] = 2;
-								// }
-								// newArry[currentQuesIndex]['isClicked'] = true;
-								// setQuesAns(newArry);
-								// setCurrentQuesStatus(newObj);
 							}}
-							className="bg-[#0c7cd5] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-4 py-2"
+							className={`bg-blue-500 hover:bg-blue-600 text-white rounded-sm px-4 py-2 ${
+								currentQuesIndex == Question.length - 1 &&
+								"bg-gray-400 hover:bg-gray-400 cursor-default"
+							}`}
 						>
 							Next
 						</button>
