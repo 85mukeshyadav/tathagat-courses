@@ -5,6 +5,8 @@ import "katex/dist/katex.min.css";
 import moment from "moment";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
+// import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
+import Cookies from "js-cookie";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../api/checkAuth";
@@ -17,6 +19,7 @@ import pms from "../assets/pms.pdf";
 import hideNavContext from "../context/AllprojectsContext";
 import Calculator from "./Calculator/Calculator";
 import QuestionInput from "./Calculator/QuestionInput";
+
 window.katex = katex;
 
 const customStyles = {
@@ -46,7 +49,10 @@ function Counter(props) {
 		}
 	}, 1000);
 	const duration = moment.duration(count, "seconds");
-	// console.log("🚀 ~ file: Examination.js ~ line 26 ~ Counter ~ duration", duration)
+	// console.log(
+	// 	"🚀 ~ file: Examination.js ~ line 26 ~ Counter ~ duration",
+	// 	duration
+	// );
 	const h = duration.hours(); // 20
 	const m = duration.minutes(); // 20
 	const s = duration.seconds();
@@ -112,18 +118,55 @@ const Examination = React.memo(() => {
 	const [bothAnsReview, setBothAnsReview] = useState(0);
 	const [answered, setAnswered] = useState(0);
 
-	const [currentQuesIndex, setCurrentQuesIndex] = useState(0);
+	const lastQuesAttempt = JSON.parse(localStorage.getItem("lastQuesAttempt"));
+	const testid = localStorage.getItem("testid");
+	const [currentQuesIndex, setCurrentQuesIndex] = useState(
+		lastQuesAttempt?.testid === testid
+			? lastQuesAttempt.currentQuesIndex < 9
+				? lastQuesAttempt.currentQuesIndex + 1
+				: lastQuesAttempt.currentQuesIndex
+			: 0
+	);
+	const quesAttempted = JSON.parse(
+		localStorage.getItem("quesAttempted") || "{}"
+	);
+	// const quesAttempted = JSON.parse(Cookies.get("quesAttempted") || "{}");
 	const [currentQuesStatus, setCurrentQuesStatus] = useState({
-		answered: [],
-		notAnswered: [],
-		notVisited: [],
-		markForReview: [],
-		bothAnsReview: [],
+		answered:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["answered"]
+				: [],
+		notAnswered:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["notAnswered"]
+				: [],
+		notVisited:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["notVisited"]
+				: [],
+		markForReview:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["markForReview"]
+				: [],
+		bothAnsReview:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["bothAnsReview"]
+				: [],
+		timeTaken:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["timeTaken"]
+				: [],
 	});
 
+	// const [timeTaken, setTimeTaken] = useState(0);
+	const [timeSpent, setTimeSpent] = useState(0);
 	const [notAnswered, setNotAnswer] = useState(0);
 	const [notVisited, setNotVisited] = useState(0);
-	const [getQuesAns, setQuesAns] = useState([]);
+	const savedSession = JSON.parse(localStorage.getItem("savedSession"));
+	// const savedSession = JSON.parse(Cookies.get("savedSession") || "{}");
+	const [getQuesAns, setQuesAns] = useState(
+		savedSession?.testid === testid ? savedSession?.getQuesAns : []
+	);
 	const [getRadio, setRadio] = useState(-1);
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [modalInsOpen, setModalInsOpen] = useState(false);
@@ -229,18 +272,38 @@ const Examination = React.memo(() => {
 			setCurrentQuesIndex(0);
 			setNotAnswer(0);
 			setNotVisited(0);
-			setQuesAns([]);
+			setQuesAns(savedSession?.getQuesAns || []);
 			setRadio(-1);
 			setModalIsOpen(false);
 			setModalInsOpen(false);
 			setIsOpen(false);
 			let newState = {
-				answered: [],
-				notAnswered: [],
-				notVisited: [],
-				markForReview: [],
-				bothAnsReview: [],
+				answered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["answered"]
+						: [],
+				notAnswered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notAnswered"]
+						: [],
+				notVisited:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notVisited"]
+						: [],
+				markForReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["markForReview"]
+						: [],
+				bothAnsReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["bothAnsReview"]
+						: [],
+				timeTaken:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["timeTaken"]
+						: [],
 			};
+			console.log("newState", newState);
 			setCurrentQuesStatus(newState);
 		}
 
@@ -260,8 +323,12 @@ const Examination = React.memo(() => {
 					localStorage.getItem("testid"),
 				options
 			);
-
+			console.log(
+				"🚀 ~ file: Examination.js ~ line 269 ~ useEffect ~ res",
+				res.data
+			);
 			setCount(res.data[0].Section[selectedSectionnumber].SectionTime * 60);
+			setTimeSpent(res.data[0].Section[selectedSectionnumber].SectionTime * 60);
 			//  setCount(20)
 			setPositiveMarks(
 				res.data[0].Section[selectedSectionnumber].positiveMarks
@@ -279,13 +346,34 @@ const Examination = React.memo(() => {
 			setExamLevel(res.data[0].examLevel);
 			setTestName(res.data[0].TestTitle);
 			let objArray = {
-				notAnswered: [],
-				notVisited: [],
-				answered: [],
-				markForReview: [],
-				bothAnsReview: [],
+				notAnswered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notAnswered"]
+						: [],
+				notVisited:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notVisited"]
+						: [],
+				answered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["answered"]
+						: [],
+				markForReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["markForReview"]
+						: [],
+				bothAnsReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["bothAnsReview"]
+						: [],
+				timeTaken:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["timeTaken"]
+						: [],
 			};
-
+			// console.log("quesNotAnswered", quesAttempted?.objArray["notAnswered"]);
+			// console.log("quesAnswered", quesAttempted?.objArray["answered"]);
+			console.log("objArray", objArray);
 			let quesAnsArray = [];
 			setTotalSection(res.data[0].Section.length);
 			res.data[0].Section[0] &&
@@ -295,34 +383,39 @@ const Examination = React.memo(() => {
 						setSectionId(res.sectionId);
 
 						let newQues = res.QuestionList.map((ques, indexs) => {
-							objArray.notAnswered[indexs] = 1;
-							objArray.notVisited[indexs] = 1;
-							objArray.answered[indexs] = 0;
-							objArray.markForReview[indexs] = 0;
-							objArray.bothAnsReview[indexs] = 0;
+							objArray.notAnswered[indexs] =
+								quesAttempted?.objArray?.notAnswered[indexs] || 1;
+							objArray.notVisited[indexs] =
+								quesAttempted?.objArray?.notVisited[indexs] || 1;
+							objArray.answered[indexs] =
+								quesAttempted?.objArray?.answered[indexs] || 0;
+							objArray.markForReview[indexs] =
+								quesAttempted?.objArray?.markForReview[indexs] || 0;
+							objArray.bothAnsReview[indexs] =
+								quesAttempted?.objArray?.bothAnsReview[indexs] || 0;
+							objArray.timeTaken[indexs] =
+								quesAttempted?.objArray?.timeTaken[indexs] || 0;
 							let everyQues = {
-								isClicked: false,
+								isClicked: savedSession?.getQuesAns[indexs]?.isClicked || false,
 								quesId: ques.questionId,
-								quesAns: -1,
-								state: 3,
-								ansStatus: "",
+								quesAns: savedSession?.getQuesAns[indexs]?.quesAns || -1,
+								state: savedSession?.getQuesAns[indexs]?.state || 3,
+								ansStatus: savedSession?.getQuesAns[indexs]?.ansStatus || "",
 								optionType: ques.optionType,
 								subjectId: ques.subjectId,
 								chapterChapterId: ques.chapterChapterId,
 								topicId: ques.topicId,
 								optionType: ques.optionType,
+								timeTaken: savedSession?.getQuesAns[indexs]?.timeTaken || 0,
 							};
 							quesAnsArray.push(everyQues);
-							ques["state"] = 3;
+							ques["state"] = savedSession?.getQuesAns[indexs]?.state || 3;
 							return ques;
 						});
 
 						res.QuestionList && setQuestion(newQues);
 						setCurrentQuesStatus(objArray);
-						// if (getQuesAns.length == 0) {
-
 						setQuesAns(quesAnsArray);
-						// }
 					}
 				});
 
@@ -372,12 +465,17 @@ const Examination = React.memo(() => {
 
 		setmarkedReview(markForRev.length);
 		setBothAnsReview(bothAnsMark.length);
-		console.log("qwqwqqw", currentQuesStatus);
+		console.log(
+			"🚀 ~ Examination.js ~ line 377 ~ currentQuesStatus",
+			currentQuesStatus
+		);
+		const newObj = {
+			answered: currentQuesStatus.answered,
+		};
 	}, [currentQuesStatus]);
 
 	useEffect(() => {
 		let qu = [...Question];
-		// console.log('ankit22222', getQuesAns)
 		if (qu.length && getQuesAns.length) {
 			qu[currentQuesIndex]["state"] = getQuesAns[currentQuesIndex]["state"];
 			setQuestion(qu);
@@ -483,6 +581,10 @@ const Examination = React.memo(() => {
 		let question = [];
 		let correctAnswers = 0;
 		let wrongAnswers = 0;
+		console.log(
+			"🚀 ~ file: Examination.js ~ line 501 ~ _submitPreTest ~ Question",
+			getQuesAns
+		);
 		getQuesAns.map((data, index) => {
 			if (data["ansStatus"] == "C") {
 				correctAnswers = correctAnswers + 1;
@@ -498,6 +600,7 @@ const Examination = React.memo(() => {
 				chapterChapterId: data.chapterChapterId,
 				topicId: data.topicId,
 				optionType: data.optionType,
+				timeTaken: data.timeTaken,
 			};
 			question.push(qu);
 		});
@@ -550,9 +653,8 @@ const Examination = React.memo(() => {
 		// });
 
 		section.push(newJson);
-		console.log(da, section, finalSec);
+		console.log("🚀 ~ Examination.js ~ line 556 ~ da", da, section, finalSec);
 		let newData = [...da, ...section];
-		//console.log(newData)
 		if (count == 0 && selectedSectionnumber == getTotalSection - 1) {
 			submitTest(1, section);
 			setFinishExam(true);
@@ -562,7 +664,11 @@ const Examination = React.memo(() => {
 
 	const submitTest = async (full_attempt, sectionData = []) => {
 		let netScore = 0;
-		console.log(allSectionData, sectionData);
+		console.log(
+			"🚀 ~ Examination.js ~ line 568 ~ allSectionData",
+			allSectionData,
+			sectionData
+		);
 		let sectData = [];
 		if (sectionData.length) {
 			if (allSectionData.length) {
@@ -592,7 +698,12 @@ const Examination = React.memo(() => {
 			return d;
 		});
 
-		console.log(allSectionData, sec, sectionData);
+		console.log(
+			"🚀 ~ Examination.js ~ line 602",
+			allSectionData,
+			sec,
+			sectionData
+		);
 		let params = {
 			userId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -608,7 +719,12 @@ const Examination = React.memo(() => {
 			params,
 			options
 		);
-		console.log(res.data);
+		console.log("🚀 ~ Examination.js ~ line 622 ~ submit", res.data);
+		// localStorage.removeItem("testid");
+		localStorage.removeItem("lastQuesAttempt");
+		localStorage.removeItem("currentQuesIndex");
+		localStorage.removeItem("quesAttempted");
+		localStorage.removeItem("savedSession");
 		if (full_attempt == 1) {
 			// window.close();
 		} else {
@@ -621,6 +737,30 @@ const Examination = React.memo(() => {
 		navigate("/exam-finished");
 		// <Link to="/exam-finished" target="_blank" />;
 	};
+
+	useEffect(() => {
+		const handleBeforeUnload = (event) => {
+			event.preventDefault();
+			event.returnValue =
+				"If you leave this page, then the page will be submitted. Are you sure you want to leave?"; // Some browsers require a return value to be set.
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
+		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+		};
+	}, []);
+
+	// useEffect(() => {
+	// 	window.onpopstate = (e) => {
+	// 		e.preventDefault();
+	// 		alert(
+	// 			"You can't go back without submitting the test. Please submit to complete the test."
+	// 		);
+	// 		navigate("/examination");
+	// 	};
+	// }, []);
 
 	const SubmitExam = () => {
 		return (
@@ -1034,11 +1174,13 @@ const Examination = React.memo(() => {
 							/>
 						</p>
 					</div>
-					<div className="flex justify-between items-center border-b-2 pl-2 w-full">
-						<p className="font-bold text-md sm:text-lg py-2">
-							Q. {currentQuesIndex + 1}
-						</p>
-						<p className="py-2 font-semibold text-sm sm:text-lg mr-2">
+					<div className="sm:flex justify-between items-center border-b-2 pl-2 w-full">
+						<div className="flex items-center">
+							<p className="font-bold text-md sm:text-lg py-2">
+								Q. {currentQuesIndex + 1}
+							</p>
+						</div>
+						<p className="py-2 font-semibold text-sm sm:text-lg mr-2 text-left">
 							Marks for Correct Answer:{" "}
 							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
 							<span className="text-red-500">
@@ -1092,6 +1234,10 @@ const Examination = React.memo(() => {
 															{res.questionoption[0] &&
 																res?.questionoption.map((ans, iAns) => {
 																	let newObj = { ...currentQuesStatus };
+																	// newObj["timeTaken"][iAns] = Math.abs(
+																	// 	timeSpent - count
+																	// );
+																	// setTimeSpent(count);
 																	return (
 																		<div
 																			key={iAns}
@@ -1112,6 +1258,26 @@ const Examination = React.memo(() => {
 																						// newObj['answered'][i] = 1;
 																						// newObj['notAnswered'][i] = 0;
 																						setCurrentQuesStatus(newObj);
+																						localStorage.setItem(
+																							"quesAttempted",
+																							JSON.stringify({
+																								testid:
+																									localStorage.getItem(
+																										"testid"
+																									),
+																								objArray: newObj,
+																							})
+																						);
+																						Cookies.set(
+																							"quesAttempted",
+																							JSON.stringify({
+																								testid:
+																									localStorage.getItem(
+																										"testid"
+																									),
+																								objArray: newObj,
+																							})
+																						);
 
 																						let newArry = [...getQuesAns];
 																						newArry[i]["quesAns"] = iAns;
@@ -1119,12 +1285,34 @@ const Examination = React.memo(() => {
 																						newArry[i]["state"] = 2;
 
 																						if (iAns + 1 == res.correctoption) {
-																							console.log("correct answer");
+																							console.log(
+																								"🚀 ~ Examination.js ~ line 1141 ~ correctans"
+																							);
 																							newArry[i]["ansStatus"] = "C";
 																						} else {
 																							newArry[i]["ansStatus"] = "W";
 																						}
 																						setQuesAns(newArry);
+																						localStorage.setItem(
+																							"savedSession",
+																							JSON.stringify({
+																								testid:
+																									localStorage.getItem(
+																										"testid"
+																									),
+																								getQuesAns: newArry,
+																							})
+																						);
+																						Cookies.set(
+																							"savedSession",
+																							JSON.stringify({
+																								testid:
+																									localStorage.getItem(
+																										"testid"
+																									),
+																								getQuesAns: newArry,
+																							})
+																						);
 																					}}
 																					type="radio"
 																					name={`ans` + i}
@@ -1178,6 +1366,10 @@ const Examination = React.memo(() => {
 													{res.questionoption[0] &&
 														res?.questionoption.map((ans, iAns) => {
 															let newObj = { ...currentQuesStatus };
+															// newObj["timeTaken"][iAns] = Math.abs(
+															// 	timeSpent - count
+															// );
+															// setTimeSpent(count);
 															return (
 																<div
 																	key={iAns}
@@ -1195,6 +1387,22 @@ const Examination = React.memo(() => {
 																			setselectedAns(iAns);
 
 																			setCurrentQuesStatus(newObj);
+																			localStorage.setItem(
+																				"quesAttempted",
+																				JSON.stringify({
+																					testid:
+																						localStorage.getItem("testid"),
+																					objArray: newObj,
+																				})
+																			);
+																			Cookies.set(
+																				"quesAttempted",
+																				JSON.stringify({
+																					testid:
+																						localStorage.getItem("testid"),
+																					objArray: newObj,
+																				})
+																			);
 
 																			let newArry = [...getQuesAns];
 																			newArry[i]["quesAns"] = iAns;
@@ -1202,12 +1410,30 @@ const Examination = React.memo(() => {
 																			newArry[i]["state"] = 2;
 
 																			if (iAns + 1 == res.correctoption) {
-																				console.log("correct answer");
+																				console.log(
+																					"🚀 ~ Examination.js ~ line 556 ~ correctans"
+																				);
 																				newArry[i]["ansStatus"] = "C";
 																			} else {
 																				newArry[i]["ansStatus"] = "W";
 																			}
 																			setQuesAns(newArry);
+																			localStorage.setItem(
+																				"savedSession",
+																				JSON.stringify({
+																					testid:
+																						localStorage.getItem("testid"),
+																					getQuesAns: newArry,
+																				})
+																			);
+																			Cookies.set(
+																				"savedSession",
+																				JSON.stringify({
+																					testid:
+																						localStorage.getItem("testid"),
+																					getQuesAns: newArry,
+																				})
+																			);
 																		}}
 																		type="radio"
 																		name={`ans` + i}
@@ -1309,7 +1535,7 @@ const Examination = React.memo(() => {
 										onClick={() => {
 											setcurrentIndex(i);
 											setCurrentQuesIndex(i);
-											console.log(i);
+											console.log("🚀 ~ Examination.js ~ line 556 ~ idx", i);
 											let newObj = { ...currentQuesStatus };
 											newObj["notVisited"][i] = 0;
 											setCurrentQuesStatus(newObj);
@@ -1334,6 +1560,13 @@ const Examination = React.memo(() => {
 												// newArray[i]['isClicked'] = true;
 											}
 											setQuesAns(newArray);
+											Cookies.set(
+												"savedSession",
+												JSON.stringify({
+													testid: localStorage.getItem("testid"),
+													getQuesAns: newArray,
+												})
+											);
 											// let qu = [...Question];
 											// setQuestion(qu)
 										}}
@@ -1441,6 +1674,17 @@ const Examination = React.memo(() => {
 									return;
 								}
 
+								let localCount = count;
+								const timeTakenExists = newObj["timeTaken"][currentQuesIndex];
+								if (timeTakenExists !== undefined) {
+									newObj["timeTaken"][currentQuesIndex] =
+										timeTakenExists + Math.abs(timeSpent - localCount);
+								} else {
+									newObj["timeTaken"][currentQuesIndex] = Math.abs(
+										timeSpent - localCount
+									);
+								}
+								setTimeSpent(localCount);
 								if (newArry[currentQuesIndex]["optionType"] == "input") {
 									if (getAns) {
 										newArry[currentQuesIndex]["quesAns"] = getAns;
@@ -1461,7 +1705,10 @@ const Examination = React.memo(() => {
 								//  else if(newArry[currentQuesIndex]['quesAns'] != -1 && newArry[currentQuesIndex]['optionType'] == 'input') {
 								//     newArry[currentQuesIndex]['quesAns'] = newArry[currentQuesIndex]['quesAns'];
 								// }
-
+								// newObj["timeTaken"][currentQuesIndex] = Math.abs(
+								// 	timeSpent - count
+								// );
+								// setTimeSpent(count);
 								newArry[currentQuesIndex]["isClicked"] = true;
 								if (newArry[currentQuesIndex]["quesAns"] == -1) {
 									newArry[currentQuesIndex]["state"] = 4;
@@ -1471,18 +1718,61 @@ const Examination = React.memo(() => {
 									newArry[currentQuesIndex]["state"] = 5;
 									qu[currentQuesIndex]["state"] = 5;
 
-									newObj["answered"][currentQuesIndex] = 1;
-									newObj["notAnswered"][currentQuesIndex] = 0;
-									newObj["notVisited"][currentQuesIndex] = 0;
-									newObj["bothAnsReview"][currentQuesIndex] = 1;
-									newObj["markForReview"][currentQuesIndex] = 1;
+									newObj["answered"][currentQuesIndex] =
+										quesAttempted.testid == testid
+											? quesAttempted?.objArray?.answered[currentQuesIndex]
+											: 1;
+									newObj["notAnswered"][currentQuesIndex] =
+										quesAttempted.testid == testid
+											? quesAttempted?.objArray?.notAnswered[currentQuesIndex]
+											: 0;
+									newObj["notVisited"][currentQuesIndex] =
+										quesAttempted.testid == testid
+											? quesAttempted?.objArray?.notVisited[currentQuesIndex]
+											: 0;
+									newObj["bothAnsReview"][currentQuesIndex] =
+										quesAttempted.testid == testid
+											? quesAttempted?.objArray?.bothAnsReview[currentQuesIndex]
+											: 0;
+									newObj["markForReview"][currentQuesIndex] =
+										quesAttempted.testid == testid
+											? quesAttempted?.objArray?.markForReview[currentQuesIndex]
+											: 0;
 								}
 								newArry[currentQuesIndex]["isClicked"] = true;
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 								}
 								setQuesAns(newArry);
+								localStorage.setItem(
+									"savedSession",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										getQuesAns: newArry,
+									})
+								);
+								Cookies.set(
+									"savedSession",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										getQuesAns: newArry,
+									})
+								);
 								setCurrentQuesStatus(newObj);
+								localStorage.setItem(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
+								Cookies.set(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
 								setQuestion(qu);
 
 								// if (currentIndex <= Question.length) {
@@ -1514,7 +1804,20 @@ const Examination = React.memo(() => {
 								newObj["markForReview"][currentQuesIndex] = 0;
 								newObj["bothAnsReview"][currentQuesIndex] = 0;
 								setCurrentQuesStatus(newObj);
-
+								localStorage.setItem(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
+								Cookies.set(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
 								let newArry = [...getQuesAns];
 								newArry[currentQuesIndex]["quesAns"] = -1;
 								newArry[currentQuesIndex]["isClicked"] = true;
@@ -1565,17 +1868,34 @@ const Examination = React.memo(() => {
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 								}
+								const testid = localStorage.getItem("testid");
+								localStorage.setItem(
+									"lastQuesAttempt",
+									JSON.stringify({
+										currentQuesIndex: currentQuesIndex,
+										testid: testid,
+									})
+								);
 								console.log(currentQuesIndex);
 
 								let newArry = [...getQuesAns];
 								let newObj = { ...currentQuesStatus };
 								let qu = [...Question];
-
+								let localCount = count;
+								const timeTakenExists = newObj["timeTaken"][currentQuesIndex];
+								if (timeTakenExists !== undefined) {
+									newObj["timeTaken"][currentQuesIndex] =
+										timeTakenExists + Math.abs(timeSpent - localCount);
+								} else {
+									newObj["timeTaken"][currentQuesIndex] = Math.abs(
+										timeSpent - localCount
+									);
+								}
+								setTimeSpent(localCount);
 								if (
 									newArry[currentQuesIndex]["quesAns"] == -1 &&
 									newArry[currentQuesIndex]["optionType"] == "input"
 								) {
-									console.log("1");
 									newArry[currentQuesIndex]["isClicked"] = true;
 									newArry[currentQuesIndex]["state"] = 2;
 									if (getAns) {
@@ -1605,7 +1925,7 @@ const Examination = React.memo(() => {
 								}
 
 								console.log(
-									"bbbbbbbb",
+									"🚀 ~ file: Examination.js ~ line 1616 ~ newArray",
 									newArry,
 									newObj,
 									qu.length,
@@ -1651,7 +1971,7 @@ const Examination = React.memo(() => {
 										setAns("");
 									}
 								}
-
+								// newObj["timeTaken"][currentQuesIndex] = count - getLeft;
 								newObj["markForReview"][currentQuesIndex] = 0;
 								newObj["bothAnsReview"][currentQuesIndex] = 0;
 								newObj["notVisited"][currentQuesIndex] = 0;
@@ -1683,8 +2003,38 @@ const Examination = React.memo(() => {
 									qu[currentQuesIndex]["state"] = 2;
 								}
 								newArry[currentQuesIndex]["isClicked"] = true;
+								newArry[currentQuesIndex]["timeTaken"] =
+									newObj["timeTaken"][currentQuesIndex];
 								setQuesAns(newArry);
+								localStorage.setItem(
+									"savedSession",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										getQuesAns: newArry,
+									})
+								);
+								Cookies.set(
+									"savedSession",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										getQuesAns: newArry,
+									})
+								);
 								setCurrentQuesStatus(newObj);
+								localStorage.setItem(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
+								Cookies.set(
+									"quesAttempted",
+									JSON.stringify({
+										testid: localStorage.getItem("testid"),
+										objArray: newObj,
+									})
+								);
 							}}
 							className="bg-[#0c7cd5] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-4 py-2 mr-4"
 						>
