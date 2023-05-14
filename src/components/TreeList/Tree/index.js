@@ -66,7 +66,8 @@ const TreeNode = ({ node, setNodeClick }) => {
 					<Button
 						onClick={() => {
 							localStorage.setItem("testid", node.id);
-							redirectTo("/examination");
+							// redirectTo("/examination");
+							window.open("/examination", "_blank");
 						}}
 						disabled={!checked}
 						className="items-center m-2 p-2 pl-4 pr-4 rounded-md font-semibold bg-blue-400 text-gray-50"
@@ -144,6 +145,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 								) : (
 									<Link
 										to={node.instructions ? "" : "/examination"}
+										target="_blank"
 										onClickCapture={() => {
 											localStorage.setItem("testid", node.id);
 											node.instructions && instructionsHooks.open();
