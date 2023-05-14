@@ -18,26 +18,32 @@ const ExamFinished = () => {
 				You have successfully completed the Test. You can view your results in
 				the analysis section.
 			</p>
-			<Center className="justify-between sm:w-4/12 mb-20 sm:mx-auto mx-10 text-justify sm:text-center my-10">
+			<div className="grid gap-4 grid-cols-1 sm:grid-cols-3 mb-20 my-10 w-1/2 text-center mx-auto">
 				<button
-					className="bg-blue-400 py-2 px-4 font-medium text-white rounded-md text-xl w-1/3 mr-8"
-					onClick={() => navigate("/review")}
+					className="bg-blue-400 py-2 px-4 font-bold text-white rounded-md mr-8 w-48 h-10"
+					onClick={() => {
+						// navigate("/review");
+						window.open("/review", "_blank");
+					}}
 				>
 					<i className="fas fa-eye mr-2"></i> Review
 				</button>
 				<button
-					className="bg-blue-400 py-2 px-4 font-medium text-white rounded-md text-xl w-1/3 mr-8"
-					onClick={() => navigate("/analysis")}
+					className="bg-blue-400 py-2 px-4 font-bold text-white rounded-md mr-8 w-48 h-10"
+					onClick={() => {
+						// navigate("/analysis");
+						window.open("/analysis", "_blank");
+					}}
 				>
 					<i className="fas fa-chart-bar mr-2"></i> Analysis
 				</button>
 				<button
-					className="bg-blue-400 py-2 px-4 font-medium text-white rounded-md text-xl w-1/3"
+					className="bg-blue-400 py-2 px-4 font-bold text-white rounded-md w-48 h-10"
 					onClick={() => navigate("/courseDetails/myCourse")}
 				>
 					<i className="fas fa-sign-out-alt mr-2"></i> Exit
 				</button>
-			</Center>
+			</div>
 		</div>
 	);
 };
