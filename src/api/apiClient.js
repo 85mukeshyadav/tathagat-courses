@@ -1,7 +1,10 @@
 import { create } from "apisauce";
 
 const apiClient = create({
-	baseURL: "https://apitest.tathagat.co.in",
+	baseURL: process.env.REACT_APP_API,
+	headers: {
+		Authorization: `Bearer ${localStorage.getItem("token")}`,
+	},
 });
 
 export default apiClient;
