@@ -48,7 +48,7 @@ const CourseInfo = () => {
 
 	console.log("🚀 ~ file: courseInfo.js ~ line 18 ~ CourseInfo ~ data", data);
 
-	if (isLoading) return <Loader />;
+	if (isLoading || !data) return <Loader />;
 
 	return (
 		<div>
@@ -64,18 +64,14 @@ const CourseInfo = () => {
 				<div className="z-[1] relative pt-20 grid sm:grid-cols-2 grid-cols-1">
 					<div>
 						<h1 className="text-white font-bold text-4xl uppercase sm:w-1/2 sm:ml-16 sm:text-center text-left ml-8">
-							{data && data[0].PackageName}
+							{data[0].PackageName}
 						</h1>
 						<p className="text-white pt-4 text-justify sm:ml-24 px-8 sm:px-0 font-semibold text-lg">
-							{data && data[0].PackageDesc}
+							{data[0].PackageDesc}
 						</p>
 						<div className="w-1/2 ml-6">
 							<button
 								onClick={() => {
-									// localStorage.setItem("pkgid", data[0].packageId);
-									// //window.open('https://tathagat.ccavenue.com','_blank').focus();
-									// if (data[0].payment_url)
-									// 	window.open(data[0].payment_url, "_blank").focus();
 									handlePayment({
 										price: parseInt(data[0].PackagePrice),
 										packageId: data[0].packageId,
@@ -90,7 +86,7 @@ const CourseInfo = () => {
 					</div>
 					<div className="sm:mt-24 mt-8">
 						<p className="text-white font-bold text-4xl pt-12">
-							₹{data && data[0].PackagePrice}/-
+							₹{data[0].PackagePrice}/-
 						</p>
 						<div className="text-white font-medium text-lg pt-2 mx-auto">
 							<Group position="center">
@@ -113,10 +109,6 @@ const CourseInfo = () => {
 			/>
 			<button
 				onClick={() => {
-					// localStorage.setItem("pkgid", data[0].packageId);
-					// //window.open('https://tathagat.ccavenue.com','_blank').focus();
-					// if (data[0].payment_url)
-					// 	window.open(data[0].payment_url, "_blank").focus();
 					handlePayment({
 						price: parseInt(data[0].PackagePrice),
 						packageId: data[0].packageId,
