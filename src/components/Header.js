@@ -1,7 +1,6 @@
 //import liraries
-import React, { useContext, useState } from "react";
-import { Link, BrowserRouter as Router } from "react-router-dom";
-import hideNavContext from "../context/AllprojectsContext";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthCntx";
 
 // create a component
@@ -133,9 +132,11 @@ const Header = () => {
 								onClick={() => {
 									localStorage.clear();
 									setAuth(false);
-									//window.location.assign(window.location.hostname);
+									window.open(
+										`${process.env.REACT_APP_SSO_URL}/simplesso/weblogout?serviceURL=${process.env.REACT_APP_REDIRECT_URL}`
+									);
 								}}
-								to="/"
+								to=""
 								className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
 								role="menuitem"
 								tabIndex="-1"
