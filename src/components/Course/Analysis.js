@@ -2,30 +2,22 @@ import React, { useState, useEffect } from "react";
 import "highcharts/css/highcharts.css";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "../../api/apiClient";
+import Loader from "../Loader";
+import ms from "ms";
 
 require("highcharts/modules/exporting")(Highcharts);
 require("highcharts/modules/annotations")(Highcharts);
 require("highcharts/modules/accessibility")(Highcharts);
 
 const Analysis = () => {
-	const options = {
-		headers: {
-			"Content-type": "application/json",
-			Authorization: "Bearer " + localStorage.getItem("token"),
-		},
-	};
-
-	const [hoverData, setHoverData] = useState(null);
-	const [getAnalysisData, setAnalysisData] = useState({});
-	const [getChartReportData, setChartReportData] = useState({});
 	const [chartOptions, setChartOptions] = useState({
 		title: {
 			text: "Performance",
 		},
 		chart: {
 			type: "line",
-			// make the chart responsive
 			width: window.innerWidth,
 			styledMode: true,
 		},
@@ -51,50 +43,38 @@ const Analysis = () => {
 		],
 	});
 
-	const updateSeries = () => {
-		setChartOptions({
-			series: [{ data: [Math.random() * 5, 2, 1] }],
-		});
+	const param = {
+		userId: localStorage.getItem("user"),
+		testId: localStorage.getItem("testid"),
+		packageId: localStorage.getItem("pkgid"),
 	};
 
-	useEffect(async () => {
-		let param = {
-			userId: localStorage.getItem("user"),
-			testId: localStorage.getItem("testid"),
-			packageId: localStorage.getItem("pkgid"),
-		};
-		const resp = await axios.post(
-			process.env.REACT_APP_API + "/test-analysis",
-			param,
-			options
-		);
-		console.log("11111", resp.data);
-		setAnalysisData(resp.data);
+	const { data: analysisData, isLoading } = useQuery({
+		queryKey: ["analysis"],
+		queryFn: () =>
+			apiClient.post(`/test-analysis`, param).then((res) => res.data),
+		staleTime: ms("30d"),
+	});
 
-		const respRep = await axios.post(
-			process.env.REACT_APP_API + "/report-user-stand",
-			param,
-			options
-		);
-		console.log("22222", respRep.data);
-		setChartReportData(respRep.data);
+	const getChartsData = async () => {
+		const response = await apiClient.post("/report-user-stand", param);
 		let dataArr = [];
 		let xAxisData = [];
-		let userMarksRange = respRep.data?.userMarksRange;
-		respRep.data?.studens_marks.map((re, i) => {
+		let userMarksRange = response.data?.userMarksRange;
+		response.data?.studens_marks.map((item, i) => {
 			let tt = {
-				y: parseFloat(re.userPersentage.toFixed(2)),
+				y: parseFloat(item.userPersentage.toFixed(2)),
 			};
-			if (userMarksRange == re.marks_range) {
+			if (userMarksRange == item.marks_range) {
 				tt = {
-					y: parseFloat(re.userPersentage.toFixed(2)),
+					y: parseFloat(item.userPersentage.toFixed(2)),
 					dataLabels: {
 						className: "highlight",
 					},
 				};
 			}
 			dataArr.push(tt);
-			xAxisData.push(re.marks_range);
+			xAxisData.push(item.marks_range);
 		});
 		setChartOptions({
 			plotOptions: {
@@ -122,23 +102,14 @@ const Analysis = () => {
 			xAxis: {
 				categories: xAxisData,
 			},
-
-			//   annotations: [{
-			//     labels: [{
-			//         point: { x: '16-20', y: 10 },
-			//         text: 'You stand here'
-			//     }],
-			//     shapes: [{
-			//         point: '16-20',
-			//         type: 'rect',
-			//         width: 20,
-			//         height: 20,
-			//         x: -10,
-			//         y: -25
-			//     }]
-			// }]
 		});
+	};
+
+	useEffect(() => {
+		getChartsData();
 	}, []);
+
+	// if (isLoading) return <Loader />;
 
 	return (
 		<>
@@ -155,7 +126,7 @@ const Analysis = () => {
 							Section Wise Performance
 						</div>
 						<div className="grp-sec-data">
-							{getAnalysisData?.section?.map((res, i) => (
+							{analysisData?.section?.map((res, i) => (
 								<>
 									<div key={i}>
 										<div className="font-bold sm:text-2xl my-4">

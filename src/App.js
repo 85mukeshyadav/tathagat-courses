@@ -9,10 +9,10 @@ import Header from "./components/Header";
 import Footer from "./components/footer";
 
 import { ModalsProvider } from "@mantine/modals";
-import Lottie from "react-lottie";
 import * as animationData from "./assets/lotties/loader.json";
 import hideNavContext from "./context/AllprojectsContext";
 import AuthContext from "./context/AuthCntx";
+import { loadScript } from "./utils/loadScript";
 
 function App() {
 	const [isAuth, setAuth] = useState(false);
@@ -41,6 +41,7 @@ function App() {
 	}, 4000);
 
 	useEffect(() => {
+		loadScript("https://checkout.razorpay.com/v1/checkout.js");
 		let token = localStorage.getItem("token");
 		if (token) {
 			let expired = isTokenExpired(token);
@@ -52,8 +53,6 @@ function App() {
 		}
 	}, []);
 
-	console.log(isAuth);
-
 	return (
 		<MantineProvider withGlobalStyles withNormalizeCSS>
 			<ModalsProvider>
@@ -61,18 +60,6 @@ function App() {
 					<AuthContext.Provider value={Auth}>
 						<hideNavContext.Provider value={nav}>
 							<Router className="relative">
-								{!isStopped ? null : (
-									<div className="fixed w-screen z-50 flex items-center bg-gray-300 opacity-80 h-screen">
-										<Lottie
-											options={defaultOptions}
-											height={80}
-											width={80}
-											// isStopped={isStopped}
-											// isPaused={isStopped}
-											className="absolute top-2/4 transform -translate-x-2/4 mt-auto mb-auto z-50 "
-										/>
-									</div>
-								)}
 								{hidenav ? null : <Header />}
 								<Rout />
 								{hidenav ? null : <Footer />}

@@ -1,30 +1,33 @@
-//import liraries
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { FiBook, FiFile, FiVideo } from "react-icons/fi";
-import { Link, Navigate } from "react-router-dom";
-import hideNavContext from "../../context/AllprojectsContext";
+import { useQuery } from "@tanstack/react-query";
+import ms from "ms";
+import React from "react";
+import { FiFile, FiVideo } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import apiClient from "../../api/apiClient";
+import slugify from "../../utils/slugify";
+import Loader from "../Loader";
 
-// create a component
 const CourseList = () => {
-	const [data, setData] = useState([]);
-	const { hidenav, sethidenav } = useContext(hideNavContext);
+	const { data, isLoading } = useQuery({
+		queryKey: ["allpackages"],
+		queryFn: () => apiClient.get("/getallpackages").then((res) => res.data),
+		staleTime: ms("24h"),
+	});
 
-	useEffect(async () => {
-		sethidenav(false);
-		const res = await axios.get(process.env.REACT_APP_API + "/getallpackages");
-		console.log(
-			"🚀 ~ file: Examination.js ~ line 45 ~ useEffect ~ res",
-			res.data
-		);
-		setData(res.data);
-	}, []);
-
-	const location = {
-		// pathname: '/courseDetails/allCourse',
-		pathname: "", //'https://tathagat.ccavenue.com',
-		//state: { fromDashboard: true }
+	const params = {
+		userId: localStorage.getItem("user"),
 	};
+	const { data: myCourses } = useQuery({
+		queryKey: ["courses", "myCourses"],
+		queryFn: () =>
+			apiClient.post(`/mypackages`, params).then((res) => res.data),
+		staleTime: ms("24h"),
+	});
+	const myCoursesData = myCourses?.data.map((res) => res.packageId);
+
+	console.log("🚀 ~ file:courselist.js ~ line 19 ~ CourseList", data);
+
+	if (isLoading) return <Loader />;
 
 	return (
 		<div className="bg-white">
@@ -33,13 +36,16 @@ const CourseList = () => {
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-2">
 					{data.map((res, i) => (
 						<Link
-							to=""
+							to={
+								res.officialDesc ? `${slugify(res.name)}/${res.packageId}` : ""
+							}
 							props={res}
 							onClick={() => {
-								localStorage.setItem("pkgid", res.packageId);
-								//window.open('https://tathagat.ccavenue.com','_blank').focus();
-								if (res.payment_url)
-									window.open(res.payment_url, "_blank").focus();
+								if (!res.officialDesc) {
+									localStorage.setItem("pkgid", res.packageId);
+									if (res.payment_url)
+										window.open(res.payment_url, "_blank").focus();
+								}
 							}}
 						>
 							<div className="max-w-6xl mx-auto sm:my-0 my-4">
@@ -56,20 +62,24 @@ const CourseList = () => {
 												}}
 											>
 												<div className="flex justify-between items-center">
-													<div className="flex bg-blue-200 w-14 h-10 items-center justify-center rounded-md">
-														<p className="font-bold text-xl text-blue-700">
+													<div className="flex bg-blue-200 w-18 h-10 items-center justify-center rounded-md">
+														<p className="font-bold text-xl text-blue-700 p-4">
 															₹{res?.price}
 														</p>
 													</div>
 													<div className="flex">
 														<div className="h-10 w-10 flex bg-red-200 justify-center items-center rounded-full">
-															<svg
-																className="h-6 w-6 text-red-500 fill-current"
-																xmlns="http://www.w3.org/2000/svg"
-																// viewBox="0 0 30 30"
-															>
-																<path d="M12.76 3.76a6 6 0 0 1 8.48 8.48l-8.53 8.54a1 1 0 0 1-1.42 0l-8.53-8.54a6 6 0 0 1 8.48-8.48l.76.75.76-.75zm7.07 7.07a4 4 0 1 0-5.66-5.66l-1.46 1.47a1 1 0 0 1-1.42 0L9.83 5.17a4 4 0 1 0-5.66 5.66L12 18.66l7.83-7.83z"></path>
-															</svg>
+															{myCoursesData.includes(res.packageId) ? (
+																<i className="fas fa-heart text-red-500 text-2xl" />
+															) : (
+																<svg
+																	className="h-6 w-6 text-red-500 fill-current"
+																	xmlns="http://www.w3.org/2000/svg"
+																	// viewBox="0 0 30 30"
+																>
+																	<path d="M12.76 3.76a6 6 0 0 1 8.48 8.48l-8.53 8.54a1 1 0 0 1-1.42 0l-8.53-8.54a6 6 0 0 1 8.48-8.48l.76.75.76-.75zm7.07 7.07a4 4 0 1 0-5.66-5.66l-1.46 1.47a1 1 0 0 1-1.42 0L9.83 5.17a4 4 0 1 0-5.66 5.66L12 18.66l7.83-7.83z"></path>
+																</svg>
+															)}
 														</div>
 													</div>
 												</div>

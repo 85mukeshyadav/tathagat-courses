@@ -1,44 +1,29 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { FiBook, FiFile, FiVideo } from "react-icons/fi";
-import { Link, Navigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import ms from "ms";
+import React from "react";
+import { FiFile, FiVideo } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import apiClient from "../../api/apiClient";
+import Loader from "../Loader";
 
 const MyCourses = () => {
-	const options = {
-		headers: {
-			"Content-type": "application/json",
-			Authorization: "Bearer " + localStorage.getItem("token"),
-		},
+	const params = {
+		userId: localStorage.getItem("user"),
 	};
-	const [data, setData] = useState([]);
 
-	useEffect(async () => {
-		_getMyPackages();
-	}, []);
-
-	const _getMyPackages = async () => {
-		let params = {
-			userId: localStorage.getItem("user"),
-		};
-		const res = await axios.post(
-			process.env.REACT_APP_API + "/mypackages",
-			params,
-			options
-		);
-		console.log(res);
-		if (res.status == 200) {
-			console.log(
-				"🚀 ~ file: Examination.js ~ line 45 ~ useEffect ~ res",
-				res.data.data
-			);
-			setData(res.data.data);
-		}
-	};
+	const { data, isLoading } = useQuery({
+		queryKey: ["myCourses"],
+		queryFn: () =>
+			apiClient.post(`/mypackages`, params).then((res) => res.data),
+		staleTime: ms("24h"),
+	});
 
 	const location = {
 		pathname: "/courseDetails/myCourse",
 		state: { fromDashboard: true },
 	};
+
+	if (isLoading) return <Loader />;
 
 	return (
 		<div className="bg-white">
@@ -46,7 +31,7 @@ const MyCourses = () => {
 				<div className="mx-auto py-16 px-4 sm:py-24 sm:px-6">
 					<p className="text-gray-500 text-5xl font-bold mb-10">My Courses</p>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-2">
-						{data.map((res, i) => (
+						{data.data.map((res, i) => (
 							<Link
 								to={location}
 								props={res}
@@ -73,13 +58,7 @@ const MyCourses = () => {
 														</div>
 														<div className="flex">
 															<div className="h-10 w-10 flex bg-red-200 justify-center items-center rounded-full">
-																<svg
-																	className="h-6 w-6 text-red-500 fill-current"
-																	xmlns="http://www.w3.org/2000/svg"
-																	// viewBox="0 0 30 30"
-																>
-																	<path d="M12.76 3.76a6 6 0 0 1 8.48 8.48l-8.53 8.54a1 1 0 0 1-1.42 0l-8.53-8.54a6 6 0 0 1 8.48-8.48l.76.75.76-.75zm7.07 7.07a4 4 0 1 0-5.66-5.66l-1.46 1.47a1 1 0 0 1-1.42 0L9.83 5.17a4 4 0 1 0-5.66 5.66L12 18.66l7.83-7.83z"></path>
-																</svg>
+																<i className="fas fa-heart text-red-500 text-2xl" />
 															</div>
 														</div>
 													</div>
