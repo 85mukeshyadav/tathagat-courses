@@ -1,12 +1,10 @@
-//import liraries
 import axios from "axios";
+import Cookies from "js-cookie";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import moment from "moment";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
-// import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
-import Cookies from "js-cookie";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { userInfo } from "../api/checkAuth";
@@ -39,12 +37,23 @@ const style = {
 };
 
 function Counter(props) {
-	const [count, setCount] = useState(props.time);
+	const remainingTime = JSON.parse(localStorage.getItem("time"));
+	const testid = localStorage.getItem("testid");
+	const [count, setCount] = useState(
+		remainingTime?.testid === testid ? remainingTime?.time : props.time
+	);
 
 	useInterval(() => {
 		// Your custom logic here
 		if (count > 0 && props.getLeft == 0) {
 			setCount(count - 1);
+			localStorage.setItem(
+				"time",
+				JSON.stringify({
+					testid: localStorage.getItem("testid"),
+					time: count - 1,
+				})
+			);
 			props.setCount(count - 1);
 		}
 	}, 1000);
@@ -127,9 +136,7 @@ const Examination = React.memo(() => {
 				: lastQuesAttempt.currentQuesIndex
 			: 0
 	);
-	const quesAttempted = JSON.parse(
-		localStorage.getItem("quesAttempted") || "{}"
-	);
+	const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
 	// const quesAttempted = JSON.parse(Cookies.get("quesAttempted") || "{}");
 	const [currentQuesStatus, setCurrentQuesStatus] = useState({
 		answered:
@@ -272,36 +279,20 @@ const Examination = React.memo(() => {
 			setCurrentQuesIndex(0);
 			setNotAnswer(0);
 			setNotVisited(0);
-			setQuesAns(savedSession?.getQuesAns || []);
+			setQuesAns(
+				savedSession?.testid === testid ? savedSession?.getQuesAns : []
+			);
 			setRadio(-1);
 			setModalIsOpen(false);
 			setModalInsOpen(false);
 			setIsOpen(false);
 			let newState = {
-				answered:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["answered"]
-						: [],
-				notAnswered:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["notAnswered"]
-						: [],
-				notVisited:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["notVisited"]
-						: [],
-				markForReview:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["markForReview"]
-						: [],
-				bothAnsReview:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["bothAnsReview"]
-						: [],
-				timeTaken:
-					quesAttempted?.testid === testid
-						? quesAttempted?.objArray["timeTaken"]
-						: [],
+				answered: [],
+				notAnswered: [],
+				notVisited: [],
+				markForReview: [],
+				bothAnsReview: [],
+				timeTaken: [],
 			};
 			console.log("newState", newState);
 			setCurrentQuesStatus(newState);
@@ -345,6 +336,7 @@ const Examination = React.memo(() => {
 			setAns("");
 			setExamLevel(res.data[0].examLevel);
 			setTestName(res.data[0].TestTitle);
+			// const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
 			let objArray = {
 				notAnswered:
 					quesAttempted?.testid === testid
@@ -371,8 +363,6 @@ const Examination = React.memo(() => {
 						? quesAttempted?.objArray["timeTaken"]
 						: [],
 			};
-			// console.log("quesNotAnswered", quesAttempted?.objArray["notAnswered"]);
-			// console.log("quesAnswered", quesAttempted?.objArray["answered"]);
 			console.log("objArray", objArray);
 			let quesAnsArray = [];
 			setTotalSection(res.data[0].Section.length);
@@ -382,34 +372,64 @@ const Examination = React.memo(() => {
 						setSectionName(res.sectionName);
 						setSectionId(res.sectionId);
 
-						let newQues = res.QuestionList.map((ques, indexs) => {
-							objArray.notAnswered[indexs] =
-								quesAttempted?.objArray?.notAnswered[indexs] || 1;
-							objArray.notVisited[indexs] =
-								quesAttempted?.objArray?.notVisited[indexs] || 1;
-							objArray.answered[indexs] =
-								quesAttempted?.objArray?.answered[indexs] || 0;
-							objArray.markForReview[indexs] =
-								quesAttempted?.objArray?.markForReview[indexs] || 0;
-							objArray.bothAnsReview[indexs] =
-								quesAttempted?.objArray?.bothAnsReview[indexs] || 0;
-							objArray.timeTaken[indexs] =
-								quesAttempted?.objArray?.timeTaken[indexs] || 0;
+						let newQues = res.QuestionList.map((ques, idx) => {
+							objArray.notAnswered[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.notAnswered[idx]
+									: 1;
+							objArray.notVisited[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.notVisited[idx]
+									: 1;
+							objArray.answered[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.answered[idx]
+									: 0;
+							objArray.markForReview[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.markForReview[idx]
+									: 0;
+							objArray.bothAnsReview[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.bothAnsReview[idx]
+									: 0;
+							objArray.timeTaken[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.timeTaken[idx]
+									: 0;
 							let everyQues = {
-								isClicked: savedSession?.getQuesAns[indexs]?.isClicked || false,
+								isClicked:
+									savedSession?.testid === testid
+										? savedSession?.getQuesAns[idx]?.isClicked
+										: false,
 								quesId: ques.questionId,
-								quesAns: savedSession?.getQuesAns[indexs]?.quesAns || -1,
-								state: savedSession?.getQuesAns[indexs]?.state || 3,
-								ansStatus: savedSession?.getQuesAns[indexs]?.ansStatus || "",
+								quesAns:
+									savedSession?.testid === testid
+										? savedSession?.getQuesAns[idx]?.quesAns
+										: -1,
+								state:
+									savedSession?.testid === testid
+										? savedSession?.getQuesAns[idx]?.state
+										: 3,
+								ansStatus:
+									savedSession?.testid === testid
+										? savedSession?.getQuesAns[idx]?.ansStatus
+										: "",
 								optionType: ques.optionType,
 								subjectId: ques.subjectId,
 								chapterChapterId: ques.chapterChapterId,
 								topicId: ques.topicId,
 								optionType: ques.optionType,
-								timeTaken: savedSession?.getQuesAns[indexs]?.timeTaken || 0,
+								timeTaken:
+									savedSession?.testid === testid
+										? savedSession?.getQuesAns[idx]?.timeTaken
+										: 0,
 							};
 							quesAnsArray.push(everyQues);
-							ques["state"] = savedSession?.getQuesAns[indexs]?.state || 3;
+							ques["state"] =
+								savedSession?.testid === testid
+									? savedSession?.getQuesAns[idx]?.state
+									: 3;
 							return ques;
 						});
 
@@ -1539,6 +1559,20 @@ const Examination = React.memo(() => {
 											let newObj = { ...currentQuesStatus };
 											newObj["notVisited"][i] = 0;
 											setCurrentQuesStatus(newObj);
+											localStorage.setItem(
+												"quesAttempted",
+												JSON.stringify({
+													testid: localStorage.getItem("testid"),
+													objArray: newObj,
+												})
+											);
+											localStorage.setItem(
+												"lastQuesAttempt",
+												JSON.stringify({
+													testid: localStorage.getItem("testid"),
+													currentQuesIndex: i - 1,
+												})
+											);
 											let newArray = [...getQuesAns];
 
 											if (newArray[i]["quesAns"] != -1) {
