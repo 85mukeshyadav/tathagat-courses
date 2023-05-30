@@ -1,28 +1,28 @@
 //import liraries
-import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Tooltip } from "@mantine/core";
+import axios from "axios";
 import moment from "moment";
+import React, { useContext, useEffect, useState } from "react";
 import {
+	FaBookmark,
 	FaEquals,
 	FaFile,
 	FaInfo,
-	FaBookmark,
 	FaRegBookmark,
 } from "react-icons/fa";
-import Answered from "../assets/Answered.png";
-import notans from "../assets/notans.png";
-import NewCandidateImage from "../assets/NewCandidateImage.jpg";
-import hideNavContext from "../context/AllprojectsContext";
-import axios from "axios";
-import { userInfo } from "../api/checkAuth";
 import Modal from "react-modal";
-import Calculator from "./Calculator/Calculator";
-import pms from "../assets/pms.pdf";
-import fullLength from "../assets/fullLength.pdf";
-import copyCat from "../assets/copyCat.pdf";
-import QuestionInput from "./Calculator/QuestionInput";
-import { Tooltip } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
+import { userInfo } from "../api/checkAuth";
+import Answered from "../assets/Answered.png";
+import NewCandidateImage from "../assets/NewCandidateImage.jpg";
+import copyCat from "../assets/copyCat.pdf";
+import fullLength from "../assets/fullLength.pdf";
+import notans from "../assets/notans.png";
+import pms from "../assets/pms.pdf";
+import hideNavContext from "../context/AllprojectsContext";
+import Calculator from "./Calculator/Calculator";
+import QuestionInput from "./Calculator/QuestionInput";
 
 const customStyles = {
 	content: {
@@ -112,6 +112,7 @@ const Review = React.memo(() => {
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
 	const [bookmarks, setBookmarks] = useImmer([]);
+	const [reviewRes, setReviewRes] = useState([]);
 
 	// window.addEventListener('beforeunload', function (e) {
 	//     e.preventDefault();
@@ -234,6 +235,8 @@ const Review = React.memo(() => {
 		if (!respReview.data || !respReview.data?.section) {
 			navigate("/myCourses");
 		}
+
+		setReviewRes(respReview.data);
 
 		setExamLevel(res.data[0].examLevel);
 		setTestName(res.data[0].TestTitle);
@@ -665,7 +668,8 @@ const Review = React.memo(() => {
 										});
 									}}
 								>
-									{bookmarks[currentQuesIndex] ? (
+									{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
+									bookmarks[currentQuesIndex] ? (
 										<FaBookmark className="text-blue-400 text-xl ml-2" />
 									) : (
 										<FaRegBookmark className="text-blue-500 text-xl ml-2" />
