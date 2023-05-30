@@ -1,9 +1,9 @@
 //import liraries
 import axios from "axios";
-import React, { useRef, useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import AuthContext from "../../context/AuthCntx";
-import { toast, ToastContainer } from "react-toastify";
 
 // import { useState } from 'react/cjs/react.development';
 
@@ -13,6 +13,9 @@ const Signin = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const { isAuth, setAuth } = useContext(AuthContext);
+	if (isAuth) {
+		navigate("/myCourses");
+	}
 
 	const _SignIn = async (e) => {
 		e.preventDefault();
@@ -23,6 +26,18 @@ const Signin = () => {
 			};
 			let res = await axios.post(process.env.REACT_APP_API + "/login", data);
 			if (res.status == 200) {
+				const resp = await axios.get(
+					process.env.REACT_APP_API + `/user_info/${email}`
+				);
+				localStorage.setItem(
+					"user_info",
+					JSON.stringify({
+						name: resp.data.username,
+						email: resp.data.email_Id,
+						phone: resp.data.mobileNumber,
+						type: resp.data.user_type,
+					})
+				);
 				localStorage.setItem("token", res.data.token);
 				localStorage.setItem("user", res.data.user.email_Id);
 				setAuth(true);
@@ -173,7 +188,7 @@ const Signin = () => {
 					</Link>
 					<a
 						href={`${process.env.REACT_APP_SSO_URL}/simplesso/login?serviceURL=${process.env.REACT_APP_REDIRECT_URL}`}
-						target="_blank"
+						// target="_blank"
 						rel="noopener noreferrer"
 						// type="submit"
 						className="mt-8 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
