@@ -12,6 +12,7 @@ import { ModalsProvider } from "@mantine/modals";
 import * as animationData from "./assets/lotties/loader.json";
 import hideNavContext from "./context/AllprojectsContext";
 import AuthContext from "./context/AuthCntx";
+import { loadScript } from "./utils/loadScript";
 
 function App() {
 	const [isAuth, setAuth] = useState(false);
@@ -40,6 +41,7 @@ function App() {
 	}, 4000);
 
 	useEffect(() => {
+		loadScript("https://checkout.razorpay.com/v1/checkout.js");
 		let token = localStorage.getItem("token");
 		if (token) {
 			let expired = isTokenExpired(token);
