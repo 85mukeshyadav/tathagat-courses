@@ -1,4 +1,3 @@
-import { Center } from "@mantine/core";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import exam from "../assets/exam.png";
@@ -39,7 +38,12 @@ const ExamFinished = () => {
 				</button>
 				<button
 					className="bg-blue-400 py-2 px-4 font-bold text-white rounded-md w-48 h-10"
-					onClick={() => navigate("/courseDetails/myCourse")}
+					onClick={() => {
+						window.opener = null;
+						window.open("", "_self");
+						window.close();
+						// navigate("/courseDetails/myCourse")
+					}}
 				>
 					<i className="fas fa-sign-out-alt mr-2"></i> Exit
 				</button>
