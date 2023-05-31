@@ -703,7 +703,7 @@ const Bookmarks = React.memo(() => {
 							})}
 						</div>
 						<footer className="fixed w-full border-t-2 border-gray-300 p-2 bottom-0">
-							<div className="flex justify-between w-[300px] ml-4">
+							<div className="flex justify-between w-[240px] sm:w-[300px] ml-4">
 								<button
 									onClick={() => {
 										setViewSection(false);
