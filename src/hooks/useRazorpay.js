@@ -18,6 +18,7 @@ const useRazorPay = () => {
 					packageId: paymentInfo.packageId,
 					studentList: [
 						{
+							status: 1,
 							checked: true,
 							email_Id: localStorage.getItem("user"),
 							user_type: "student",
