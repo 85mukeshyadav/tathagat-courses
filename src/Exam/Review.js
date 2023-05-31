@@ -655,8 +655,15 @@ const Review = React.memo(() => {
 								<button
 									onClick={() => {
 										const quesId =
-											data[selectedSectionnumber].QuestionList[currentIndex]
+											data[selectedSectionnumber].QuestionList[currentQuesIndex]
 												.questionId;
+										setReviewQues((prev) => [
+											...prev,
+											{
+												...prev[currentQuesIndex],
+												bookmark: !prev[currentQuesIndex]?.bookmark,
+											},
+										]);
 										setBookmarks((draft) => {
 											let newDraft = [...draft];
 											newDraft[currentQuesIndex] = !newDraft[currentQuesIndex];
