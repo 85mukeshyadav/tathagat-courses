@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
-import React from "react";
+import React, { useEffect } from "react";
 import { FiFile, FiVideo } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import apiClient from "../../api/apiClient";
@@ -11,7 +11,7 @@ const MyCourses = () => {
 		userId: localStorage.getItem("user"),
 	};
 
-	const { data, isLoading } = useQuery({
+	const { data, isLoading, refetch } = useQuery({
 		queryKey: ["myCourses"],
 		queryFn: () =>
 			apiClient.post(`/mypackages`, params).then((res) => res.data),
@@ -22,6 +22,10 @@ const MyCourses = () => {
 		pathname: "/courseDetails/myCourse",
 		state: { fromDashboard: true },
 	};
+
+	useEffect(() => {
+		refetch();
+	}, []);
 
 	if (isLoading) return <Loader />;
 
