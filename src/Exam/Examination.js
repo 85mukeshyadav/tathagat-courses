@@ -174,7 +174,11 @@ const Examination = React.memo(() => {
 	const [getQuesAns, setQuesAns] = useState(
 		savedSession?.testid === testid ? savedSession?.getQuesAns : []
 	);
-	const [getRadio, setRadio] = useState(-1);
+	const [getRadio, setRadio] = useState(
+		savedSession?.testid === testid
+			? savedSession?.getQuesAns[currentQuesIndex]?.quesAns
+			: -1
+	);
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [modalInsOpen, setModalInsOpen] = useState(false);
 	const [modalQuesAlertOpen, setModalQuesAlertOpen] = useState(false);
@@ -333,7 +337,7 @@ const Examination = React.memo(() => {
 			);
 			setdata(res.data[0].Section);
 			setcurrentIndex(0);
-			setAns("");
+			setAns(getQuesAns[currentQuesIndex]?.quesAns || "");
 			setExamLevel(res.data[0].examLevel);
 			setTestName(res.data[0].TestTitle);
 			// const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
@@ -1594,6 +1598,13 @@ const Examination = React.memo(() => {
 												// newArray[i]['isClicked'] = true;
 											}
 											setQuesAns(newArray);
+											localStorage.setItem(
+												"savedSession",
+												JSON.stringify({
+													testid: localStorage.getItem("testid"),
+													getQuesAns: newArray,
+												})
+											);
 											Cookies.set(
 												"savedSession",
 												JSON.stringify({

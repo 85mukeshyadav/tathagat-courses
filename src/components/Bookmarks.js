@@ -1,11 +1,12 @@
 import { Tooltip } from "@mantine/core";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { FaBookmark, FaInfo, FaRegBookmark } from "react-icons/fa";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { FaBookmark, FaInfo, FaRegBookmark, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
 import QuestionInput from "../Exam/Calculator/QuestionInput";
 import hideNavContext from "../context/AllprojectsContext";
+import Header from "./Header";
 import Loader from "./Loader";
 
 const customStyles = {
@@ -75,6 +76,7 @@ const Bookmarks = React.memo(() => {
 	const [getAns, setAns] = useState("");
 	const [getMode, setMode] = useState("review");
 	const [loading, setLoading] = useState(false);
+	const [searchText, setSearchText] = useState("");
 
 	useEffect(async () => {
 		if (selectedSectionnumber > 0) {
@@ -289,6 +291,18 @@ const Bookmarks = React.memo(() => {
 		}
 	};
 
+	const filteredData = useMemo(() => {
+		if (searchText.length === 0) {
+			return bookmarksData?.data;
+		} else {
+			return bookmarksData?.data.filter((res) =>
+				res.questions_info.question
+					.toLowerCase()
+					.includes(searchText.toLowerCase())
+			);
+		}
+	}, [searchText, bookmarksData]);
+
 	if (loading) return <Loader />;
 
 	if (bookmarksData && bookmarksData.data.length == 0) {
@@ -308,11 +322,12 @@ const Bookmarks = React.memo(() => {
 
 	return (
 		<div className="h-full overflow-hidden">
-			<nav className="block justify-between bg-slate-600 p-2 py-8">
+			<Header />
+			{/* <nav className="block justify-between bg-slate-600 p-2 py-8">
 				<div className="text-yellow-400 font-bold text-2xl">Bookmarks</div>
-			</nav>
+			</nav> */}
 
-			<div className="flex flex-row h-full">
+			<div className="flex flex-row h-full mt-4">
 				{/* left aside */}
 				<div className="w-1/3 h-[86vh] border-r border-gray-200">
 					<div className="flex flex-col h-full">
@@ -329,14 +344,28 @@ const Bookmarks = React.memo(() => {
 							</div>
 						</div>
 						<div className="flex flex-col h-full overflow-y-scroll w-full">
-							{bookmarksData &&
-								bookmarksData.data.map((res, i) => (
+							<div className="flex flex-row justify-between items-center ml-2">
+								<FaSearch className="text-gray-500" />
+								<input
+									type="text"
+									className="border-b p-2 w-full text-gray-500 focus:outline-none"
+									placeholder="Search bookmarks"
+									onChange={(e) => setSearchText(e.target.value)}
+								/>
+							</div>
+							{filteredData?.length > 0 ? (
+								filteredData?.map((res, i) => (
 									<div
 										key={i}
 										className={`flex flex-row justify-between items-center p-2 border-b border-gray-200 cursor-pointer
 										${currentQuesIndex == i && "bg-gray-100"}`}
 										onClick={() => {
-											setCurrentQuesIndex(i);
+											let filteredIndex = bookmarksData.data.findIndex(
+												(item) =>
+													item.questions_info.questionId ==
+													res.questions_info.questionId
+											);
+											setCurrentQuesIndex(filteredIndex);
 										}}
 									>
 										<div className="flex flex-row">
@@ -375,7 +404,14 @@ const Bookmarks = React.memo(() => {
 											</div>
 										</div>
 									</div>
-								))}
+								))
+							) : (
+								<div className="items-center h-full">
+									<div className="mt-4 font-semibold text-gray-500">
+										No bookmarks found!
+									</div>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

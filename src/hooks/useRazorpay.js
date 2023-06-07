@@ -28,7 +28,11 @@ const useRazorPay = () => {
 				.then((res) => {
 					console.log(res.data);
 					if (res.status === 200) {
-						navigate("/payment-success");
+						navigate("/payment-success", {
+							state: {
+								order_id: paymentInfo.razorpay_order_id,
+							},
+						});
 					}
 				})
 				.catch((err) => {
