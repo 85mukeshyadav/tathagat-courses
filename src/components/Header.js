@@ -7,6 +7,8 @@ import AuthContext from "../context/AuthCntx";
 const Header = () => {
 	const { isAuth, setAuth } = useContext(AuthContext);
 
+	const currentRoute = window.location.pathname;
+
 	const openmenuHandler = (e) => {
 		let menu = document.getElementById("meunId");
 		menu.style.display = "block";
@@ -49,20 +51,26 @@ const Header = () => {
 								{/* <Link style={ { padding: 6 } } to='/courses' > */}
 								<Link
 									to={isAuth ? "/myCourses" : "/"}
-									className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+									className={`text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium 
+												${currentRoute === "/myCourses" ? "bg-gray-700" : ""}
+									`}
 								>
 									{isAuth ? "My Courses" : ""}
 								</Link>
 
 								<Link
 									to={isAuth ? "/courses" : "/"}
-									className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+									className={`text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium
+												${currentRoute === "/courses" ? "bg-gray-700" : ""}
+									`}
 								>
 									{isAuth ? "All Courses" : ""}
 								</Link>
 								<Link
 									to={isAuth ? "/bookmarks" : "/"}
-									className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+									className={`text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium
+												${currentRoute === "/bookmarks" ? "bg-gray-700" : ""}
+									`}
 								>
 									{isAuth ? "Bookmarks" : ""}
 								</Link>
