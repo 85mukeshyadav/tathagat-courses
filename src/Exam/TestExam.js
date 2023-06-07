@@ -8,7 +8,7 @@ import Loader from "../components/Loader";
 
 const TestExam = () => {
 	const navigate = useNavigate();
-	const { testid, user, pkgid } = useParams();
+	const { testid, pkgid } = useParams();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -19,27 +19,24 @@ const TestExam = () => {
 	}
 
 	const checkIfTestExists = async () => {
-		if (!localStorage.getItem("token")) {
+		if (!localStorage.getItem("token") || !localStorage.getItem("user")) {
 			alert("Please login to access this test.");
 			return navigate("/signin");
 		}
-
 		setLoading(true);
+
 		const testid1 = decrypt(testid);
-		const user1 = decrypt(user);
 		const pkgid1 = decrypt(pkgid);
-		console.log(testid1, user1, pkgid1);
+		const user = localStorage.getItem("user");
+
 		const response = await apiClient.get(
-			`/gettest/${testid1}/${user1}/${pkgid1}`
+			`/gettest/${testid1}/${user}/${pkgid1}`
 		);
 		if (response.ok) {
-			console.log(response.data);
 			localStorage.setItem("testid", testid1);
-			localStorage.setItem("user", user1);
 			localStorage.setItem("pkgid", pkgid1);
 			navigate("/examination");
 		} else {
-			console.log(response.problem, response.data);
 			setError(response.problem);
 		}
 		setLoading(false);
@@ -69,14 +66,13 @@ const TestExam = () => {
 						title="No access!"
 						color="red"
 					>
-						You do not have access to this test. Please buy the course to access
-						this test.
+						You are unable to take this test. Please visit all courses.
 					</Alert>
 					<button
 						className="mt-8 text-white bg-blue-400 font-semibold px-4 py-2 rounded hover:bg-blue-500"
 						onClick={() => navigate(`/courses`)}
 					>
-						Buy Course
+						All Courses
 					</button>
 				</>
 			)}
