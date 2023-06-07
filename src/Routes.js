@@ -42,7 +42,7 @@ const Rout = (props) => (
 		<Route exact path="analysis" element={<Analysis />} />
 		<Route exact path="" element={<Homepage />} />
 		<Route exact path="/blogs" element={<Blogs />} />
-		<Route exact path="/test/:pkgid/:testid/:user" element={<TestExam />} />
+		<Route exact path="/test/:pkgid/:testid" element={<TestExam />} />
 		<Route exact path="/ssologin/:token/:user" element={<Login />} />
 		<Route exact path="/exam-finished" element={<ExamFinished />} />
 		<Route exact path="/payment-success" element={<PaymentSuccess />} />
