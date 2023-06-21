@@ -363,7 +363,7 @@ const Review = React.memo(() => {
 							))}
 						</ul>
 					</div>
-					<div className="flex justify-between border-y-2 border-gray-300 pl-2 py-2 mt-2">
+					<div className="flex justify-end border-y-2 border-gray-300 pl-2 py-2 mt-2">
 						<p className="font-semibold text-sm sm:text-base mr-2">
 							Marks for Correct Answer:{" "}
 							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
@@ -379,9 +379,13 @@ const Review = React.memo(() => {
 							</p>
 							<div className="flex items-center mr-2">
 								<Switch
+									checked={showCorrectAns}
 									label="Re-attempt"
 									className="mr-4 font-semibold"
-									onChange={() => setShowCorrectAns(!showCorrectAns)}
+									onChange={() => {
+										setShowCorrectAns(!showCorrectAns);
+										getSolution(Question[currentQuesIndex]);
+									}}
 								/>
 								<Tooltip label="Report this question to the admin">
 									<button
@@ -436,7 +440,7 @@ const Review = React.memo(() => {
 						return currentQuesIndex == i ? (
 							<div
 								key={i}
-								className="text-left justify-between overflow-y-scroll max-h-[500px] pl-2 w-full"
+								className="text-left justify-between overflow-y-scroll max-h-[450px] pl-2 w-full"
 								style={{ height: "100%" }}
 							>
 								{res.questionType == "paragraph" ? (
@@ -543,15 +547,15 @@ const Review = React.memo(() => {
 													<div
 														style={{ marginTop: "10px", minHeight: "200px" }}
 													>
-														<button
+														{/* <button
 															className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 															name="vieSec"
 															onClick={() => getSolution(res)}
 														>
 															{" "}
 															View Solution{" "}
-														</button>
-														{getViewSection ? (
+														</button> */}
+														{showCorrectAns ? (
 															getViewSolution &&
 															typeof getViewSolution == "object" ? (
 																<div
@@ -682,15 +686,15 @@ const Review = React.memo(() => {
 												></h3>
 											</div> */}
 											<div style={{ marginTop: "10px", minHeight: "200px" }}>
-												<button
+												{/* <button
 													className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 													name="vieSec"
 													onClick={() => getSolution(res)}
 												>
 													{" "}
 													View Solution{" "}
-												</button>
-												{getViewSection ? (
+												</button> */}
+												{showCorrectAns ? (
 													getViewSolution &&
 													typeof getViewSolution == "object" ? (
 														<div
@@ -721,7 +725,7 @@ const Review = React.memo(() => {
 				<div className="border-gray-800 sm:border-l-2 border-t-2 sm:border-t-0 h-full">
 					<div className="flex flex-col justify-center sm:w-80 items-center">
 						<div className="w-full">
-							<div className="py-2 px-2 text-lg text-white font-semibold bg-[#4e85c5]">
+							<div className="text-left py-2 px-2 text-lg text-white font-semibold bg-[#4e85c5]">
 								{userInfo(localStorage.getItem("token"))}
 							</div>
 							<div className="flex items-center w-full py-3 px-2 text-gray-700 font-semibold">
@@ -802,7 +806,8 @@ const Review = React.memo(() => {
 										onClick={() => {
 											setCurrentQuesIndex(i);
 											setViewSection(false);
-
+											getSolution(res);
+											setShowCorrectAns(false);
 											if (res.optionType == "input") {
 												if (reviewQues[i].usersAnswer != -1) {
 													setAns(reviewQues[i].usersAnswer);
@@ -888,6 +893,8 @@ const Review = React.memo(() => {
 						<button
 							onClick={() => {
 								setViewSection(false);
+								getSolution(Question[currentQuesIndex]);
+								setShowCorrectAns(false);
 								if (currentQuesIndex > 0) {
 									setCurrentQuesIndex(currentQuesIndex - 1);
 									if (Question[currentQuesIndex - 1]["optionType"] == "input") {
@@ -911,6 +918,8 @@ const Review = React.memo(() => {
 						<button
 							onClick={() => {
 								setViewSection(false);
+								getSolution(Question[currentQuesIndex]);
+								setShowCorrectAns(false);
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 									if (Question[currentQuesIndex + 1]["optionType"] == "input") {
