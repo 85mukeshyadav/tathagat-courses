@@ -110,7 +110,7 @@ const Examination = React.memo(() => {
 	const [currentIndex, setcurrentIndex] = useState(0);
 	const { hidenav, sethidenav } = useContext(hideNavContext);
 	const savedCallback = useRef();
-	const [count, setCount] = useState(1200);
+	const [count, setCount] = useState(-1);
 	const [Alert, setAlertbox] = useState(false);
 	const [SectionName, setSectionName] = useState();
 	const [sectionId, setSectionId] = useState();
@@ -425,8 +425,8 @@ const Examination = React.memo(() => {
 								topicId: ques.topicId,
 								optionType: ques.optionType,
 								timeTaken:
-									savedSession?.testid === testid
-										? savedSession?.getQuesAns[idx]?.timeTaken
+									quesAttempted?.testid === testid
+										? quesAttempted?.objArray["timeTaken"][idx]
 										: 0,
 							};
 							quesAnsArray.push(everyQues);
@@ -1278,7 +1278,7 @@ const Examination = React.memo(() => {
 																					onChange={() => {
 																						SelectAnswer(i);
 																						setselectedAns(iAns);
-
+																						setRadio(iAns);
 																						// newObj['answered'][i] = 1;
 																						// newObj['notAnswered'][i] = 0;
 																						setCurrentQuesStatus(newObj);
@@ -1409,7 +1409,7 @@ const Examination = React.memo(() => {
 																		onChange={() => {
 																			SelectAnswer(i);
 																			setselectedAns(iAns);
-
+																			setRadio(iAns);
 																			setCurrentQuesStatus(newObj);
 																			localStorage.setItem(
 																				"quesAttempted",
