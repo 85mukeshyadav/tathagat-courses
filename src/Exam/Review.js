@@ -1,62 +1,23 @@
 //import liraries
-import { Tooltip } from "@mantine/core";
-import axios from "axios";
-import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
+import { Divider, Modal, Switch, Textarea, Tooltip } from "@mantine/core";
 import {
-	FaBookmark,
-	FaEquals,
-	FaFile,
-	FaInfo,
-	FaRegBookmark,
-} from "react-icons/fa";
-import Modal from "react-modal";
+	IconAlarm,
+	IconClock,
+	IconHelpCircle,
+	IconHourglass,
+} from "@tabler/icons-react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { FaBookmark, FaEquals, FaInfo, FaRegBookmark } from "react-icons/fa";
+import { IoWarning } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
 import { userInfo } from "../api/checkAuth";
 import Answered from "../assets/Answered.png";
-import NewCandidateImage from "../assets/NewCandidateImage.jpg";
-import copyCat from "../assets/copyCat.pdf";
-import fullLength from "../assets/fullLength.pdf";
 import notans from "../assets/notans.png";
-import pms from "../assets/pms.pdf";
 import hideNavContext from "../context/AllprojectsContext";
-import Calculator from "./Calculator/Calculator";
 import QuestionInput from "./Calculator/QuestionInput";
 
-const customStyles = {
-	content: {
-		top: "50%",
-		left: "50%",
-		right: "auto",
-		bottom: "auto",
-		marginRight: "-50%",
-		transform: "translate(-50%, -50%)",
-	},
-};
-
-function Counter(props) {
-	const [count, setCount] = useState(props.time);
-
-	// useInterval(() => {
-	//     // Your custom logic here
-	//     setCount(count - 1);
-	// }, 1000);
-	const duration = moment.duration(count, "seconds");
-	// console.log("🚀 ~ file: Examination.js ~ line 26 ~ Counter ~ duration", duration)
-	const h = duration.hours(); // 20
-	const m = duration.minutes(); // 20
-	const s = duration.seconds();
-
-	if (s <= 0 && m <= 0 && h <= 0) {
-		props.changeFinish();
-		return <span key={props.time} className="mx-1">{`0 Min`}</span>;
-	}
-
-	return <span key={props.time} className="mx-1">{`${h}:${m}:${s} Min`}</span>;
-}
-
-// create a component
 const Review = React.memo(() => {
 	const options = {
 		headers: {
@@ -68,19 +29,14 @@ const Review = React.memo(() => {
 	const navigate = useNavigate();
 
 	const [Question, setQuestion] = useState([]);
-	const [currentIndex, setcurrentIndex] = useState(0);
 	const { sethidenav } = useContext(hideNavContext);
-	const [count, setCount] = useState(1200);
 	const [Alert, setAlertbox] = useState(false);
 	const [SectionName, setSectionName] = useState();
 	const [sectionId, setSectionId] = useState();
 	const [negativeMarks, setNegativeMarks] = useState();
 	const [positiveMarks, setPositiveMarks] = useState();
-	const [selectedAns, setselectedAns] = useState(1000);
-	const [selectedSectionnumber, setselectedcategorynumber] = useState(0);
+	const [selectedSectionnumber, setSelectedCategoryNumber] = useState(0);
 	const [data, setdata] = useState([]);
-	const [FinishExam, setFinishExam] = useState(false);
-	const [allData, setAllData] = useState([]);
 
 	const [markedReview, setmarkedReview] = useState(0);
 	const [bothAnsReview, setBothAnsReview] = useState(0);
@@ -99,12 +55,9 @@ const Review = React.memo(() => {
 	const [notVisited, setNotVisited] = useState(0);
 	const [getQuesAns, setQuesAns] = useState([]);
 	const [getRadio, setRadio] = useState(-1);
-	const [modalIsOpen, setModalIsOpen] = useState(false);
-	const [modalInsOpen, setModalInsOpen] = useState(false);
-	const [isOpen, setIsOpen] = useState(false);
 
 	const [allSectionData, setAllSectionData] = useState([]);
-	const [reviewQues, setReviewQues] = useState([]);
+	const [reviewQues, setReviewQues] = useImmer([]);
 	const [getViewSection, setViewSection] = useState(false);
 	const [getViewSolution, setViewSolution] = useState("");
 	const [getAns, setAns] = useState("");
@@ -112,20 +65,12 @@ const Review = React.memo(() => {
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
 	const [bookmarks, setBookmarks] = useImmer([]);
-	const [reviewRes, setReviewRes] = useState([]);
-
-	// window.addEventListener('beforeunload', function (e) {
-	//     e.preventDefault();
-	//     e.returnValue = '';
-	// });
-
-	// useUnload(e => {
-	//     e.preventDefault();
-	//     console.log("adasdasdasd")
-	//     e.returnValue = '';
-	//   });
+	const [reviewRes, setReviewRes] = useState({});
+	const [showCorrectAns, setShowCorrectAns] = useState(false);
+	const [isReportVisible, setIsReportVisible] = useState(false);
 
 	const handleBookmark = async (id, status) => {
+		console.log("status", status);
 		const res = await axios.post(process.env.REACT_APP_API + "/addbookmark", {
 			userEmailId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -138,13 +83,6 @@ const Review = React.memo(() => {
 			console.log("Bookmark not added!");
 		}
 	};
-
-	useEffect(() => {
-		if (count <= 0) {
-			// _submitPreTest();
-			// setTimeout(()=>{submitTest(1)},5000);
-		}
-	}, [count]);
 
 	useEffect(async () => {
 		if (selectedSectionnumber > 0) {
@@ -202,9 +140,6 @@ const Review = React.memo(() => {
 			setNotVisited(0);
 			setQuesAns([]);
 			setRadio(-1);
-			setModalIsOpen(false);
-			setModalInsOpen(false);
-			setIsOpen(false);
 			let newState = {
 				answered: [],
 				notAnswered: [],
@@ -220,7 +155,6 @@ const Review = React.memo(() => {
 			process.env.REACT_APP_API + "/gettest/" + localStorage.getItem("testid"),
 			options
 		);
-		console.log("TEST RESP:", res.data);
 		let param = {
 			userId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -241,13 +175,9 @@ const Review = React.memo(() => {
 		setExamLevel(res.data[0].examLevel);
 		setTestName(res.data[0].TestTitle);
 
-		// console.log(res.data)
-		setCount(res.data[0].Section[selectedSectionnumber].SectionTime * 60);
-
 		setPositiveMarks(res.data[0].Section[selectedSectionnumber].positiveMarks);
 		setNegativeMarks(res.data[0].Section[selectedSectionnumber].negativeMarks);
 		setdata(res.data[0].Section);
-		setcurrentIndex(0);
 		let objArray = {
 			notAnswered: [],
 			notVisited: [],
@@ -279,7 +209,7 @@ const Review = React.memo(() => {
 							isClicked: false,
 							quesId: ques.questionId,
 							quesAns:
-								respReview.data.section[index].question[indexs].usersAnswer,
+								respReview.data?.section[index]?.question[indexs]?.usersAnswer,
 							state: 3,
 							ansStatus: "",
 							optionType: ques.optionType,
@@ -306,8 +236,6 @@ const Review = React.memo(() => {
 					// }
 				}
 			});
-
-		setAllData(res.data);
 
 		return null;
 	}, [selectedSectionnumber]);
@@ -339,115 +267,11 @@ const Review = React.memo(() => {
 		}
 	}, [getQuesAns]);
 
-	const changeFinish = () => {
-		setFinishExam(true);
-	};
-
 	useEffect(() => {
 		sethidenav(true);
 	}, []);
 
-	const submitTest = async () => {
-		let params = {
-			userId: localStorage.getItem("user"),
-			testId: localStorage.getItem("testid"),
-			packageId: localStorage.getItem("pkgid"),
-			section: [...allSectionData],
-		};
-
-		navigate("/myCourses");
-	};
-
-	const SubmitExam = () => {
-		return (
-			<main className="absolute w-full min-h-screen z-10 bg-gray-50 text-gray-900 font-sans overflow-x-hidden">
-				<h2 className="my-10 text-lg font-semibold">Exam Summary</h2>
-				<div className="relative px-4 md:flex">
-					<div>
-						<table className="min-w-[98vw]">
-							<tbody>
-								<tr className="bg-blue-300">
-									<th className="text-left p-2">section Name</th>
-									<th className="text-left p-2">No of questions</th>
-									<th className="text-left p-2">Answered</th>
-									<th className="text-left p-2">Not Answered</th>
-									<th className="text-left p-2">Marked for review</th>
-									<th className="text-left p-2">
-										Answered & Marked for Review (will be considered for
-										evaluation)
-									</th>
-									<th className="text-left p-2">Not visited</th>
-								</tr>
-								{allSectionData.map((res) => (
-									<tr className="bg-gray-200">
-										<td className="text-left p-2">{res.sectionName}</td>
-										<td className="text-left p-2">{res.question.length}</td>
-										<td className="text-left p-2">{res.answered}</td>
-										<td className="text-left p-2">{res.notAnswered}</td>
-										<td className="text-left p-2">{res.markedReview}</td>
-										<td className="text-left p-2">{res.bothAnsReview}</td>
-										<td className="text-left p-2">{res.notVisited}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<footer className="absolute border-t-2 border-gray-400 flex w-full justify-center self-center bottom-[2%]">
-					<div className="">
-						{count <= 0 ? (
-							""
-						) : (
-							<>
-								<p>
-									Are you sure to submit this Group? Click 'Yes' to proceed;
-									Click 'No' to go back.
-									<br></br>
-									Dear Candidate, Once the Group is submitted, you cannot edit
-									your responses.
-								</p>
-								<button
-									onClick={() => submitTest()}
-									className="bg-[#38aae9] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-6 py-2 mr-10"
-								>
-									Yes
-								</button>
-								<button
-									onClick={() => setFinishExam(false)}
-									className="bg-[#38aae9] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-6 py-2 mr-10"
-								>
-									No
-								</button>
-							</>
-						)}
-					</div>
-				</footer>
-			</main>
-		);
-	};
-
-	const setModalIsOpenToFalse = () => {
-		setModalIsOpen(false);
-	};
-
-	const setModalIsOpenToTrue = () => {
-		setModalIsOpen(true);
-	};
-
-	const setModalInsOpenToFalse = () => {
-		setModalInsOpen(false);
-	};
-
-	const setModalInsOpenToTrue = () => {
-		setModalInsOpen(true);
-	};
-
-	const togglePopup = () => {
-		setIsOpen(!isOpen);
-	};
-
 	const getSolution = async (res) => {
-		console.log(res);
 		if (res.explantation) {
 			setViewSolution(res.explantation);
 		} else {
@@ -455,7 +279,6 @@ const Review = React.memo(() => {
 				process.env.REACT_APP_API + "/question-details/" + res.questionId,
 				options
 			);
-			console.log(resp.data);
 			setViewSolution(resp.data["explantation"]);
 		}
 
@@ -464,147 +287,47 @@ const Review = React.memo(() => {
 
 	return (
 		<div className="bg-gray-50 h-full overflow-hidden">
-			{FinishExam ? <SubmitExam /> : null}
-			{Alert ? (
-				<main className="absolute w-full z-10 bg-[#0000002f] text-gray-900 font-sans overflow-x-hidden">
-					<div className="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
-						<div className="bg-black opacity-25 w-full h-full absolute z-10 inset-0"></div>
-						<div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative">
-							<div className="md:flex items-center">
-								{/* <div className="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
-                                <i className="bx bx-error text-3xl"></i>
-                            </div> */}
-								<div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
-									<p className="font-bold">Are You Sure </p>
-									<p className="text-sm text-gray-700 mt-1">
-										once You leave the section, This action cannot be undone.
-									</p>
-								</div>
-							</div>
-							<div className="text-center md:text-right mt-4 md:flex md:justify-end">
-								<button
-									onClickCapture={() => {
-										setAlertbox(false);
-										setselectedcategorynumber(selectedSectionnumber + 1);
-									}}
-									className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
-								>
-									submit
-								</button>
-								<button
-									onClickCapture={() => {
-										setAlertbox(false);
-									}}
-									className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
-                                md:mt-0 md:order-1"
-								>
-									Cancel
-								</button>
-							</div>
-						</div>
-					</div>
-				</main>
-			) : null}
-			<nav className="sm:flex block justify-between bg-slate-600 p-2">
+			<nav className="sm:flex block justify-between bg-slate-600 p-2 py-6">
 				<div className="text-yellow-400 font-semibold">{SectionName}</div>
-				<div className="text-yellow-400 font-semibold">
-					Test Name:- {getTestName}
+				<div className="text-yellow-400 sm:text-lg font-semibold">
+					{getTestName}
 				</div>
-				<div className="sm:flex block items-center">
-					<button
-						onClick={togglePopup}
-						className="flex items-center text-gray-50 mr-6 mb-4 mt-4 sm:mt-4"
-					>
-						Calculator
-					</button>
-
-					{/* <div className='calculator-demo' style={style}>
-                    <h1>Calculator</h1>
-                    <Calculator
-                        onNewInput={handleInput}
-                        onResultChange={onResultChange}/>
-                    </div> */}
-					<button
-						onClick={setModalIsOpenToTrue}
-						className="flex items-center text-gray-50 mr-6 mb-4 sm:mt-4"
-					>
-						<div className="bg-green-400 p-2 rounded-full mr-2">
-							<FaFile className="text-white" />
-						</div>
-						Question paper
-					</button>
-					<button
-						onClick={setModalInsOpenToTrue}
-						className="flex items-center text-gray-50 mb-4 sm:mt-4"
-					>
-						<div className="bg-blue-400 p-2 rounded-full mr-2">
-							<FaInfo className="text-white" />
-						</div>
-						View Instruction
-					</button>
-				</div>
-				<Modal isOpen={modalIsOpen} style={customStyles} ariaHideApp={false}>
-					<button onClick={setModalIsOpenToFalse}>x</button>
-					<div class="quesHeight">
-						{Question.map((allQues, i) => (
-							<div key={i}>
-								<span>Q{i + 1}</span>
-								<p
-									key={i}
-									className="w-10/12 p-4"
-									dangerouslySetInnerHTML={{
-										__html:
-											allQues.questionType == "paragraph"
-												? allQues.paragraph
-												: allQues.question,
-									}}
-								></p>
-							</div>
-						))}
-					</div>
-				</Modal>
-
-				<Modal isOpen={modalInsOpen} style={customStyles} ariaHideApp={false}>
-					<button onClick={setModalInsOpenToFalse}>x</button>
-					{getExamLevel == 4 || getExamLevel == 3 || getExamLevel == 2 ? (
-						<embed
-							src={pms}
-							type="application/pdf"
-							height="700px"
-							width="600px"
-						></embed>
-					) : getExamLevel == 1 ? (
-						<embed
-							src={fullLength}
-							type="application/pdf"
-							height="700px"
-							width="600px"
-						></embed>
-					) : (
-						<embed
-							src={copyCat}
-							type="application/pdf"
-							height="700px"
-							width="600px"
-						></embed>
-					)}
-				</Modal>
+				<div></div>
 			</nav>
-
-			{isOpen ? (
-				<div className="popup-box">
-					<div className="box">
-						<span className="close-icon" onClick={togglePopup}>
-							x
-						</span>
-						<Calculator />
+			{/* report modal */}
+			<Modal
+				opened={isReportVisible}
+				onClose={() => setIsReportVisible(false)}
+				title="Report Question"
+				hideCloseButton
+				centered
+				size="lg"
+			>
+				<div className="flex flex-col space-y-4">
+					<div className="flex items-center space-x-2">
+						<IconHelpCircle size={24} />
+						<p className="text-lg font-semibold">
+							Are you sure you want to report this question?
+						</p>
+					</div>
+					<p className="text-sm">
+						Reporting this question will notify the admin and the question will
+						be reviewed.
+					</p>
+					<Textarea
+						placeholder="Enter your reason for reporting this question"
+						className="w-full"
+					/>
+					<div className="flex items-center justify-center">
+						<button
+							className="bg-red-500 hover:bg-red-600 transition text-white font-semibold py-2 px-4 rounded-md"
+							onClick={() => setIsReportVisible(false)}
+						>
+							Report
+						</button>
 					</div>
 				</div>
-			) : (
-				""
-			)}
-			{/* <Calculator /> */}
-
+			</Modal>
 			<div id="quesAns" className="sm:flex block justify-between">
 				<div className="w-full mr-4">
 					<div>
@@ -633,58 +356,8 @@ const Review = React.memo(() => {
 							))}
 						</ul>
 					</div>
-					<div className="flex justify-between border-y-2 border-gray-300 pl-2 py-2 mt-2">
-						<p className="flex font-bold">Section</p>
-						<p className="flex font-bold">
-							Time left:
-							<Counter
-								// getLeft={getLeft}
-								setCount={setCount}
-								key={count + "time"}
-								time={count}
-								changeFinish={changeFinish}
-							/>
-						</p>
-					</div>
-					<div className="flex justify-between items-center border-b-2 pl-2 w-full">
-						<div className="flex items-center">
-							<p className="font-bold text-md sm:text-lg py-2">
-								Q. {currentQuesIndex + 1}
-							</p>
-							<Tooltip label="Add this question to bookmarks">
-								<button
-									onClick={() => {
-										const quesId =
-											data[selectedSectionnumber].QuestionList[currentQuesIndex]
-												.questionId;
-										setReviewQues((prev) => [
-											...prev,
-											{
-												...prev[currentQuesIndex],
-												bookmark: !prev[currentQuesIndex]?.bookmark,
-											},
-										]);
-										setBookmarks((draft) => {
-											let newDraft = [...draft];
-											newDraft[currentQuesIndex] = !newDraft[currentQuesIndex];
-											handleBookmark(
-												quesId,
-												!newDraft[currentQuesIndex] ? 0 : 1
-											);
-											return newDraft;
-										});
-									}}
-								>
-									{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
-									bookmarks[currentQuesIndex] ? (
-										<FaBookmark className="text-blue-400 text-xl ml-2" />
-									) : (
-										<FaRegBookmark className="text-blue-500 text-xl ml-2" />
-									)}
-								</button>
-							</Tooltip>
-						</div>
-						<p className="py-2 font-semibold text-sm sm:text-lg mr-2">
+					<div className="flex justify-end border-y-2 border-gray-300 pl-2 py-2 mt-2">
+						<p className="font-semibold text-sm sm:text-base mr-2">
 							Marks for Correct Answer:{" "}
 							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
 							<span className="text-red-500">
@@ -692,12 +365,68 @@ const Review = React.memo(() => {
 							</span>
 						</p>
 					</div>
+					<div className="flex items-center border-b-2 pl-2 w-full">
+						<div className="flex w-full items-center justify-between">
+							<p className="font-bold text-md sm:text-lg py-2">
+								Q. {currentQuesIndex + 1}
+							</p>
+							<div className="flex items-center mr-2">
+								<Switch
+									checked={showCorrectAns}
+									label="Re-attempt"
+									className="mr-4 font-semibold"
+									onChange={() => {
+										setShowCorrectAns(!showCorrectAns);
+										getSolution(Question[currentQuesIndex]);
+									}}
+								/>
+								<Tooltip label="Report this question to the admin">
+									<button
+										className="flex items-center text-red-500 text-sm sm:text-base font-semibold mr-4"
+										onClick={() => setIsReportVisible(true)}
+									>
+										<IoWarning className="text-red-500 text-lg mr-1" />
+										Report
+									</button>
+								</Tooltip>
+								<Tooltip label="Add this question to bookmarks">
+									<button
+										className="flex items-center text-blue-500 text-sm sm:text-base font-semibold"
+										onClick={() => {
+											const quesId =
+												data[selectedSectionnumber].QuestionList[
+													currentQuesIndex
+												].questionId;
+											const bookmarkStatus =
+												reviewQues[currentQuesIndex]?.bookmark ||
+												bookmarks[currentQuesIndex];
+											setBookmarks((draft) => {
+												draft[currentQuesIndex] = !bookmarkStatus;
+											});
+											setReviewQues((draft) => {
+												draft[currentQuesIndex].bookmark = !bookmarkStatus;
+											});
+											handleBookmark(quesId, !bookmarkStatus ? 1 : 0);
+										}}
+									>
+										{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
+										bookmarks[currentQuesIndex] ? (
+											<FaBookmark className="text-blue-400 mr-1" />
+										) : (
+											<FaRegBookmark className="text-blue-500 mr-1" />
+										)}
+										Bookmark
+									</button>
+								</Tooltip>
+							</div>
+						</div>
+					</div>
 
 					{Question.map((res, i) => {
 						return currentQuesIndex == i ? (
 							<div
 								key={i}
-								className="text-left justify-between overflow-y-scroll max-h-[500px] pl-2 w-full"
+								className="text-left justify-between overflow-y-scroll max-h-[450px] pl-2 w-full"
 								style={{ height: "100%" }}
 							>
 								{res.questionType == "paragraph" ? (
@@ -744,14 +473,10 @@ const Review = React.memo(() => {
 																			key={iAns}
 																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																		>
-																			{console.log(
-																				"🚀 ~ file: index.js ~ line 687 ~ res.questionoption.map ~ ans",
-																				ans
-																			)}
 																			<div
 																				className={`flex items-center py-2 px-4 rounded-md
-																					${res.correctoption == iAns + 1 && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "C" && "bg-green-100 "}
+																					${res.correctoption == iAns + 1 && showCorrectAns && "bg-green-100 "}
+																					${reviewQues[i].answerStatus == "C" && showCorrectAns && "bg-green-100 "}
 																					${reviewQues[i].answerStatus == "W" && "bg-red-100"}
 																				`}
 																			>
@@ -774,8 +499,10 @@ const Review = React.memo(() => {
 																					className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
 																				></h3>
 																				{(reviewQues[i].answerStatus == "C" &&
+																					showCorrectAns &&
 																					iAns == getRadio) ||
-																				res.correctoption == iAns + 1 ? (
+																				(res.correctoption == iAns + 1 &&
+																					showCorrectAns) ? (
 																					<i className="mr-1 fa fa-check text-green-500 text-2xl" />
 																				) : (
 																					reviewQues[i].answerStatus == "W" &&
@@ -802,15 +529,15 @@ const Review = React.memo(() => {
 													<div
 														style={{ marginTop: "10px", minHeight: "200px" }}
 													>
-														<button
+														{/* <button
 															className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 															name="vieSec"
 															onClick={() => getSolution(res)}
 														>
 															{" "}
 															View Solution{" "}
-														</button>
-														{getViewSection ? (
+														</button> */}
+														{showCorrectAns ? (
 															getViewSolution &&
 															typeof getViewSolution == "object" ? (
 																<div
@@ -865,12 +592,6 @@ const Review = React.memo(() => {
 												<>
 													{res.questionoption[0] &&
 														res?.questionoption.map((ans, iAns) => {
-															{
-																console.log(
-																	"🚀 ~ file: index.js ~ line 808 ~ res.questionoption.map ~ ans",
-																	res
-																);
-															}
 															return (
 																<div
 																	key={iAns}
@@ -878,8 +599,13 @@ const Review = React.memo(() => {
 																>
 																	<div
 																		className={`flex items-center py-2 px-4 rounded-md
-																			${res.correctoption == iAns + 1 && "bg-green-100 "}
-																			${reviewQues[i].answerStatus == "C" && iAns == getRadio && "bg-green-100"}
+																			${res.correctoption == iAns + 1 && showCorrectAns && "bg-green-100 "}
+																			${
+																				reviewQues[i].answerStatus == "C" &&
+																				showCorrectAns &&
+																				iAns == getRadio &&
+																				"bg-green-100"
+																			}
 																			${reviewQues[i].answerStatus == "W" && iAns == getRadio && "bg-red-100"}`}
 																	>
 																		<input
@@ -900,8 +626,10 @@ const Review = React.memo(() => {
 																			className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
 																		></h3>
 																		{(reviewQues[i].answerStatus == "C" &&
+																			showCorrectAns &&
 																			iAns == getRadio) ||
-																		res.correctoption == iAns + 1 ? (
+																		(res.correctoption == iAns + 1 &&
+																			showCorrectAns) ? (
 																			<i className="mr-1 fa fa-check text-green-500 text-2xl" />
 																		) : (
 																			reviewQues[i].answerStatus == "W" &&
@@ -934,15 +662,15 @@ const Review = React.memo(() => {
 												></h3>
 											</div> */}
 											<div style={{ marginTop: "10px", minHeight: "200px" }}>
-												<button
+												{/* <button
 													className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 													name="vieSec"
 													onClick={() => getSolution(res)}
 												>
 													{" "}
 													View Solution{" "}
-												</button>
-												{getViewSection ? (
+												</button> */}
+												{showCorrectAns ? (
 													getViewSolution &&
 													typeof getViewSolution == "object" ? (
 														<div
@@ -972,61 +700,72 @@ const Review = React.memo(() => {
 				</div>
 				<div className="border-gray-800 sm:border-l-2 border-t-2 sm:border-t-0 h-full">
 					<div className="flex flex-col justify-center sm:w-80 items-center">
-						<div className="flex m-4">
-							<img className="w-28 h-28 rounded-sm" src={NewCandidateImage} />
-							<div className="ml-4 m-auto text-xl font-bold text-gray-700">
-								<p>{userInfo(localStorage.getItem("token"))}</p>
-								<p></p>
+						<div className="w-full">
+							<div className="text-left py-2 px-2 text-lg text-white font-semibold bg-[#4e85c5]">
+								{userInfo(localStorage.getItem("token"))}
 							</div>
-						</div>
-						<div className="flex flex-wrap gap-4 p-2 mt-2 items-center sm:justify-start justify-center">
-							<div className="flex sm:gap-4 gap-10 w-full items-center sm:justify-start justify-center sm:ml-2">
-								<div className="flex flex-wrap font-medium items-center">
-									<div className="relative">
-										<img src={Answered} className="w-10" />
-										<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/4">
-											{answered}
-										</p>
-									</div>
-									<p className="ml-2 text-sm font-normal">Answered</p>
+							<div className="flex items-center w-full py-3 px-2 text-gray-700 font-semibold">
+								<div className="flex items-center">
+									<IconClock size={20} className="mr-2" />
+									Time spent on this ques:
 								</div>
-								<div className="flex flex-wrap font-medium items-center">
-									<div className="relative">
-										<img src={notans} className="w-10" />
-										<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/4">
-											{notAnswered}
-										</p>
-									</div>
-									<p className="ml-2 text-sm font-normal">Not Answered</p>
-								</div>
-							</div>
-							<div className="flex gap-4 w-full items-center sm:justify-start justify-center sm:ml-2">
-								<div className="flex flex-wrap font-medium items-center sm:ml-0 ml-6">
-									<div className="relative bg-[#ededed] border-[#979797] shadow-inner shadow-[#a9a9a962] border-2 p-2 w-10 h-10 rounded-sm">
-										<p className="text-gray-800">{notVisited}</p>
-									</div>
-									<p className="ml-2 text-sm font-normal">Not visited</p>
-								</div>
-								<div className="flex flex-wrap font-medium items-center sm:ml-0 ml-4">
-									<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 w-10 h-10 rounded-full">
-										<p className="text-gray-50">{markedReview}</p>
-									</div>
-									<p className="ml-2 text-sm font-normal">Marked for review</p>
-								</div>
-							</div>
-							<div className="flex font-medium items-center self-center w-80 sm:ml-2 ml-6">
-								<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 min-w-[2.5rem] min-h-[2.5rem] w-10 h-10 rounded-full">
-									<FaEquals className="absolute bottom-[-10%] font-normal text-sm right-[-10%] text-white bg-[#98c271] text-[8px] rounded-full min-w-[1rem] w-4 h-4 min-h-4" />
-									<p className="text-gray-50">{bothAnsReview}</p>
-								</div>
-								<p className="text-sm font-normal">
-									Answered & Marked for Review (will be considered for
-									evaluation){" "}
+								<p className="ml-1 text-sm">
+									{(reviewRes &&
+										reviewRes?.section &&
+										reviewRes?.section[selectedSectionnumber]?.question[
+											currentQuesIndex
+										]?.timeTaken) ||
+									(reviewRes &&
+										reviewRes?.section &&
+										reviewRes?.section[selectedSectionnumber]?.question[
+											currentQuesIndex
+										]?.timeTaken?.length > 0)
+										? `${reviewRes?.section[selectedSectionnumber]?.question[currentQuesIndex]?.timeTaken}s`
+										: "NA"}
 								</p>
 							</div>
+							<Divider />
+							<div className="flex items-center w-full py-3 px-2 text-gray-700 font-semibold">
+								<IconHelpCircle size={22} className="mr-2" />
+								<p>Question Difficulty:</p>
+								<p
+									className={`ml-1 text-sm px-1 py-[1px] rounded-sm text-white
+									${Question[currentQuesIndex]?.questionLevel == "Easy" && `bg-green-500`}
+									${Question[currentQuesIndex]?.questionLevel == "Medium" && `bg-yellow-500`}
+									${Question[currentQuesIndex]?.questionLevel == "Hard" && `bg-red-500`}
+								`}
+								>
+									{Question[currentQuesIndex]?.questionLevel}
+								</p>
+							</div>
+							<Divider />
+							<div className="flex items-center w-full py-3 px-2 text-gray-700 font-semibold">
+								<IconHourglass size={22} className="mr-2" />
+								<p>Avg. time spent:</p>
+								<p className="ml-1 text-sm">
+									{reviewRes &&
+									reviewRes?.section &&
+									reviewRes?.section[selectedSectionnumber]?.avgSpentTime
+										? `${reviewRes?.section[selectedSectionnumber]?.avgSpentTime}s`
+										: "NA"}
+								</p>
+							</div>
+							<Divider />
+							<div className="flex items-center w-full py-3 px-2 text-gray-700 font-semibold">
+								<IconAlarm size={22} className="mr-1" />
+								<p>Avg. time for correct ans:</p>
+								<p className="ml-1 text-sm">
+									{reviewRes &&
+									reviewRes?.section &&
+									reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime
+										? `${reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime}s`
+										: "NA"}
+								</p>
+							</div>
+							<Divider />
 						</div>
 						<div className="flex flex-col w-full">
-							<div className="bg-[#4e85c5] mt-2">
+							<div className="bg-[#4e85c5] mt-8">
 								<p className="text-left p-2 text-white font-semibold w-full">
 									{SectionName}
 								</p>
@@ -1041,10 +780,10 @@ const Review = React.memo(() => {
 									<button
 										key={i}
 										onClick={() => {
-											setcurrentIndex(i);
 											setCurrentQuesIndex(i);
 											setViewSection(false);
-
+											getSolution(res);
+											setShowCorrectAns(false);
 											if (res.optionType == "input") {
 												if (reviewQues[i].usersAnswer != -1) {
 													setAns(reviewQues[i].usersAnswer);
@@ -1130,6 +869,8 @@ const Review = React.memo(() => {
 						<button
 							onClick={() => {
 								setViewSection(false);
+								getSolution(Question[currentQuesIndex]);
+								setShowCorrectAns(false);
 								if (currentQuesIndex > 0) {
 									setCurrentQuesIndex(currentQuesIndex - 1);
 									if (Question[currentQuesIndex - 1]["optionType"] == "input") {
@@ -1153,6 +894,8 @@ const Review = React.memo(() => {
 						<button
 							onClick={() => {
 								setViewSection(false);
+								getSolution(Question[currentQuesIndex]);
+								setShowCorrectAns(false);
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 									if (Question[currentQuesIndex + 1]["optionType"] == "input") {

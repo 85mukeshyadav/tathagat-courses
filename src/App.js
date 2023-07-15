@@ -1,15 +1,15 @@
 import { MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import "./App.css";
 import Rout from "./Routes";
+import * as animationData from "./assets/lotties/loader.json";
 import Header from "./components/Header";
 import Footer from "./components/footer";
-
-import { ModalsProvider } from "@mantine/modals";
-import * as animationData from "./assets/lotties/loader.json";
 import hideNavContext from "./context/AllprojectsContext";
 import AuthContext from "./context/AuthCntx";
 import { loadScript } from "./utils/loadScript";
