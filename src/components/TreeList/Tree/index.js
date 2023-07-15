@@ -1,10 +1,9 @@
+import { Button, Checkbox, Group, Modal, ScrollArea } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import React, { useState } from "react";
-import "./index.css";
 import { Link, useNavigate } from "react-router-dom";
 import Score from "../../Course/Score";
-import { useDisclosure } from "@mantine/hooks";
-import { Modal, Group, Button, ScrollArea } from "@mantine/core";
-import { Checkbox } from "@mantine/core";
+import "./index.css";
 // import hideNavContext from "../../../context/AllprojectsContext";
 
 const Tree = ({ data = [], setNodeClick }) => {
@@ -47,13 +46,14 @@ const TreeNode = ({ node, setNodeClick }) => {
 			<Modal
 				opened={instructionsOpened}
 				onClose={instructionsHooks.close}
-				// title="Instructions"
 				size="100%"
 			>
-				<ScrollArea h={500}>
-					{/* <p className="text-2xl font-bold text-gray-700">Test Instructions</p> */}
+				<p className="text-2xl uppercase text-center font-bold text-gray-700">
+					Test Instructions
+				</p>
+				<ScrollArea h={450}>
 					<div
-						className="mt-4 px-6"
+						className="mt-4 px-6 pb-4"
 						dangerouslySetInnerHTML={{ __html: node.instructions }}
 					/>
 				</ScrollArea>
@@ -66,11 +66,10 @@ const TreeNode = ({ node, setNodeClick }) => {
 					<Button
 						onClick={() => {
 							localStorage.setItem("testid", node.id);
-							// redirectTo("/examination");
 							window.open("/examination", "_blank");
 						}}
 						disabled={!checked}
-						className="items-center m-2 p-2 pl-4 pr-4 rounded-md font-semibold bg-blue-400 text-gray-50"
+						className="items-center m-2 p-2 pl-4 pr-4 rounded-md font-semibold bg-blue-400 transition text-gray-50"
 					>
 						<i className="fas fa-play mr-2" />
 						Begin Test
@@ -145,7 +144,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 								) : (
 									<Link
 										to={node.instructions ? "" : "/examination"}
-										target="_blank"
+										target={node.instructions ? "" : "_blank"}
 										onClickCapture={() => {
 											localStorage.setItem("testid", node.id);
 											node.instructions && instructionsHooks.open();

@@ -57,7 +57,7 @@ const Review = React.memo(() => {
 	const [getRadio, setRadio] = useState(-1);
 
 	const [allSectionData, setAllSectionData] = useState([]);
-	const [reviewQues, setReviewQues] = useState([]);
+	const [reviewQues, setReviewQues] = useImmer([]);
 	const [getViewSection, setViewSection] = useState(false);
 	const [getViewSolution, setViewSolution] = useState("");
 	const [getAns, setAns] = useState("");
@@ -70,6 +70,7 @@ const Review = React.memo(() => {
 	const [isReportVisible, setIsReportVisible] = useState(false);
 
 	const handleBookmark = async (id, status) => {
+		console.log("status", status);
 		const res = await axios.post(process.env.REACT_APP_API + "/addbookmark", {
 			userEmailId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -78,11 +79,6 @@ const Review = React.memo(() => {
 		});
 		if (res.status == 200) {
 			console.log("Bookmark added successfully!");
-			// if (status == 1) {
-			// 	toast.success("Bookmark added successfully!");
-			// } else {
-			// 	toast.success("Bookmark removed successfully!");
-			// }
 		} else {
 			console.log("Bookmark not added!");
 		}
@@ -159,7 +155,6 @@ const Review = React.memo(() => {
 			process.env.REACT_APP_API + "/gettest/" + localStorage.getItem("testid"),
 			options
 		);
-		console.log("TEST RESP:", res.data);
 		let param = {
 			userId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
@@ -277,7 +272,6 @@ const Review = React.memo(() => {
 	}, []);
 
 	const getSolution = async (res) => {
-		console.log(res);
 		if (res.explantation) {
 			setViewSolution(res.explantation);
 		} else {
@@ -285,7 +279,6 @@ const Review = React.memo(() => {
 				process.env.REACT_APP_API + "/question-details/" + res.questionId,
 				options
 			);
-			console.log(resp.data);
 			setViewSolution(resp.data["explantation"]);
 		}
 
@@ -404,23 +397,16 @@ const Review = React.memo(() => {
 												data[selectedSectionnumber].QuestionList[
 													currentQuesIndex
 												].questionId;
-											setReviewQues((prev) => [
-												...prev,
-												{
-													...prev[currentQuesIndex],
-													bookmark: !prev[currentQuesIndex]?.bookmark,
-												},
-											]);
+											const bookmarkStatus =
+												reviewQues[currentQuesIndex]?.bookmark ||
+												bookmarks[currentQuesIndex];
 											setBookmarks((draft) => {
-												let newDraft = [...draft];
-												newDraft[currentQuesIndex] =
-													!newDraft[currentQuesIndex];
-												handleBookmark(
-													quesId,
-													!newDraft[currentQuesIndex] ? 0 : 1
-												);
-												return newDraft;
+												draft[currentQuesIndex] = !bookmarkStatus;
 											});
+											setReviewQues((draft) => {
+												draft[currentQuesIndex].bookmark = !bookmarkStatus;
+											});
+											handleBookmark(quesId, !bookmarkStatus ? 1 : 0);
 										}}
 									>
 										{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
@@ -487,10 +473,6 @@ const Review = React.memo(() => {
 																			key={iAns}
 																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																		>
-																			{console.log(
-																				"🚀 ~ file: index.js ~ line 687 ~ res.questionoption.map ~ ans",
-																				ans
-																			)}
 																			<div
 																				className={`flex items-center py-2 px-4 rounded-md
 																					${res.correctoption == iAns + 1 && showCorrectAns && "bg-green-100 "}
@@ -610,12 +592,6 @@ const Review = React.memo(() => {
 												<>
 													{res.questionoption[0] &&
 														res?.questionoption.map((ans, iAns) => {
-															{
-																console.log(
-																	"🚀 ~ file: index.js ~ line 808 ~ res.questionoption.map ~ ans",
-																	res
-																);
-															}
 															return (
 																<div
 																	key={iAns}
