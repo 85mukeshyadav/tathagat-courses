@@ -701,67 +701,23 @@ const Analysis = () => {
 						</BarChart>
 					</ResponsiveContainer>
 				</div>
-				<div className="my-10">
-					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
-						Questions List
-					</p>
-					<div className="w-1/2 ml-10">
-						<Tabs
-							value={activeSectionTab}
-							onTabChange={(item) => {
-								setActiveSectionTab(item);
-								setCurrentSection(
-									section.findIndex((i) => i.sectionName === item)
-								);
-							}}
-						>
-							<Tabs.List>
-								{section?.map((section) => (
-									<Tabs.Tab
-										key={section.sectionName}
-										value={section.sectionName}
-									>
-										{section.sectionName}
-									</Tabs.Tab>
-								))}
-							</Tabs.List>
-							{section?.map((section) => (
-								<Tabs.Panel
-									key={section.sectionName}
-									value={section.sectionName}
-								>
-									<div className="flex">
-										{[...Array(section?.QuestionList.length).keys()].map(
-											(i) => (
-												<div
-													onClick={() => {
-														setQuestionIndex(i);
-														openModal();
-													}}
-													className={`flex h-10 w-10 rounded-full bg-blue-400 hover:bg-blue-500 transition cursor-pointer text-white items-center justify-center mx-2 mt-4`}
-												>
-													<p className="font-bold">{i + 1}</p>
-												</div>
-											)
-										)}
-									</div>
-								</Tabs.Panel>
-							))}
-						</Tabs>
-					</div>
-				</div>
-				<div className="mt-14 bg-gray-100 py-5">
-					<p className="text-2xl text-left font-bold ml-10 pt-4 text-gray-700">
-						Know your Time Management
-					</p>
-					<div className="flex items-center justify-around">
-						<div className="w-1/3 ml-10">
+				{activeSectionTab && (
+					<div className="my-10">
+						<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+							Questions List
+						</p>
+						<div className="w-1/2 ml-10">
 							<Tabs
-								value={activeTimeManagmentTab}
-								onTabChange={setActiveTimeManagmentTab}
+								value={activeSectionTab}
+								onTabChange={(item) => {
+									setActiveSectionTab(item);
+									setCurrentSection(
+										section.findIndex((i) => i.sectionName === item)
+									);
+								}}
 							>
 								<Tabs.List>
-									{analysisData?.section?.map((section) => (
+									{section?.map((section) => (
 										<Tabs.Tab
 											key={section.sectionName}
 											value={section.sectionName}
@@ -770,155 +726,203 @@ const Analysis = () => {
 										</Tabs.Tab>
 									))}
 								</Tabs.List>
-								{analysisData?.section?.map((section) => (
+								{section?.map((section) => (
 									<Tabs.Panel
 										key={section.sectionName}
 										value={section.sectionName}
 									>
-										<div className="flex justify-center">
-											<div>
-												<RingProgress
-													size={120}
-													thickness={10}
-													label={
-														(section.question.reduce(
-															(sum, i) => sum + i.timeTaken,
-															0
-														) || 0) + "s"
-													}
-													sections={[{ value: 100, color: "#8884d8" }]}
-												/>
-												<p>Total Time Taken</p>
-											</div>
-											<div>
-												<RingProgress
-													size={120}
-													thickness={10}
-													label={
-														(section.question
-															.filter((i) => i.answerStatus === "C")
-															.reduce((sum, i) => sum + i.timeTaken, 0) || 0) +
-														"s"
-													}
-													sections={[{ value: 100, color: "#8884d8" }]}
-												/>
-												<p>Correct Answers</p>
-											</div>
-											<div>
-												<RingProgress
-													size={120}
-													thickness={10}
-													label={
-														(section.question
-															.filter((i) => i.answerStatus === "W")
-															.reduce((sum, i) => sum + i.timeTaken, 0) || 0) +
-														"s"
-													}
-													sections={[{ value: 100, color: "#8884d8" }]}
-												/>
-												<p>Incorrect Answers</p>
-											</div>
-											<div>
-												<RingProgress
-													size={120}
-													thickness={10}
-													label={
-														(section.question
-															.filter((i) => i.usersAnswer === -1)
-															.reduce((sum, i) => sum + i.timeTaken, 0) || 0) +
-														"s"
-													}
-													sections={[{ value: 100, color: "#8884d8" }]}
-												/>
-												<p>Unanswered</p>
-											</div>
+										<div className="flex">
+											{[...Array(section?.QuestionList.length).keys()].map(
+												(i) => (
+													<div
+														onClick={() => {
+															setQuestionIndex(i);
+															openModal();
+														}}
+														className={`flex h-10 w-10 rounded-full bg-blue-400 hover:bg-blue-500 transition cursor-pointer text-white items-center justify-center mx-2 mt-4`}
+													>
+														<p className="font-bold">{i + 1}</p>
+													</div>
+												)
+											)}
 										</div>
 									</Tabs.Panel>
 								))}
 							</Tabs>
 						</div>
-						<div className="mt-10">
-							<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
-								<div className="flex items-center">
-									<div className="h-5 w-5 bg-[#8884d8]"></div>
-									<p className="ml-2">You</p>
-								</div>
-								<div className="flex items-center">
-									<div className="h-5 w-5 bg-[#82ca9d]"></div>
-									<p className="ml-2">Topper</p>
-								</div>
+					</div>
+				)}
+				{activeTimeManagmentTab && (
+					<div className="mt-14 bg-gray-100 py-5">
+						<p className="text-2xl text-left font-bold ml-10 pt-4 text-gray-700">
+							Know your Time Management
+						</p>
+						<div className="flex items-center justify-around">
+							<div className="w-1/3 ml-10">
+								<Tabs
+									value={activeTimeManagmentTab}
+									onTabChange={setActiveTimeManagmentTab}
+								>
+									<Tabs.List>
+										{analysisData?.section?.map((section) => (
+											<Tabs.Tab
+												key={section.sectionName}
+												value={section.sectionName}
+											>
+												{section.sectionName}
+											</Tabs.Tab>
+										))}
+									</Tabs.List>
+									{analysisData?.section?.map((section) => (
+										<Tabs.Panel
+											key={section.sectionName}
+											value={section.sectionName}
+										>
+											<div className="flex justify-center">
+												<div>
+													<RingProgress
+														size={120}
+														thickness={10}
+														label={
+															(section.question.reduce(
+																(sum, i) => sum + i.timeTaken,
+																0
+															) || 0) + "s"
+														}
+														sections={[{ value: 100, color: "#8884d8" }]}
+													/>
+													<p>Total Time Taken</p>
+												</div>
+												<div>
+													<RingProgress
+														size={120}
+														thickness={10}
+														label={
+															(section.question
+																.filter((i) => i.answerStatus === "C")
+																.reduce((sum, i) => sum + i.timeTaken, 0) ||
+																0) + "s"
+														}
+														sections={[{ value: 100, color: "#8884d8" }]}
+													/>
+													<p>Correct Answers</p>
+												</div>
+												<div>
+													<RingProgress
+														size={120}
+														thickness={10}
+														label={
+															(section.question
+																.filter((i) => i.answerStatus === "W")
+																.reduce((sum, i) => sum + i.timeTaken, 0) ||
+																0) + "s"
+														}
+														sections={[{ value: 100, color: "#8884d8" }]}
+													/>
+													<p>Incorrect Answers</p>
+												</div>
+												<div>
+													<RingProgress
+														size={120}
+														thickness={10}
+														label={
+															(section.question
+																.filter((i) => i.usersAnswer === -1)
+																.reduce((sum, i) => sum + i.timeTaken, 0) ||
+																0) + "s"
+														}
+														sections={[{ value: 100, color: "#8884d8" }]}
+													/>
+													<p>Unanswered</p>
+												</div>
+											</div>
+										</Tabs.Panel>
+									))}
+								</Tabs>
 							</div>
-							{/* <ResponsiveContainer width="100%" height={200}> */}
-							<BarChart
-								width={400}
-								height={200}
-								data={[
-									{
-										name: "Your Accuracy",
-										accuracy: performance?.accuracy,
-									},
-									{
-										name: "Topper Accuracy",
-										topperAccuracy: topperPerformance?.accuracy,
-									},
-								]}
-							>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="name" />
-								<YAxis />
-								{/* <Tooltip /> */}
-								<Bar dataKey="accuracy" fill="#8884d8" />
-								<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-							</BarChart>
-							{/* </ResponsiveContainer> */}
-						</div>
-						<div className="mt-10">
-							<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
-								<div className="flex items-center">
-									<div className="h-5 w-5 bg-[#8884d8]"></div>
-									<p className="ml-2">You</p>
+							<div className="mt-10">
+								<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
+									<div className="flex items-center">
+										<div className="h-5 w-5 bg-[#8884d8]"></div>
+										<p className="ml-2">You</p>
+									</div>
+									<div className="flex items-center">
+										<div className="h-5 w-5 bg-[#82ca9d]"></div>
+										<p className="ml-2">Topper</p>
+									</div>
 								</div>
-								<div className="flex items-center">
-									<div className="h-5 w-5 bg-[#82ca9d]"></div>
-									<p className="ml-2">Topper</p>
-								</div>
+								{/* <ResponsiveContainer width="100%" height={200}> */}
+								<BarChart
+									width={400}
+									height={200}
+									data={[
+										{
+											name: "Your Accuracy",
+											accuracy: performance?.accuracy,
+										},
+										{
+											name: "Topper Accuracy",
+											topperAccuracy: topperPerformance?.accuracy,
+										},
+									]}
+								>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="name" />
+									<YAxis />
+									{/* <Tooltip /> */}
+									<Bar dataKey="accuracy" fill="#8884d8" />
+									<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+								</BarChart>
+								{/* </ResponsiveContainer> */}
 							</div>
-							<BarChart
-								width={400}
-								height={200}
-								data={[
-									{
-										name: "Your Time",
-										accuracy:
-											(analysisData?.section &&
-												analysisData?.section[0].question.reduce(
-													(sum, i) => sum + i.timeTaken,
-													0
-												)) ||
-											0,
-									},
-									{
-										name: "Topper Time",
-										topperAccuracy:
-											(topperAnalysisData?.section &&
-												topperAnalysisData?.section[0].question.reduce(
-													(sum, i) => sum + i.timeTaken,
-													0
-												)) ||
-											0,
-									},
-								]}
-							>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="name" />
-								<YAxis />
-								{/* <Tooltip /> */}
-								<Bar dataKey="accuracy" fill="#8884d8" />
-								<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-							</BarChart>
+							<div className="mt-10">
+								<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
+									<div className="flex items-center">
+										<div className="h-5 w-5 bg-[#8884d8]"></div>
+										<p className="ml-2">You</p>
+									</div>
+									<div className="flex items-center">
+										<div className="h-5 w-5 bg-[#82ca9d]"></div>
+										<p className="ml-2">Topper</p>
+									</div>
+								</div>
+								<BarChart
+									width={400}
+									height={200}
+									data={[
+										{
+											name: "Your Time",
+											accuracy:
+												(analysisData?.section &&
+													analysisData?.section[0].question.reduce(
+														(sum, i) => sum + i.timeTaken,
+														0
+													)) ||
+												0,
+										},
+										{
+											name: "Topper Time",
+											topperAccuracy:
+												(topperAnalysisData?.section &&
+													topperAnalysisData?.section[0].question.reduce(
+														(sum, i) => sum + i.timeTaken,
+														0
+													)) ||
+												0,
+										},
+									]}
+								>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="name" />
+									<YAxis />
+									{/* <Tooltip /> */}
+									<Bar dataKey="accuracy" fill="#8884d8" />
+									<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+								</BarChart>
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 				<div className="mt-10">
 					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
 						Compare with Topper
