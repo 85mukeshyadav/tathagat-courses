@@ -18,6 +18,7 @@ import MyCourses from "./components/Course/myCourses";
 import ExamFinished from "./components/ExamFinished";
 import Homepage from "./components/Homepage";
 import PaymentSuccess from "./components/PaymentSuccess";
+import Profile from "./components/Profile";
 
 /**
  * Routes component containing routes for the whole application
@@ -46,7 +47,7 @@ const Rout = (props) => (
 		<Route exact path="/ssologin/:token/:user" element={<Login />} />
 		<Route exact path="/exam-finished" element={<ExamFinished />} />
 		<Route exact path="/payment-success" element={<PaymentSuccess />} />
-		{/* <Navigate exacts from='/' to='/login' /> */}
+		<Route exact path="/profile" element={<Profile />} />
 		<Route exact path="*" element={<Page404 />} />
 	</Routes>
 );
