@@ -66,7 +66,7 @@ function App() {
 							</Router>
 						</hideNavContext.Provider>
 					</AuthContext.Provider>
-					<ToastContainer />
+					<ToastContainer limit={1} />
 				</div>
 			</ModalsProvider>
 		</MantineProvider>

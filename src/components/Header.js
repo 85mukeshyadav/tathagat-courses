@@ -1,10 +1,13 @@
 //import liraries
+import { Avatar } from "@mantine/core";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthCntx";
+import useUserStore from "../store/useUserStore";
 
 // create a component
 const Header = () => {
+	const { user } = useUserStore();
 	const { isAuth, setAuth } = useContext(AuthContext);
 
 	const currentRoute = window.location.pathname;
@@ -135,23 +138,35 @@ const Header = () => {
                                 <Link to={ () => false } className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-0">Your Profile</Link>
                                 <Link to={ () => false } className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1">Settings</Link> */}
 						{isAuth ? (
-							<Link
-								style={{ cursor: "pointer" }}
-								onClick={() => {
-									localStorage.clear();
-									setAuth(false);
-									window.open(
-										`${process.env.REACT_APP_SSO_URL}/simplesso/weblogout?serviceURL=${process.env.REACT_APP_REDIRECT_URL}`
-									);
-								}}
-								to=""
-								className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-								role="menuitem"
-								tabIndex="-1"
-								id="user-menu-item-2"
-							>
-								Sign out
-							</Link>
+							<>
+								<Avatar
+									className="mr-6"
+									component={Link}
+									to="/profile"
+									variant="filled"
+									size="md"
+									radius="xl"
+									color="dark"
+									src={process.env.REACT_APP_API + "/" + user.profile}
+								/>
+								<Link
+									style={{ cursor: "pointer" }}
+									onClick={() => {
+										localStorage.clear();
+										setAuth(false);
+										window.open(
+											`${process.env.REACT_APP_SSO_URL}/simplesso/weblogout?serviceURL=${process.env.REACT_APP_REDIRECT_URL}`
+										);
+									}}
+									to=""
+									className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+									role="menuitem"
+									tabIndex="-1"
+									id="user-menu-item-2"
+								>
+									Sign out
+								</Link>
+							</>
 						) : null}
 						{/* </div>
                         </div> */}
