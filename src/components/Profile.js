@@ -94,6 +94,7 @@ const Profile = () => {
 		if (res.ok) {
 			console.log(res.data);
 			setValue("name", res.data.data?.full_name);
+			setValue("email", res.data.data?.personal_email);
 			setValue("phoneNumber", res.data.data?.mobileNumber);
 			setValue("address", res.data.data?.address);
 			setProfilePhoto(process.env.REACT_APP_API + "/" + res.data.data?.profile);
