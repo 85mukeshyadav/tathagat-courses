@@ -1,33 +1,30 @@
 import { Button, TextInput } from "@mantine/core";
-import React, { useState } from "react";
+import clsx from "clsx";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { BiPencil } from "react-icons/bi";
 import { FaRegUserCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
+
 import apiClient from "../api/apiClient";
 import useUserStore from "../store/useUserStore";
 import Loader from "./Loader";
 
 const Profile = () => {
 	const { setUser } = useUserStore();
-	const [name, setName] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");
-	const [address, setAddress] = useState("");
+	const { control, handleSubmit, formState, setValue } = useForm({
+		defaultValues: {
+			name: "",
+			email: "",
+			phoneNumber: "",
+			address: "",
+		},
+	});
+
+	const [edit, setEdit] = useState(false);
 	const [profilePhoto, setProfilePhoto] = useState("");
 	const [image, setImage] = useState(null);
-
 	const [loading, setLoading] = useState(false);
-	const [profileLoading, setProfileLoading] = useState(false);
-
-	const handleNameChange = (event) => {
-		setName(event.target.value);
-	};
-
-	const handlePhoneNumberChange = (event) => {
-		setPhoneNumber(event.target.value);
-	};
-
-	const handleAddressChange = (event) => {
-		setAddress(event.target.value);
-	};
 
 	const handleProfilePhotoChange = (event) => {
 		if (
@@ -46,8 +43,9 @@ const Profile = () => {
 		setImage(event.target.files[0]);
 	};
 
-	const handleSaveChanges = async () => {
-		if (!name || !phoneNumber) {
+	const handleSaveChanges = async (data) => {
+		const { name, email, phoneNumber, address } = data;
+		if (!name || !phoneNumber || !email) {
 			toast.error("Please fill in the required fields.", {
 				position: "bottom-center",
 				autoClose: 1000,
@@ -55,9 +53,9 @@ const Profile = () => {
 			});
 			return;
 		}
-		setLoading(true);
 		const formData = new FormData();
 		formData.append("full_name", name);
+		formData.append("personal_email", email);
 		formData.append("mobileNumber", phoneNumber);
 		formData.append("address", address);
 		formData.append("img", image);
@@ -83,21 +81,21 @@ const Profile = () => {
 				address: address,
 				profile: res.data.data?.user?.profile,
 			});
+			setEdit(false);
 		} else {
 			console.log(res.data);
 			toast.error("There was an error updating your profile");
 		}
-		setLoading(false);
 	};
 
 	const getUserProfile = async () => {
-		setProfileLoading(true);
+		setLoading(true);
 		const res = await apiClient.get(`/profile/${localStorage.getItem("user")}`);
 		if (res.ok) {
 			console.log(res.data);
-			setName(res.data.data?.full_name);
-			setPhoneNumber(res.data.data?.mobileNumber);
-			setAddress(res.data.data?.address);
+			setValue("name", res.data.data?.full_name);
+			setValue("phoneNumber", res.data.data?.mobileNumber);
+			setValue("address", res.data.data?.address);
 			setProfilePhoto(process.env.REACT_APP_API + "/" + res.data.data?.profile);
 			setUser({
 				name: res.data.data?.full_name,
@@ -109,18 +107,25 @@ const Profile = () => {
 		} else {
 			console.log(res.data);
 		}
-		setProfileLoading(false);
+		setLoading(false);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		getUserProfile();
 	}, []);
 
-	if (profileLoading) return <Loader />;
+	if (loading) return <Loader />;
 
 	return (
 		<div className="max-w-md h-full mx-auto px-6 py-10 my-10 bg-white rounded-lg shadow-lg">
-			<h1 className="text-4xl text-gray-700 font-bold mb-10">Profile</h1>
+			<h1 className="text-4xl text-gray-700 font-bold mb-2">Profile</h1>
+			<div
+				className="mb-9 cursor-pointer text-blue-500 hover:underline flex items-center justify-center"
+				onClick={() => setEdit(!edit)}
+			>
+				<BiPencil className="inline-block mr-1" />
+				<p>{edit ? "Cancel" : "Edit Profile"}</p>
+			</div>
 			<div className="mb-4">
 				{profilePhoto ? (
 					<img
@@ -139,7 +144,9 @@ const Profile = () => {
 					<div className="mb-2">
 						<label
 							htmlFor="photo"
-							className="cursor-pointer text-blue-500 hover:underline"
+							className={clsx("cursor-pointer text-blue-500 hover:underline", {
+								hidden: !edit,
+							})}
 						>
 							Change Profile Photo
 						</label>
@@ -154,37 +161,113 @@ const Profile = () => {
 			</div>
 			<div className="mb-6 text-left">
 				<TextInput
-					label="Name"
-					id="name"
-					value={name}
-					onChange={handleNameChange}
-					placeholder="Name"
-					withAsterisk
+					label="Tathagat ID"
+					id="tathagatid"
+					value={localStorage.getItem("user")}
+					disabled
 				/>
 			</div>
 			<div className="mb-6 text-left">
-				<TextInput
-					label="Phone Number"
-					id="phone"
-					value={phoneNumber}
-					onChange={handlePhoneNumberChange}
-					placeholder="Phone Number"
-					withAsterisk
+				<Controller
+					name="name"
+					control={control}
+					render={({ field }) => (
+						<TextInput
+							label="Name"
+							id="name"
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Name"
+							withAsterisk
+							disabled={!edit}
+						/>
+					)}
 				/>
 			</div>
+			<div
+				className={clsx("text-left", formState.errors.email ? "mb-1" : "mb-6")}
+			>
+				<Controller
+					name="email"
+					control={control}
+					rules={{
+						pattern: {
+							value: /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/i,
+							message: "Invalid Email",
+						},
+					}}
+					render={({ field }) => (
+						<TextInput
+							label="Email"
+							id="email"
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Email"
+							withAsterisk
+							disabled={!edit}
+						/>
+					)}
+				/>
+			</div>
+			{formState.errors.email && (
+				<div className="mb-4 text-sm text-left text-red-500">
+					{formState.errors.email.message}
+				</div>
+			)}
+			<div
+				className={clsx(
+					"text-left",
+					formState.errors.phoneNumber ? "mb-1" : "mb-6"
+				)}
+			>
+				<Controller
+					name="phoneNumber"
+					control={control}
+					rules={{
+						pattern: {
+							value: /^[6-9]{1}[0-9]{9}$/,
+							message: "Invalid Phone Number",
+						},
+					}}
+					render={({ field }) => (
+						<TextInput
+							label="Phone Number"
+							id="phoneNumber"
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Phone Number"
+							withAsterisk
+							disabled={!edit}
+						/>
+					)}
+				/>
+			</div>
+			{formState.errors.phoneNumber && (
+				<div className="mb-4 text-sm text-left text-red-500">
+					{formState.errors.phoneNumber.message}
+				</div>
+			)}
 			<div className="mb-4 text-left">
-				<TextInput
-					label="Address"
-					id="address"
-					value={address}
-					onChange={handleAddressChange}
-					placeholder="Address"
+				<Controller
+					name="address"
+					control={control}
+					render={({ field }) => (
+						<TextInput
+							label="Address"
+							id="address"
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Address"
+							disabled={!edit}
+						/>
+					)}
 				/>
 			</div>
 			<Button
-				loading={loading}
+				loading={formState.isSubmitting}
 				className="bg-blue-500 mt-4"
-				onClick={handleSaveChanges}
+				onClick={handleSubmit(handleSaveChanges)}
+				disabled={!edit}
 			>
 				Save Changes
 			</Button>
