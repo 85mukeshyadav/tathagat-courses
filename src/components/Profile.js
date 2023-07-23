@@ -75,10 +75,10 @@ const Profile = () => {
 				autoClose: 1000,
 			});
 			setUser({
-				name: name,
-				email: localStorage.getItem("user"),
-				mobile: phoneNumber,
-				address: address,
+				name: res.data.data?.user?.full_name,
+				email: res.data.data?.user?.personal_email,
+				mobile: res.data.data?.user?.mobileNumber,
+				address: res.data.data?.user?.address,
 				profile: res.data.data?.user?.profile,
 			});
 			setEdit(false);
