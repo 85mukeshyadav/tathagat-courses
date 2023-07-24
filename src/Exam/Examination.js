@@ -1064,7 +1064,7 @@ const Examination = React.memo(() => {
 				>
 					<p className="text-2xl font-semibold mb-5 text-red-500">
 						Note that the timer is running. Kindly close the question paper to
-						attends the questions.
+						attend the questions.
 					</p>
 					<p className="text-2xl font-bold text-gray-700">Question Paper</p>
 					<div>
@@ -1093,8 +1093,8 @@ const Examination = React.memo(() => {
 					yOffset="1vh"
 				>
 					<p className="text-2xl font-semibold mb-6 text-red-500">
-						Note that the timer is running. Kindly close the question paper to
-						attends the questions.
+						Note that the timer is running. Kindly close the instructions to
+						attend the questions.
 					</p>
 					{getExamLevel == 4 || getExamLevel == 3 || getExamLevel == 2 ? (
 						<embed
