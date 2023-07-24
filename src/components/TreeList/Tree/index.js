@@ -58,6 +58,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 					/>
 				</ScrollArea>
 				<Checkbox
+					className="mt-4"
 					checked={checked}
 					onChange={(event) => setChecked(event.currentTarget.checked)}
 					label="I have read and understood the instructions"
@@ -151,9 +152,11 @@ const TreeNode = ({ node, setNodeClick }) => {
 											setChecked(false);
 										}}
 									>
-										<button className="items-center w-32 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50">
-											<i className="fas fa-play"></i> {"  "}
-											Start Test
+										<button className="items-center w-34 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50">
+											<i className="fas fa-play mr-1"></i> {"  "}
+											{node.id === localStorage.getItem("testid")
+												? "Resume Test"
+												: "Start Test"}
 										</button>{" "}
 									</Link>
 								)}

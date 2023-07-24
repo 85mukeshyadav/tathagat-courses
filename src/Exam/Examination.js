@@ -1,12 +1,14 @@
+import { Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Cookies from "js-cookie";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import moment from "moment";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { FaEquals, FaFile, FaInfo } from "react-icons/fa";
-import Modal from "react-modal";
+import { FaEquals, FaFile, FaInfo, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+
 import { userInfo } from "../api/checkAuth";
 import Answered from "../assets/Answered.png";
 import NewCandidateImage from "../assets/NewCandidateImage.jpg";
@@ -28,6 +30,7 @@ const customStyles = {
 		bottom: "auto",
 		marginRight: "-50%",
 		transform: "translate(-50%, -50%)",
+		width: "80%",
 	},
 };
 
@@ -58,13 +61,10 @@ function Counter(props) {
 		}
 	}, 1000);
 	const duration = moment.duration(count, "seconds");
-	// console.log(
-	// 	"🚀 ~ file: Examination.js ~ line 26 ~ Counter ~ duration",
-	// 	duration
-	// );
-	const h = duration.hours(); // 20
-	const m = duration.minutes(); // 20
-	const s = duration.seconds();
+
+	const h = duration.hours().toString().padStart(2, "0");
+	const m = duration.minutes().toString().padStart(2, "0");
+	const s = duration.seconds().toString().padStart(2, "0");
 
 	if (s <= 0 && m <= 0 && h <= 0) {
 		// props.changeFinish();
@@ -194,6 +194,15 @@ const Examination = React.memo(() => {
 	const [getFinalSec, setFinalSec] = useState([]);
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
+
+	const [
+		questionPaperOpened,
+		{ open: questionPaperOpen, close: questionPaperClose },
+	] = useDisclosure(false);
+	const [
+		instructionsOpened,
+		{ open: instructionsOpen, close: instructionsClose },
+	] = useDisclosure(false);
 
 	// useUnload(e => {
 	//     if(leaveAlert)
@@ -1030,7 +1039,7 @@ const Examination = React.memo(() => {
                         onResultChange={onResultChange}/>
                     </div> */}
 					<button
-						onClick={setModalIsOpenToTrue}
+						onClick={questionPaperOpen}
 						className="flex items-center text-gray-50 mr-6 mb-4 sm:mt-4"
 					>
 						<div className="bg-green-400 p-2 rounded-full mr-2">
@@ -1039,7 +1048,7 @@ const Examination = React.memo(() => {
 						Question paper
 					</button>
 					<button
-						onClick={setModalInsOpenToTrue}
+						onClick={instructionsOpen}
 						className="flex items-center text-gray-50 mb-4 sm:mt-4"
 					>
 						<div className="bg-blue-400 p-2 rounded-full mr-2">
@@ -1048,15 +1057,23 @@ const Examination = React.memo(() => {
 						View Instruction
 					</button>
 				</div>
-				<Modal isOpen={modalIsOpen} style={customStyles} ariaHideApp={false}>
-					<button onClick={setModalIsOpenToFalse}>x</button>
-					<div class="quesHeight">
+				<Modal
+					opened={questionPaperOpened}
+					onClose={questionPaperClose}
+					size="80%"
+				>
+					<p className="text-2xl font-semibold mb-5 text-red-500">
+						Note that the timer is running. Kindly close the question paper to
+						attend the questions.
+					</p>
+					<p className="text-2xl font-bold text-gray-700">Question Paper</p>
+					<div>
 						{Question.map((allQues, i) => (
-							<div key={i}>
-								<span>Q{i + 1}</span>
+							<div key={i} className="flex items-center">
+								<span className="font-bold text-gray-700">Q{i + 1}.</span>
 								<p
 									key={i}
-									className="p-4"
+									className="px-2 py-2 font-semibold text-gray-700"
 									dangerouslySetInnerHTML={{
 										__html:
 											allQues.questionType == "paragraph"
@@ -1069,28 +1086,36 @@ const Examination = React.memo(() => {
 					</div>
 				</Modal>
 
-				<Modal isOpen={modalInsOpen} style={customStyles} ariaHideApp={false}>
-					<button onClick={setModalInsOpenToFalse}>x</button>
+				<Modal
+					opened={instructionsOpened}
+					onClose={instructionsClose}
+					size="80%"
+					yOffset="1vh"
+				>
+					<p className="text-2xl font-semibold mb-6 text-red-500">
+						Note that the timer is running. Kindly close the instructions to
+						attend the questions.
+					</p>
 					{getExamLevel == 4 || getExamLevel == 3 || getExamLevel == 2 ? (
 						<embed
 							src={pms}
 							type="application/pdf"
-							height="700px"
-							width={window.innerWidth > 600 ? "600px" : "350px"}
+							height={window.innerHeight - 200}
+							width="100%"
 						></embed>
 					) : getExamLevel == 1 ? (
 						<embed
 							src={fullLength}
 							type="application/pdf"
-							height="700px"
-							width={window.innerWidth > 600 ? "600px" : "350px"}
+							height={window.innerHeight - 200}
+							width="100%"
 						></embed>
 					) : (
 						<embed
 							src={copyCat}
 							type="application/pdf"
-							height="700px"
-							width={window.innerWidth > 600 ? "600px" : "350px"}
+							height={window.innerHeight - 200}
+							width="100%"
 						></embed>
 					)}
 				</Modal>
@@ -1099,8 +1124,8 @@ const Examination = React.memo(() => {
 			{isOpen ? (
 				<div className="popup-box">
 					<div className="box">
-						<span className="close-icon" onClick={togglePopup}>
-							x
+						<span onClick={togglePopup} className="p-1 cursor-pointer">
+							<FaTimes className="text-gray-500 hover:text-gray-600 transition" />
 						</span>
 						<Calculator />
 					</div>
@@ -1167,6 +1192,7 @@ const Examination = React.memo(() => {
 									key={i}
 									onClick={() => {
 										if (selectedSectionnumber < i) setAlertbox(false);
+										setselectedcategorynumber(i);
 									}}
 									className={`flex items-center border-2 ml-2 mt-2 p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm ${
 										selectedSectionnumber == i ? "bg-blue-400" : "bg-gray-100"
@@ -1175,7 +1201,7 @@ const Examination = React.memo(() => {
 											? "text-gray-50"
 											: "text-gray-500"
 									} font-semibold`}
-									disabled={selectedSectionnumber != i ? true : false}
+									// disabled={selectedSectionnumber != i ? true : false}
 								>
 									{res.sectionName}
 									<div key={i} className="bg-blue-400 p-1 rounded-full ml-2">
@@ -1206,9 +1232,12 @@ const Examination = React.memo(() => {
 						</div>
 						<p className="py-2 font-semibold text-sm sm:text-lg mr-2 text-left">
 							Marks for Correct Answer:{" "}
-							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
+							<span className="text-green-600">
+								{data[selectedSectionnumber]?.positiveMarks || ""}
+							</span>{" "}
+							| Negative Marks:{" "}
 							<span className="text-red-500">
-								{data[selectedSectionnumber]?.negativeMarks}
+								{Math.abs(data[selectedSectionnumber]?.negativeMarks) || ""}
 							</span>
 						</p>
 					</div>
@@ -1785,9 +1814,15 @@ const Examination = React.memo(() => {
 											: 0;
 								}
 								newArry[currentQuesIndex]["isClicked"] = true;
+
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 								}
+
+								if (currentQuesIndex + 1 == Question.length) {
+									setCurrentQuesIndex(0);
+								}
+
 								setQuesAns(newArry);
 								localStorage.setItem(
 									"savedSession",
@@ -1913,6 +1948,11 @@ const Examination = React.memo(() => {
 								if (currentQuesIndex + 1 < Question.length) {
 									setCurrentQuesIndex(currentQuesIndex + 1);
 								}
+
+								if (currentQuesIndex + 1 == Question.length) {
+									setCurrentQuesIndex(0);
+								}
+
 								const testid = localStorage.getItem("testid");
 								localStorage.setItem(
 									"lastQuesAttempt",
