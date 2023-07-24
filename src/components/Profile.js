@@ -100,7 +100,7 @@ const Profile = () => {
 			setProfilePhoto(process.env.REACT_APP_API + "/" + res.data.data?.profile);
 			setUser({
 				name: res.data.data?.full_name,
-				email: localStorage.getItem("user"),
+				email: res.data.data?.personal_email,
 				mobile: res.data.data?.mobileNumber,
 				address: res.data.data?.address,
 				profile: res.data.data?.profile,
