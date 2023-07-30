@@ -1,5 +1,6 @@
 import { Tooltip } from "@mantine/core";
 import axios from "axios";
+import clsx from "clsx";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { FaBookmark, FaInfo, FaRegBookmark, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -250,8 +251,7 @@ const Bookmarks = React.memo(() => {
 			console.log(resp.data);
 			setViewSolution(resp.data["explantation"]);
 		}
-
-		setViewSection(true);
+		setViewSection(!getViewSection);
 	};
 
 	const getBookmarks = async () => {
@@ -323,10 +323,6 @@ const Bookmarks = React.memo(() => {
 	return (
 		<div className="h-full overflow-hidden">
 			<Header />
-			{/* <nav className="block justify-between bg-slate-600 p-2 py-8">
-				<div className="text-yellow-400 font-bold text-2xl">Bookmarks</div>
-			</nav> */}
-
 			<div className="flex flex-row h-full mt-4">
 				{/* left aside */}
 				<div className="w-1/3 h-[86vh] border-r border-gray-200">
@@ -366,6 +362,7 @@ const Bookmarks = React.memo(() => {
 													res.questions_info.questionId
 											);
 											setCurrentQuesIndex(filteredIndex);
+											setViewSection(false);
 										}}
 									>
 										<div className="flex flex-row">
@@ -424,8 +421,8 @@ const Bookmarks = React.memo(() => {
 										<button
 											key={i}
 											onClick={() => {
-												if (selectedSectionnumber < i) setAlertbox(true);
 												setViewSection(false);
+												if (selectedSectionnumber < i) setAlertbox(true);
 											}}
 											className={`flex items-center border-2 ml-2 mt-2 p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm ${
 												selectedSectionnumber == i
@@ -595,8 +592,11 @@ const Bookmarks = React.memo(() => {
 																		getSolution(res.questions_info)
 																	}
 																>
-																	{" "}
-																	View Solution{" "}
+																	{getViewSection ? (
+																		<p>Hide Solution</p>
+																	) : (
+																		<p>View Solution</p>
+																	)}
 																</button>
 																{getViewSection ? (
 																	getViewSolution &&
@@ -704,24 +704,28 @@ const Bookmarks = React.memo(() => {
 														style={{ marginTop: "10px", minHeight: "200px" }}
 													>
 														<button
-															className="flex items-center px-4 py-2 rounded-sm font-semibold bg-blue-400 text-gray-50 ml-4"
+															className="flex items-center px-4 py-2 rounded-sm font-semibold bg-blue-400 hover:bg-blue-500 transition text-gray-50 ml-4"
 															name="vieSec"
 															onClick={() => getSolution(res.questions_info)}
 														>
-															View Solution
+															{getViewSection ? (
+																<p>Hide Solution</p>
+															) : (
+																<p>View Solution</p>
+															)}
 														</button>
 														{getViewSection ? (
 															getViewSolution &&
 															typeof getViewSolution == "object" ? (
 																<div
-																	className="mb-8"
+																	className="mt-5 mb-8 ml-5"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution.q,
 																	}}
 																></div>
 															) : (
 																<div
-																	className="mb-8"
+																	className="mt-5 mb-8 ml-5"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution,
 																	}}
@@ -747,10 +751,12 @@ const Bookmarks = React.memo(() => {
 											setCurrentQuesIndex(currentQuesIndex - 1);
 										}
 									}}
-									className={`bg-blue-400 hover:bg-blue-500 text-white rounded-sm px-4 py-2 ${
-										currentQuesIndex == 0 &&
-										"bg-gray-400 hover:bg-gray-400 cursor-default"
-									}`}
+									className={clsx(
+										"bg-blue-400 hover:bg-blue-500 text-white font-semibold rounded-sm px-4 py-2",
+										currentQuesIndex == 0
+											? "bg-gray-400 hover:bg-gray-400 cursor-default"
+											: "hover:bg-blue-500"
+									)}
 								>
 									Previous
 								</button>
@@ -761,10 +767,12 @@ const Bookmarks = React.memo(() => {
 											setCurrentQuesIndex(currentQuesIndex + 1);
 										}
 									}}
-									className={`bg-blue-400 hover:bg-blue-500 text-white rounded-sm px-4 py-2 ${
-										currentQuesIndex == Question.length - 1 &&
-										"bg-gray-400 hover:bg-gray-400 cursor-default"
-									}`}
+									className={clsx(
+										"bg-blue-400 text-white font-semibold rounded-sm px-4 py-2",
+										currentQuesIndex === Question.length - 1
+											? "bg-gray-400 hover:bg-gray-400 cursor-default"
+											: "hover:bg-blue-500"
+									)}
 								>
 									Next
 								</button>

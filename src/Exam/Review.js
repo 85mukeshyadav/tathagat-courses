@@ -389,7 +389,14 @@ const Review = React.memo(() => {
 										Report
 									</button>
 								</Tooltip>
-								<Tooltip label="Add this question to bookmarks">
+								<Tooltip
+									label={
+										(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
+										bookmarks[currentQuesIndex]
+											? "Remove this question from bookmarks"
+											: "Add this question to bookmarks"
+									}
+								>
 									<button
 										className="flex items-center text-blue-500 text-sm sm:text-base font-semibold"
 										onClick={() => {
@@ -411,11 +418,16 @@ const Review = React.memo(() => {
 									>
 										{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
 										bookmarks[currentQuesIndex] ? (
-											<FaBookmark className="text-blue-400 mr-1" />
+											<>
+												<FaBookmark className="text-blue-400 mr-1" />
+												<p>Bookmarked</p>
+											</>
 										) : (
-											<FaRegBookmark className="text-blue-500 mr-1" />
+											<>
+												<FaRegBookmark className="text-blue-500 mr-1" />
+												<p>Bookmark</p>
+											</>
 										)}
-										Bookmark
 									</button>
 								</Tooltip>
 							</div>
