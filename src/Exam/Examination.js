@@ -1253,7 +1253,7 @@ const Examination = React.memo(() => {
 									<>
 										<div className="prow w-full" style={{ height: "100%" }}>
 											<div
-												className="pcolumn"
+												className="pcolumn overflow-y-auto"
 												style={{ borderRight: "1px solid grey" }}
 											>
 												<p
@@ -1262,7 +1262,7 @@ const Examination = React.memo(() => {
 													}}
 												></p>
 											</div>
-											<div className="pcolumn">
+											<div className="pcolumn overflow-y-auto">
 												<>
 													<p
 														className="p-4"
@@ -1784,34 +1784,23 @@ const Examination = React.memo(() => {
 								// );
 								// setTimeSpent(count);
 								newArry[currentQuesIndex]["isClicked"] = true;
+
 								if (newArry[currentQuesIndex]["quesAns"] == -1) {
 									newArry[currentQuesIndex]["state"] = 4;
 									qu[currentQuesIndex]["state"] = 4;
+
 									newObj["markForReview"][currentQuesIndex] = 1;
+									newObj["bothAnsReview"][currentQuesIndex] = 0;
 								} else {
 									newArry[currentQuesIndex]["state"] = 5;
 									qu[currentQuesIndex]["state"] = 5;
 
-									newObj["answered"][currentQuesIndex] =
-										quesAttempted.testid == testid
-											? quesAttempted?.objArray?.answered[currentQuesIndex]
-											: 1;
-									newObj["notAnswered"][currentQuesIndex] =
-										quesAttempted.testid == testid
-											? quesAttempted?.objArray?.notAnswered[currentQuesIndex]
-											: 0;
-									newObj["notVisited"][currentQuesIndex] =
-										quesAttempted.testid == testid
-											? quesAttempted?.objArray?.notVisited[currentQuesIndex]
-											: 0;
-									newObj["bothAnsReview"][currentQuesIndex] =
-										quesAttempted.testid == testid
-											? quesAttempted?.objArray?.bothAnsReview[currentQuesIndex]
-											: 0;
-									newObj["markForReview"][currentQuesIndex] =
-										quesAttempted.testid == testid
-											? quesAttempted?.objArray?.markForReview[currentQuesIndex]
-											: 0;
+									newObj["answered"][currentQuesIndex] = 1;
+									newObj["notAnswered"][currentQuesIndex] = 0;
+									newObj["notVisited"][currentQuesIndex] = 0;
+
+									newObj["markForReview"][currentQuesIndex] = 0;
+									newObj["bothAnsReview"][currentQuesIndex] = 1;
 								}
 								newArry[currentQuesIndex]["isClicked"] = true;
 
