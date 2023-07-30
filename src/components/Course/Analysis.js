@@ -24,6 +24,7 @@ import {
 	YAxis,
 } from "recharts";
 
+import clsx from "clsx";
 import apiClient from "../../api/apiClient";
 
 require("highcharts/modules/exporting")(Highcharts);
@@ -79,11 +80,10 @@ const Analysis = () => {
 	const [topperAnalysisData, setTopperAnalysisData] = useState({});
 	const [marksDistribution, setMarksDistribution] = useState([]);
 	const [average, setAverage] = useState(0);
-	const [allStudents, setAllStudents] = useState([]);
+	const [leaderboard, setLeaderboard] = useState([]);
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
-	const [questionVisible, setQuestionVisible] = useState(false);
 	const [questionIndex, setQuestionIndex] = useState(0);
 	const [modalIsOpen, setIsOpen] = useState(false);
 	// const [opened, { open, close }] = useDisclosure(false);
@@ -129,7 +129,7 @@ const Analysis = () => {
 		setChartOptions({
 			plotOptions: {
 				series: {
-					color: "#FF0000",
+					color: "#8884d8",
 					dataLabels: {
 						enabled: true,
 						borderRadius: 2,
@@ -161,26 +161,33 @@ const Analysis = () => {
 			setTotalMarks(res.data?.data?.section[0]?.totalMarks);
 			setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 			setTopper(res.data?.data?.topperObject);
+			setLeaderboard(res.data?.data?.leaderBoardList.reverse());
 			const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 			const students = res.data?.data?.AllStudent;
-			setAllStudents(students);
 			const averageScore =
 				students.reduce((sum, i) => sum + i.score, 0) / students.length;
 			setAverage(averageScore);
 			let distribution = [];
 			console.log(markDistribution.marks.endnumber);
-			let j = 0;
 			for (
 				let i = markDistribution.marks.startnumber;
-				i <= markDistribution.marks.endnumber;
+				i < markDistribution.marks.endnumber;
 				i += 5
 			) {
-				const noOfStudents = students.filter(
-					(item) => item.score >= i && item.score <= i + 5
-				).length;
+				// const noOfStudents = students.filter(
+				// 	(item) => item.score >= i && item.score <= i + 5
+				// ).length;
+				const percentageOfStudents =
+					(students.filter((item) => item.score >= i && item.score <= i + 5)
+						.length /
+						students.length) *
+					100;
 				const obj = {
-					marks: i + " to " + (i + 5),
-					noOfStudents: noOfStudents,
+					marks:
+						i === markDistribution.marks.startnumber
+							? i + " to " + (i + 5)
+							: i + 1 + " to " + (i + 5),
+					noOfStudents: percentageOfStudents,
 					youarehere:
 						students.find(
 							(item) => item.userId === localStorage.getItem("user")
@@ -193,7 +200,6 @@ const Analysis = () => {
 							: false,
 				};
 				distribution.push(obj);
-				j++;
 			}
 			console.log(distribution);
 			setMarksDistribution(distribution);
@@ -280,10 +286,7 @@ const Analysis = () => {
 					</div>
 					<div className="flex items-center justify-between">
 						<div className="flex items-center">
-							<div className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center text-white">
-								<p className="font-bold">{questionIndex + 1}</p>
-							</div>
-							<div className="ml-4">
+							<div>
 								<p className="text-lg font-bold text-gray-700">
 									{section[currentSection]?.sectionName}
 								</p>
@@ -300,7 +303,7 @@ const Analysis = () => {
 					className="mt-4 text-lg font-semibold text-gray-700"
 					dangerouslySetInnerHTML={{
 						__html:
-							"Question:-" +
+							`Question ${questionIndex + 1}.` +
 							section[currentSection]?.QuestionList[questionIndex]?.question,
 					}}
 				></div>
@@ -364,7 +367,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700">
-											{performance?.accuracy || "NA"}
+											{performance?.accuracy.toFixed(1) || "NA"}
 										</p>
 										<p className="text-sm font-semibold ml-2 text-gray-400">
 											Accuracy
@@ -415,11 +418,16 @@ const Analysis = () => {
 										{analysisData?.section?.map((item, i) => (
 											<tr key={i}>
 												<td>{item?.sectionName || "NA"}</td>
-												<td>{item?.questionAttempt || "NA"}</td>
+												<td>{item?.answered}</td>
 												<td>{item?.correctAnswers}</td>
 												<td>{item?.wrongAnswers}</td>
-												<td>{item?.unanswered || "NA"}</td>
-												<td>{item?.accuracy || "NA"}</td>
+												<td>{item?.unanswered}</td>
+												<td>
+													{(
+														(item?.correctAnswers / item?.answered) *
+														100
+													).toFixed(1) || "NA"}
+												</td>
 												<td>{item?.score}</td>
 												<td>{item?.rank || "NA"}</td>
 												<td>
@@ -549,8 +557,23 @@ const Analysis = () => {
 
 														{res?.question.map((ques, ind) => (
 															<tr key={`${i}-${ind}`}>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ind + 1}
+																<td className=" flex justify-center items-center">
+																	<div
+																		onClick={() => {
+																			setQuestionIndex(ind);
+																			openModal();
+																		}}
+																		className={clsx(
+																			"flex h-10 w-10 rounded-full transition cursor-pointer text-white font-semibold items-center justify-center",
+																			ques.answerStatus === "C"
+																				? "bg-green-500"
+																				: ques.answerStatus === "W"
+																				? "bg-red-400"
+																				: "bg-gray-400"
+																		)}
+																	>
+																		{ind + 1}
+																	</div>
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{ques.chapterName ? ques.chapterName : "--"}
@@ -625,33 +648,31 @@ const Analysis = () => {
 								Leaderboard
 							</p>
 							<div className="h-[700px] overflow-y-scroll">
-								{allStudents
-									.sort((a, b) => a.score - b.score)
-									.map((student, i) => (
-										<div
-											key={i}
-											className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white mx-5"
-										>
-											<div className="flex items-center w-full">
-												<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
-													<FiUser size={24} color="white" />
-												</div>
-												<div>
-													<p className="text-lg font-semibold text-gray-700">
-														{student.userId}
+								{leaderboard.map((student, i) => (
+									<div
+										key={i}
+										className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white mx-5"
+									>
+										<div className="flex items-center w-full">
+											<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
+												<FiUser size={24} color="white" />
+											</div>
+											<div>
+												<p className="text-lg font-semibold text-gray-700 text-left">
+													{student?.name || "NA"}
+												</p>
+												<div className="flex items-start">
+													<p className="text-sm font-semibold mr-4 text-gray-400">
+														Rank: {i + 1}
 													</p>
-													<div className="flex items-start">
-														<p className="text-sm font-semibold ml-1 mr-4 text-gray-400">
-															Rank: {student.rank}
-														</p>
-														<p className="text-sm font-semibold text-gray-400">
-															Score: {student.score}
-														</p>
-													</div>
+													<p className="text-sm font-semibold text-gray-400">
+														Score: {student?.netScore || "NA"}
+													</p>
 												</div>
 											</div>
 										</div>
-									))}
+									</div>
+								))}
 							</div>
 						</div>
 					</div>
@@ -701,57 +722,6 @@ const Analysis = () => {
 						</BarChart>
 					</ResponsiveContainer>
 				</div>
-				{activeSectionTab && (
-					<div className="my-10">
-						<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
-							Questions List
-						</p>
-						<div className="w-1/2 ml-10">
-							<Tabs
-								value={activeSectionTab}
-								onTabChange={(item) => {
-									setActiveSectionTab(item);
-									setCurrentSection(
-										section.findIndex((i) => i.sectionName === item)
-									);
-								}}
-							>
-								<Tabs.List>
-									{section?.map((section) => (
-										<Tabs.Tab
-											key={section.sectionName}
-											value={section.sectionName}
-										>
-											{section.sectionName}
-										</Tabs.Tab>
-									))}
-								</Tabs.List>
-								{section?.map((section) => (
-									<Tabs.Panel
-										key={section.sectionName}
-										value={section.sectionName}
-									>
-										<div className="flex">
-											{[...Array(section?.QuestionList.length).keys()].map(
-												(i) => (
-													<div
-														onClick={() => {
-															setQuestionIndex(i);
-															openModal();
-														}}
-														className={`flex h-10 w-10 rounded-full bg-blue-400 hover:bg-blue-500 transition cursor-pointer text-white items-center justify-center mx-2 mt-4`}
-													>
-														<p className="font-bold">{i + 1}</p>
-													</div>
-												)
-											)}
-										</div>
-									</Tabs.Panel>
-								))}
-							</Tabs>
-						</div>
-					</div>
-				)}
 				{activeTimeManagmentTab && (
 					<div className="mt-14 bg-gray-100 py-5">
 						<p className="text-2xl text-left font-bold ml-10 pt-4 text-gray-700">
@@ -948,8 +918,8 @@ const Analysis = () => {
 							<tbody>
 								<tr>
 									<td>You</td>
-									<td>{performance?.score || "NA"}</td>
-									<td>{performance?.accuracy || "NA"}</td>
+									<td>{performance?.score}</td>
+									<td>{performance?.accuracy.toFixed(1) || "NA"}</td>
 									<td>
 										{analysisData?.section &&
 											analysisData?.section[0]?.correctAnswers}
@@ -969,7 +939,7 @@ const Analysis = () => {
 								</tr>
 								<tr>
 									<td>Topper</td>
-									<td>{topperPerformance?.score || "NA"}</td>
+									<td>{topperPerformance?.score}</td>
 									<td>{topperPerformance?.accuracy || "NA"}</td>
 									<td>
 										{topperAnalysisData?.section &&
@@ -1004,102 +974,104 @@ const Analysis = () => {
 						</div>
 					</div>
 					<div className="my-5">
-						<LineChart
-							width={window.innerWidth - 50}
-							height={400}
-							data={marksDistribution}
-							margin={{
-								top: 5,
-								right: 30,
-								left: 50,
-								bottom: 20,
-							}}
+						<ResponsiveContainer
+							width={window.innerWidth > 768 ? "95%" : "85%"}
+							height={500}
 						>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="marks">
-								<Label
-									value="Marks"
-									offset={-20}
-									position="insideBottom"
-									style={{
-										fontSize: "1.1rem",
-										fontWeight: "600",
-									}}
-								/>
-							</XAxis>
-							<YAxis>
-								<Label
-									value="Students"
-									angle={-90}
-									offset={-20}
-									position="insideLeft"
-									style={{
-										fontSize: "1.1rem",
-										fontWeight: "600",
-									}}
-								/>
-							</YAxis>
-							<Tooltip
-								formatter={(value) => {
-									return [value, "Students"];
+							<LineChart
+								data={marksDistribution}
+								margin={{
+									top: 5,
+									right: 30,
+									left: 50,
+									bottom: 20,
 								}}
-							/>
-							<Line
-								type="monotone"
-								dataKey="noOfStudents"
-								stroke="#8884d8"
-								strokeWidth={2}
-								activeDot={{ r: 8 }}
-								dot={(props) => {
-									const { payload } = props;
-									if (payload.youarehere) {
-										return (
-											<>
+							>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="marks">
+									<Label
+										value="Marks"
+										offset={-20}
+										position="insideBottom"
+										style={{
+											fontSize: "1rem",
+											fontWeight: "600",
+										}}
+									/>
+								</XAxis>
+								<YAxis>
+									<Label
+										value="Percentage of students"
+										angle={-90}
+										position="insideLeft"
+										style={{
+											fontSize: "1rem",
+											fontWeight: "600",
+										}}
+									/>
+								</YAxis>
+								<Tooltip
+									formatter={(value) => {
+										return [value, "Students"];
+									}}
+								/>
+								<Line
+									type="monotone"
+									dataKey="noOfStudents"
+									stroke="#8884d8"
+									strokeWidth={2}
+									activeDot={{ r: 8 }}
+									dot={(props) => {
+										const { payload } = props;
+										if (payload.youarehere) {
+											return (
+												<>
+													<circle
+														cx={props.cx}
+														cy={props.cy}
+														fill="#F43F5E"
+														r={6}
+														strokeWidth={props.strokeWidth}
+													/>
+													<rect
+														x={props.cx}
+														y={props.cy}
+														width="90"
+														height="25"
+														fill="#F43F5E"
+														stroke="white"
+														strokeWidth="2"
+														rx="2"
+													/>
+													<text
+														x={props.cx}
+														y={props.cy}
+														dx={12}
+														dy={16}
+														fill="#FFF"
+														textAnchor="start"
+														fontWeight={600}
+														fontSize={12}
+													>
+														You're here
+													</text>
+												</>
+											);
+										} else {
+											return (
 												<circle
 													cx={props.cx}
 													cy={props.cy}
-													fill="#F43F5E"
+													fill="#8884d8"
 													r={6}
 													strokeWidth={props.strokeWidth}
 												/>
-												<rect
-													x={props.cx + 10}
-													y={props.cy - 30}
-													width="90"
-													height="25"
-													fill="#F43F5E"
-													stroke="white"
-													strokeWidth="2"
-													rx="2"
-												/>
-												<text
-													x={props.cx}
-													y={props.cy}
-													dx={20}
-													dy={-14}
-													fill="#FFF"
-													textAnchor="start"
-													fontWeight={600}
-													fontSize={12}
-												>
-													You're here
-												</text>
-											</>
-										);
-									} else {
-										return (
-											<circle
-												cx={props.cx}
-												cy={props.cy}
-												fill="#8884d8"
-												r={6}
-												strokeWidth={props.strokeWidth}
-											/>
-										);
-									}
-								}}
-							/>
-						</LineChart>
+											);
+										}
+									}}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
 					</div>
 				</div>
 				<div className="my-10">
