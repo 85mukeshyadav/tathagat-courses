@@ -65,7 +65,9 @@ const Review = React.memo(() => {
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
 	const [bookmarks, setBookmarks] = useImmer([]);
-	const [reviewRes, setReviewRes] = useState({});
+	const [reviewRes, setReviewRes] = useState({
+		section: [],
+	});
 	const [showCorrectAns, setShowCorrectAns] = useState(false);
 	const [isReportVisible, setIsReportVisible] = useState(false);
 
@@ -246,21 +248,12 @@ const Review = React.memo(() => {
 				return res;
 			}
 		});
-
-		// setAnswered(ans.length);
-		// setNotAnswer(notAns.length);
 		if (notVisit.length - 1 >= 0) {
-			// setNotVisited(notVisit.length - 1);
 		}
-
-		// setmarkedReview(markForRev.length);
-		// setBothAnsReview(bothAnsMark.length);
-		// console.log('qwqwqqw', currentQuesStatus)
 	}, [currentQuesStatus]);
 
 	useEffect(() => {
 		let qu = [...Question];
-		// console.log('ankit22222', getQuesAns)
 		if (qu.length && getQuesAns.length) {
 			qu[currentQuesIndex]["state"] = getQuesAns[currentQuesIndex]["state"];
 			setQuestion(qu);
@@ -366,14 +359,15 @@ const Review = React.memo(() => {
 						</p>
 					</div>
 					<div className="flex items-center border-b-2 pl-2 w-full">
-						<div className="flex w-full items-center justify-between">
-							<p className="font-bold text-md sm:text-lg py-2">
+						<div className="sm:flex w-full sm:items-center justify-between">
+							<p className="font-bold text-md text-left sm:text-lg py-2">
 								Q. {currentQuesIndex + 1}
 							</p>
 							<div className="flex items-center mr-2">
+								<p className="text-sm mr-3 font-semibold">Re-attempt</p>
 								<Switch
 									checked={showCorrectAns}
-									label="Re-attempt"
+									label="Solution"
 									className="mr-4 font-semibold"
 									onChange={() => {
 										setShowCorrectAns(!showCorrectAns);
@@ -674,30 +668,32 @@ const Review = React.memo(() => {
 												></h3>
 											</div> */}
 											<div style={{ marginTop: "10px", minHeight: "200px" }}>
-												{/* <button
-													className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
-													name="vieSec"
-													onClick={() => getSolution(res)}
-												>
-													{" "}
-													View Solution{" "}
-												</button> */}
 												{showCorrectAns ? (
 													getViewSolution &&
 													typeof getViewSolution == "object" ? (
-														<div
-															className="mb-8"
-															dangerouslySetInnerHTML={{
-																__html: getViewSolution.q,
-															}}
-														></div>
+														<>
+															<p className="text-xl font-semibold ml-5">
+																Solution:
+															</p>
+															<div
+																className="mb-8 pl-5 sm:pl-10 pt-5"
+																dangerouslySetInnerHTML={{
+																	__html: getViewSolution.q,
+																}}
+															/>
+														</>
 													) : (
-														<div
-															className="mb-8"
-															dangerouslySetInnerHTML={{
-																__html: getViewSolution,
-															}}
-														></div>
+														<>
+															<p className="text-xl font-semibold ml-5">
+																Solution:
+															</p>
+															<div
+																className="mb-8 pl-5 sm:pl-10 pt-5"
+																dangerouslySetInnerHTML={{
+																	__html: getViewSolution,
+																}}
+															/>
+														</>
 													)
 												) : (
 													""
@@ -722,16 +718,12 @@ const Review = React.memo(() => {
 									Time spent on this ques:
 								</div>
 								<p className="ml-1 text-sm">
-									{(reviewRes &&
-										reviewRes?.section &&
-										reviewRes?.section[selectedSectionnumber]?.question[
-											currentQuesIndex
-										]?.timeTaken) ||
-									(reviewRes &&
-										reviewRes?.section &&
-										reviewRes?.section[selectedSectionnumber]?.question[
-											currentQuesIndex
-										]?.timeTaken?.length > 0)
+									{reviewRes?.section[selectedSectionnumber]?.question[
+										currentQuesIndex
+									]?.timeTaken ||
+									reviewRes?.section[selectedSectionnumber]?.question[
+										currentQuesIndex
+									]?.timeTaken?.length > 0
 										? `${reviewRes?.section[selectedSectionnumber]?.question[currentQuesIndex]?.timeTaken}s`
 										: "NA"}
 								</p>
@@ -755,9 +747,7 @@ const Review = React.memo(() => {
 								<IconHourglass size={22} className="mr-2" />
 								<p>Avg. time spent:</p>
 								<p className="ml-1 text-sm">
-									{reviewRes &&
-									reviewRes?.section &&
-									reviewRes?.section[selectedSectionnumber]?.avgSpentTime
+									{reviewRes?.section[selectedSectionnumber]?.avgSpentTime
 										? `${reviewRes?.section[selectedSectionnumber]?.avgSpentTime}s`
 										: "NA"}
 								</p>
@@ -767,9 +757,8 @@ const Review = React.memo(() => {
 								<IconAlarm size={22} className="mr-1" />
 								<p>Avg. time for correct ans:</p>
 								<p className="ml-1 text-sm">
-									{reviewRes &&
-									reviewRes?.section &&
-									reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime
+									{reviewRes?.section[selectedSectionnumber]
+										?.avgCorrentSpentTime
 										? `${reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime}s`
 										: "NA"}
 								</p>
@@ -786,91 +775,140 @@ const Review = React.memo(() => {
 								Choose a Question
 							</p>
 						</div>
-						<div className="h-[220px] max-h-[220px] overflow-hidden overflow-y-scroll">
+						<div className="sm:h-[220px] overflow-y-scroll">
 							<div className="flex grow flex-wrap max-w-[inherit] w-[100%] gap-4 p-4">
-								{Question.map((res, i) => (
-									<button
-										key={i}
-										onClick={() => {
-											setCurrentQuesIndex(i);
-											setViewSection(false);
-											getSolution(res);
-											setShowCorrectAns(false);
-											if (res.optionType == "input") {
-												if (reviewQues[i].usersAnswer != -1) {
-													setAns(reviewQues[i].usersAnswer);
+								{reviewRes?.section[selectedSectionnumber]?.question.map(
+									(ques, i) => (
+										<button
+											key={i}
+											onClick={() => {
+												setCurrentQuesIndex(i);
+												setViewSection(false);
+												getSolution(ques);
+												setShowCorrectAns(false);
+												if (ques.optionType == "input") {
+													if (reviewQues[i].usersAnswer != -1) {
+														setAns(reviewQues[i].usersAnswer);
+													} else {
+														setAns();
+													}
 												} else {
-													setAns();
+													setRadio(reviewQues[i].usersAnswer);
 												}
-											} else {
-												setRadio(reviewQues[i].usersAnswer);
-											}
-
-											// let newObj = { ...currentQuesStatus }
-											// newObj['notVisited'][i] = 0;
-											// setCurrentQuesStatus(newObj);
-											// let newArray = [...getQuesAns];
-
-											// console.log(newArray, i)
-
-											// if (newArray[i]['quesAns'] != -1) {
-											//     //newArray[i]['state'] = 1;
-
-											//     setRadio(newArray[i]['quesAns'])
-											// } else {
-											//     setRadio(-1)
-											//     // newArray[i]['state'] = 2;
-											//     // newArray[i]['isClicked'] = true;
-
-											// }
-											// setQuesAns(newArray);
-											// let qu = [...Question];
-											// setQuestion(qu)
-										}}
-										className="relative"
-									>
-										{res.state == 2 ? (
-											<>
-												<img src={notans} className="w-10" />
-												<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/4">
-													{i + 1}
-												</p>
-											</>
-										) : res.state == 1 ? (
-											<>
-												<img src={Answered} className="w-10" />
-												<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/4">
-													{i + 1}
-												</p>
-											</>
-										) : res.state == 3 ? (
-											<>
-												<div className="relative bg-[#ededed] border-[#979797] shadow-inner shadow-[#a9a9a962] border-2 p-2 w-10 h-10 rounded-sm">
-													<p className="text-gray-800">{i + 1}</p>
-												</div>
-											</>
-										) : res.state == 4 ? (
-											<>
-												<div className="flex flex-wrap font-medium items-center">
-													<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 w-10 h-10 rounded-full">
-														<p className="text-gray-50">{i + 1}</p>
+											}}
+											className="relative"
+										>
+											{!ques?.answerStatus && !ques?.notVisited ? (
+												<>
+													<img src={notans} className="w-10" />
+													<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/2">
+														{i + 1}
+													</p>
+												</>
+											) : ques?.bothAnsReview ? (
+												<>
+													<div className="flex font-medium items-center self-center">
+														<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 min-w-[2.5rem] min-h-[2.5rem] w-10 h-10 rounded-full">
+															<FaEquals className="absolute bottom-[-10%] font-normal text-sm right-[-10%] text-white bg-[#98c271] text-[8px] rounded-full min-w-[1rem] w-4 h-4 min-h-4" />
+															<p className="text-gray-50">{i + 1}</p>
+														</div>
 													</div>
-												</div>
-											</>
-										) : res.state == 5 ? (
-											<>
-												<div className="flex font-medium items-center self-center">
-													<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 min-w-[2.5rem] min-h-[2.5rem] w-10 h-10 rounded-full">
-														<FaEquals className="absolute bottom-[-10%] font-normal text-sm right-[-10%] text-white bg-[#98c271] text-[8px] rounded-full min-w-[1rem] w-4 h-4 min-h-4" />
-														<p className="text-gray-50">{i + 1}</p>
+												</>
+											) : ques?.notVisited ? (
+												<>
+													<div className="relative bg-[#ededed] border-[#979797] shadow-inner shadow-[#a9a9a962] border-2 p-2 w-10 h-10 rounded-sm">
+														<p className="text-gray-800">{i + 1}</p>
 													</div>
-												</div>
-											</>
-										) : (
-											""
-										)}
-									</button>
-								))}
+												</>
+											) : ques?.markForReview ? (
+												<>
+													<div className="flex flex-wrap font-medium items-center">
+														<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 p-2 w-10 h-10 rounded-full">
+															<p className="text-gray-50">{i + 1}</p>
+														</div>
+													</div>
+												</>
+											) : ques?.answerStatus ? (
+												<>
+													<img src={Answered} className="w-10" />
+													<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1/2">
+														{i + 1}
+													</p>
+												</>
+											) : (
+												""
+											)}
+										</button>
+									)
+								)}
+							</div>
+							<div className="flex flex-wrap gap-4 mt-2 items-center justify-center mb-20 sm:mb-5">
+								<div className="flex sm:gap-4 gap-10 w-full items-center sm:justify-start justify-center sm:ml-5">
+									<div className="flex flex-wrap font-medium items-center">
+										<div className="relative">
+											<img src={Answered} className="w-10" />
+											<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1">
+												{reviewRes?.section[
+													selectedSectionnumber
+												]?.question.filter((ques) => ques?.answerStatus)
+													.length || 0}
+											</p>
+										</div>
+										<p className="ml-2 text-sm font-normal">Answered</p>
+									</div>
+									<div className="flex flex-wrap font-medium items-center">
+										<div className="relative">
+											<img src={notans} className="w-10" />
+											<p className="absolute text-gray-50 top-[0%] -translate-x-2/4 left-2/4 translate-y-1">
+												{reviewRes?.section[
+													selectedSectionnumber
+												]?.question.filter((ques) => !ques?.answerStatus)
+													.length || 0}
+											</p>
+										</div>
+										<p className="ml-2 text-sm font-normal">Not Answered</p>
+									</div>
+								</div>
+								<div className="flex gap-4 w-full items-center sm:justify-start justify-center sm:ml-4">
+									<div className="flex flex-wrap font-medium items-center sm:ml-0 ml-6">
+										<div className="relative bg-[#ededed] border-[#979797] shadow-inner shadow-[#a9a9a962] border-2 flex flex-col items-center justify-center w-10 h-10 rounded-sm">
+											<p className="text-gray-800">
+												{reviewRes?.section[
+													selectedSectionnumber
+												]?.question.filter((ques) => ques?.notVisited).length ||
+													0}
+											</p>
+										</div>
+										<p className="ml-2 text-sm font-normal">Not visited</p>
+									</div>
+									<div className="flex flex-wrap font-medium items-center sm:ml-0 ml-4">
+										<div className="relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 flex flex-col items-center justify-center w-10 h-10 rounded-full">
+											<p className="text-gray-50">
+												{reviewRes?.section[
+													selectedSectionnumber
+												]?.question.filter((ques) => ques?.markForReview)
+													.length || 0}
+											</p>
+										</div>
+										<p className="ml-2 text-sm font-normal">
+											Marked for review
+										</p>
+									</div>
+								</div>
+								<div className="flex font-medium items-center w-80 sm:ml-2 ml-6">
+									<div className="ml-2 relative bg-[#765398] border-[#7a638f] shadow-inner shadow-[#d3a7fc] border-2 flex flex-col justify-center items-center min-w-[2.5rem] min-h-[2.5rem] w-10 h-10 rounded-full">
+										<FaEquals className="absolute bottom-[-10%] font-normal text-sm right-[-10%] text-white bg-[#98c271] text-[8px] rounded-full min-w-[1rem] w-4 h-4 min-h-4" />
+										<p className="text-gray-50">
+											{reviewRes?.section[
+												selectedSectionnumber
+											]?.question.filter((ques) => ques?.bothAnsReview)
+												.length || 0}
+										</p>
+									</div>
+									<p className="text-sm font-normal ml-2">
+										Answered & Marked for Review
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
