@@ -165,7 +165,6 @@ const Examination = React.memo(() => {
 				: [],
 	});
 
-	// const [timeTaken, setTimeTaken] = useState(0);
 	const [timeSpent, setTimeSpent] = useState(0);
 	const [notAnswered, setNotAnswer] = useState(0);
 	const [notVisited, setNotVisited] = useState(0);
@@ -634,6 +633,9 @@ const Examination = React.memo(() => {
 				topicId: data.topicId,
 				optionType: data.optionType,
 				timeTaken: data.timeTaken,
+				markForReview: currentQuesStatus?.markForReview[index],
+				bothAnsReview: currentQuesStatus?.bothAnsReview[index],
+				notVisited: currentQuesStatus?.notVisited[index],
 			};
 			question.push(qu);
 		});
@@ -1066,14 +1068,16 @@ const Examination = React.memo(() => {
 						Note that the timer is running. Kindly close the question paper to
 						attend the questions.
 					</p>
-					<p className="text-2xl font-bold text-gray-700">Question Paper</p>
+					<p className="text-2xl font-bold text-gray-700 mb-5">
+						Question Paper
+					</p>
 					<div>
 						{Question.map((allQues, i) => (
-							<div key={i} className="flex items-center">
-								<span className="font-bold text-gray-700">Q{i + 1}.</span>
+							<div key={i} className="flex my-5">
+								<span className="font-bold text-gray-700 mr-4">Q{i + 1}.</span>
 								<p
 									key={i}
-									className="px-2 py-2 font-semibold text-gray-700"
+									className="font-semibold text-gray-700"
 									dangerouslySetInnerHTML={{
 										__html:
 											allQues.questionType == "paragraph"
@@ -1283,7 +1287,7 @@ const Examination = React.memo(() => {
 															/>
 														</div>
 													) : (
-														<>
+														<div className="mb-12">
 															{res.questionoption[0] &&
 																res?.questionoption.map((ans, iAns) => {
 																	let newObj = { ...currentQuesStatus };
@@ -1382,7 +1386,7 @@ const Examination = React.memo(() => {
 																		</div>
 																	);
 																})}
-														</>
+														</div>
 													)}
 												</>
 											</div>
@@ -1415,7 +1419,7 @@ const Examination = React.memo(() => {
 													/>
 												</div>
 											) : (
-												<>
+												<div className="mb-12">
 													{res.questionoption[0] &&
 														res?.questionoption.map((ans, iAns) => {
 															let newObj = { ...currentQuesStatus };
@@ -1503,7 +1507,7 @@ const Examination = React.memo(() => {
 																</div>
 															);
 														})}
-												</>
+												</div>
 											)}
 										</>
 									</>
@@ -1858,7 +1862,7 @@ const Examination = React.memo(() => {
 								//     }
 								// }
 							}}
-							className="border-2 text-gray-600 hover:bg-[#0c7cd5] hover:text-white rounded-sm border-gray-300 px-4 py-2 mr-2 mb-2"
+							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2 mr-2 mb-2"
 						>
 							Mark for Review and Next
 						</button>
@@ -1909,7 +1913,7 @@ const Examination = React.memo(() => {
 									chbx[i].checked = false;
 								}
 							}}
-							className="border-2 text-gray-600 hover:bg-[#0c7cd5] hover:text-white rounded-sm border-gray-300 px-4 py-2 "
+							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2 "
 						>
 							Clear Response
 						</button>
@@ -2110,7 +2114,7 @@ const Examination = React.memo(() => {
 									})
 								);
 							}}
-							className="bg-[#0c7cd5] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-4 py-2 mr-4"
+							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 mr-4"
 						>
 							Save & Next
 						</button>
@@ -2120,7 +2124,7 @@ const Examination = React.memo(() => {
 								_submitPreTest();
 								setFinishExam(true);
 							}}
-							className="bg-[#38aae9] text-white hover:border-gray-700 hover:border-2 border-2 rounded-sm px-4 py-2 mr-10"
+							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 mr-10"
 						>
 							Submit
 						</button>
