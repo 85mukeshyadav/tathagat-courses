@@ -81,6 +81,8 @@ const Analysis = () => {
 	const [marksDistribution, setMarksDistribution] = useState([]);
 	const [average, setAverage] = useState(0);
 	const [leaderboard, setLeaderboard] = useState([]);
+	const [quesList, setQuesList] = useState([]);
+	const [rightPercentage, setRightPercentage] = useState([]);
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
@@ -150,6 +152,7 @@ const Analysis = () => {
 	const getOverallPerformance = async () => {
 		setLoading(true);
 		const res = await apiClient.post("/overallPerformanceSummary", param);
+		const res1 = await apiClient.post("/getwritePercentage", param);
 		if (res.ok) {
 			console.log(
 				"🚀 ~ file: Analysis.js:125 ~ getOverallPerformance ~",
@@ -162,6 +165,7 @@ const Analysis = () => {
 			setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 			setTopper(res.data?.data?.topperObject);
 			setLeaderboard(res.data?.data?.leaderBoardList.reverse());
+			setQuesList(res.data?.data?.Qans?.Section[0]?.QuestionList);
 			const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 			const students = res.data?.data?.AllStudent;
 			const averageScore =
@@ -205,6 +209,9 @@ const Analysis = () => {
 			setMarksDistribution(distribution);
 		} else {
 			console.log(res.data);
+		}
+		if (res1.ok) {
+			setRightPercentage(res1.data?.data[0]?.question);
 		}
 		setLoading(false);
 	};
@@ -553,14 +560,20 @@ const Analysis = () => {
 															<th className="text-left p-2 text-sm sm:text-lg">
 																Correct Option
 															</th>
+															<th className="text-left p-2 text-sm sm:text-lg">
+																Percentage of students who got it right
+															</th>
+															<th className="text-left p-2 text-sm sm:text-lg">
+																Attempt order
+															</th>
 														</tr>
 
-														{res?.question.map((ques, ind) => (
-															<tr key={`${i}-${ind}`}>
+														{res?.question.map((ques, idx) => (
+															<tr key={`${i}-${idx}`}>
 																<td className=" flex justify-center items-center">
 																	<div
 																		onClick={() => {
-																			setQuestionIndex(ind);
+																			setQuestionIndex(idx);
 																			openModal();
 																		}}
 																		className={clsx(
@@ -572,7 +585,7 @@ const Analysis = () => {
 																				: "bg-gray-400"
 																		)}
 																	>
-																		{ind + 1}
+																		{idx + 1}
 																	</div>
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
@@ -591,8 +604,16 @@ const Analysis = () => {
 																		: "--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques.correctoption
-																		? ques.correctoption
+																	{(quesList.length > 0 &&
+																		quesList[idx]?.correctoption) ||
+																		"--"}
+																</td>
+																<td className="text-left p-2 text-xs sm:text-lg">
+																	{rightPercentage[idx]?.writePercentage + "%"}
+																</td>
+																<td className="text-left p-2 text-xs sm:text-lg">
+																	{ques?.attemptOrder !== -1
+																		? ques?.attemptOrder + 1
 																		: "--"}
 																</td>
 															</tr>
@@ -940,7 +961,7 @@ const Analysis = () => {
 								<tr>
 									<td>Topper</td>
 									<td>{topperPerformance?.score}</td>
-									<td>{topperPerformance?.accuracy || "NA"}</td>
+									<td>{topperPerformance?.accuracy?.toFixed(1) || "NA"}</td>
 									<td>
 										{topperAnalysisData?.section &&
 											topperAnalysisData?.section[0]?.correctAnswers}
