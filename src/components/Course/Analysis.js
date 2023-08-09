@@ -612,7 +612,8 @@ const Analysis = () => {
 																	{rightPercentage[idx]?.writePercentage + "%"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques?.attemptOrder !== -1
+																	{ques?.attemptOrder &&
+																	ques?.attemptOrder !== -1
 																		? ques?.attemptOrder + 1
 																		: "--"}
 																</td>
