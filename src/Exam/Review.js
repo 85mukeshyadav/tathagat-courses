@@ -748,7 +748,9 @@ const Review = React.memo(() => {
 								<p>Avg. time spent:</p>
 								<p className="ml-1 text-sm">
 									{reviewRes?.section[selectedSectionnumber]?.avgSpentTime
-										? `${reviewRes?.section[selectedSectionnumber]?.avgSpentTime}s`
+										? `${reviewRes?.section[
+												selectedSectionnumber
+										  ]?.avgSpentTime?.toFixed(2)}s`
 										: "NA"}
 								</p>
 							</div>
@@ -759,7 +761,9 @@ const Review = React.memo(() => {
 								<p className="ml-1 text-sm">
 									{reviewRes?.section[selectedSectionnumber]
 										?.avgCorrentSpentTime
-										? `${reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime}s`
+										? `${reviewRes?.section[
+												selectedSectionnumber
+										  ]?.avgCorrentSpentTime?.toFixed(2)}s`
 										: "NA"}
 								</p>
 							</div>
