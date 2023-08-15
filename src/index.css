@@ -213,19 +213,10 @@ footer {
 	fill: #63b1de;
 }
 
-/* .treeview > svg{
-  display: -webkit-inline-box;
-} */
-
-.treeview > span {
-	/* font-size: 0.7em !important; */
-}
-
 .pcolumn {
 	float: left;
 	width: 50%;
-	padding: 10px;
-	height: auto; /* Should be removed. Only for demonstration */
+	padding: 20px;
 }
 
 /* Clear floats after the columns */
