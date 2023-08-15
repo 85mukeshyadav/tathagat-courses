@@ -1,4 +1,4 @@
-import { Modal } from "@mantine/core";
+import { Modal, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -198,6 +198,7 @@ const Examination = React.memo(() => {
 	const [getFinalSec, setFinalSec] = useState([]);
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
+	const [groupedQuestions, setGroupedQuestions] = useState({});
 
 	const [
 		questionPaperOpened,
@@ -464,6 +465,25 @@ const Examination = React.memo(() => {
 						});
 
 						res.QuestionList && setQuestion(newQues);
+						const groupedQuestions = {};
+						newQues.forEach((ques, i) => {
+							if (ques.questionType === "paragraph") {
+								if (!groupedQuestions[ques.paragraph]) {
+									groupedQuestions[ques.paragraph] = [];
+								}
+								groupedQuestions[ques.paragraph].push({
+									index: i,
+									question: ques.question,
+								});
+							} else {
+								groupedQuestions[i] = {
+									questionType: ques.questionType,
+									question: ques.question,
+								};
+							}
+						});
+						console.log(groupedQuestions);
+						setGroupedQuestions(groupedQuestions);
 						setCurrentQuesStatus(objArray);
 						setQuesAns(quesAnsArray);
 					}
@@ -806,16 +826,6 @@ const Examination = React.memo(() => {
 		};
 	}, []);
 
-	// useEffect(() => {
-	// 	window.onpopstate = (e) => {
-	// 		e.preventDefault();
-	// 		alert(
-	// 			"You can't go back without submitting the test. Please submit to complete the test."
-	// 		);
-	// 		navigate("/examination");
-	// 	};
-	// }, []);
-
 	const SubmitExam = () => {
 		return (
 			<main className="absolute w-full h-full z-10 bg-gray-50 text-gray-900 font-sans">
@@ -1091,19 +1101,66 @@ const Examination = React.memo(() => {
 						Question Paper
 					</p>
 					<div>
-						{Question.map((allQues, i) => (
+						{/* {Question.map((ques, i) => (
 							<div key={i} className="flex my-5">
 								<span className="font-bold text-gray-700 mr-4">Q{i + 1}.</span>
-								<p
-									key={i}
-									className="font-semibold text-gray-700"
-									dangerouslySetInnerHTML={{
-										__html:
-											allQues.questionType == "paragraph"
-												? allQues.paragraph
-												: allQues.question,
-									}}
-								></p>
+								{ques.questionType == "single" && (
+									<p
+										key={i}
+										className="font-semibold text-gray-700"
+										dangerouslySetInnerHTML={{
+											__html: ques.question,
+										}}
+									/>
+								)}
+								{ques.questionType == "paragraph" && (
+									<p
+										key={i}
+										className="font-semibold text-gray-700"
+										dangerouslySetInnerHTML={{
+											__html: ques.paragraph,
+										}}
+									/>
+								)}
+							</div>
+						))} */}
+						{Object.keys(groupedQuestions).map((key, index) => (
+							<div key={key} className="my-5">
+								{groupedQuestions[key].hasOwnProperty("questionType") ? (
+									<div className="flex">
+										<span className="font-bold text-gray-700 mr-2">
+											Q{index + 1}.
+										</span>
+										<p
+											className="font-semibold text-gray-700"
+											dangerouslySetInnerHTML={{
+												__html: groupedQuestions[key].question,
+											}}
+										/>
+									</div>
+								) : (
+									<>
+										<p
+											className="font-semibold text-gray-700"
+											dangerouslySetInnerHTML={{
+												__html: key,
+											}}
+										/>
+										{groupedQuestions[key].map((subQues, j) => (
+											<div key={j} className="flex ml-4 mt-2">
+												<span className="font-bold text-gray-700 mr-4">
+													Q{subQues.index + 1}.
+												</span>
+												<p
+													className="font-semibold text-gray-700"
+													dangerouslySetInnerHTML={{
+														__html: subQues.question,
+													}}
+												/>
+											</div>
+										))}
+									</>
+								)}
 							</div>
 						))}
 					</div>
@@ -1269,30 +1326,30 @@ const Examination = React.memo(() => {
 						return currentQuesIndex == i ? (
 							<div
 								key={i}
-								className="text-left justify-between overflow-y-scroll overflow-x-hidden mb-8 pl-2 w-full"
+								className="text-left justify-between overflow-x-hidden mb-8 pl-2 pb-16 w-full"
 								style={{ height: "100%" }}
 							>
 								{res.questionType == "paragraph" ? (
 									<>
-										<div className="prow w-full" style={{ height: "100%" }}>
-											<div
-												className="pcolumn overflow-y-auto"
-												style={{ borderRight: "1px solid grey" }}
-											>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: res.paragraph,
-													}}
-												></p>
+										<div className="grid sm:grid-cols-2 grid-cols-1 grid-s w-full">
+											<div className="overflow-y-scroll p-4 border-r-[1px] border-gray-300">
+												<ScrollArea h={400}>
+													<div
+														className="pb-5"
+														dangerouslySetInnerHTML={{
+															__html: res.paragraph,
+														}}
+													/>
+												</ScrollArea>
 											</div>
-											<div className="pcolumn overflow-y-auto">
-												<>
-													<p
+											<div className="overflow-y-scroll">
+												<ScrollArea h={400}>
+													<div
 														className="p-4"
 														dangerouslySetInnerHTML={{
 															__html: res.question,
 														}}
-													></p>
+													/>
 
 													{res.optionType == "input" ? (
 														<div>
@@ -1407,7 +1464,7 @@ const Examination = React.memo(() => {
 																})}
 														</div>
 													)}
-												</>
+												</ScrollArea>
 											</div>
 										</div>
 									</>
@@ -1536,7 +1593,7 @@ const Examination = React.memo(() => {
 					})}
 				</div>
 				<div className="border-gray-800 sm:border-l-2 border-t-2 sm:border-t-0 h-full">
-					<div className="flex flex-col justify-center sm:w-80 items-center">
+					<div className="flex flex-col justify-center sm:w-80 items-center overflow-y-scroll pb-16 sm:pb-0">
 						<div className="flex m-4">
 							<img
 								className="w-28 h-28 rounded-sm ml-2"
@@ -1883,7 +1940,7 @@ const Examination = React.memo(() => {
 								//     }
 								// }
 							}}
-							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2 mr-2 mb-2"
+							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2 mr-2 mb-3 sm:mb-0"
 						>
 							Mark for Review and Next
 						</button>
@@ -1934,12 +1991,12 @@ const Examination = React.memo(() => {
 									chbx[i].checked = false;
 								}
 							}}
-							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2 "
+							className="border-2 hover:bg-sky-600 transition font-semibold text-gray-500 hover:text-white rounded-sm border-gray-300 px-4 py-2"
 						>
 							Clear Response
 						</button>
 					</div>
-					<div className="sm:flex block justify-around items-center">
+					<div className="flex flex-row mt-3 sm:mt-0 sm:justify-around justify-center items-center">
 						<button
 							onClick={() => {
 								let countQues = 0;
@@ -2149,7 +2206,7 @@ const Examination = React.memo(() => {
 								_submitPreTest();
 								setFinishExam(true);
 							}}
-							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 mr-10"
+							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 sm:mr-10"
 						>
 							Submit
 						</button>
