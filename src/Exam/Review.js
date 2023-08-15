@@ -7,11 +7,13 @@ import {
 	IconHourglass,
 } from "@tabler/icons-react";
 import axios from "axios";
+import dayjs from "dayjs";
 import React, { useContext, useEffect, useState } from "react";
 import { FaBookmark, FaEquals, FaInfo, FaRegBookmark } from "react-icons/fa";
 import { IoWarning } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
+import apiClient from "../api/apiClient";
 import { userInfo } from "../api/checkAuth";
 import Answered from "../assets/Answered.png";
 import notans from "../assets/notans.png";
@@ -70,13 +72,17 @@ const Review = React.memo(() => {
 	});
 	const [showCorrectAns, setShowCorrectAns] = useState(false);
 	const [isReportVisible, setIsReportVisible] = useState(false);
+	const [reviewRes1, setReviewRes1] = useState([]);
 
-	const handleBookmark = async (id, status) => {
+	const handleBookmark = async (ques, status) => {
 		console.log("status", status);
 		const res = await axios.post(process.env.REACT_APP_API + "/addbookmark", {
 			userEmailId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
-			questionsId: id,
+			questionsId: ques.questionId,
+			topicName: ques.topicId,
+			subjectName: ques.subjectId,
+			courseName: localStorage.getItem("courseid"),
 			status: status,
 		});
 		if (res.status == 200) {
@@ -161,12 +167,18 @@ const Review = React.memo(() => {
 			userId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
 			packageId: localStorage.getItem("pkgid"),
+			startDate: `${dayjs().year()}-${dayjs().month() + 1}-01`,
+			endDate: `${dayjs().year()}-${
+				dayjs().month() + 1
+			}-${dayjs().daysInMonth()}`,
 		};
 		const respReview = await axios.post(
 			process.env.REACT_APP_API + "/reviewTest",
 			param,
 			options
 		);
+		const res1 = await apiClient.post("/getwritePercentage", param);
+		setReviewRes1(res1.data?.data[0]?.question);
 
 		if (!respReview.data || !respReview.data?.section) {
 			navigate("/myCourses");
@@ -394,10 +406,10 @@ const Review = React.memo(() => {
 									<button
 										className="flex items-center text-blue-500 text-sm sm:text-base font-semibold"
 										onClick={() => {
-											const quesId =
+											const ques =
 												data[selectedSectionnumber].QuestionList[
 													currentQuesIndex
-												].questionId;
+												];
 											const bookmarkStatus =
 												reviewQues[currentQuesIndex]?.bookmark ||
 												bookmarks[currentQuesIndex];
@@ -407,7 +419,7 @@ const Review = React.memo(() => {
 											setReviewQues((draft) => {
 												draft[currentQuesIndex].bookmark = !bookmarkStatus;
 											});
-											handleBookmark(quesId, !bookmarkStatus ? 1 : 0);
+											handleBookmark(ques, !bookmarkStatus ? 1 : 0);
 										}}
 									>
 										{(reviewQues && reviewQues[currentQuesIndex]?.bookmark) ||
@@ -734,12 +746,12 @@ const Review = React.memo(() => {
 								<p>Question Difficulty:</p>
 								<p
 									className={`ml-1 text-sm px-1 py-[1px] rounded-sm text-white
-									${Question[currentQuesIndex]?.questionLevel == "Easy" && `bg-green-500`}
-									${Question[currentQuesIndex]?.questionLevel == "Medium" && `bg-yellow-500`}
-									${Question[currentQuesIndex]?.questionLevel == "Hard" && `bg-red-500`}
+									${reviewRes1[currentQuesIndex]?.questionLevel == "Easy" && `bg-green-500`}
+									${reviewRes1[currentQuesIndex]?.questionLevel == "Medium" && `bg-yellow-500`}
+									${reviewRes1[currentQuesIndex]?.questionLevel == "Hard" && `bg-red-500`}
 								`}
 								>
-									{Question[currentQuesIndex]?.questionLevel}
+									{reviewRes1[currentQuesIndex]?.questionLevel}
 								</p>
 							</div>
 							<Divider />
@@ -748,7 +760,9 @@ const Review = React.memo(() => {
 								<p>Avg. time spent:</p>
 								<p className="ml-1 text-sm">
 									{reviewRes?.section[selectedSectionnumber]?.avgSpentTime
-										? `${reviewRes?.section[selectedSectionnumber]?.avgSpentTime}s`
+										? `${reviewRes?.section[
+												selectedSectionnumber
+										  ]?.avgSpentTime?.toFixed(2)}s`
 										: "NA"}
 								</p>
 							</div>
@@ -759,7 +773,9 @@ const Review = React.memo(() => {
 								<p className="ml-1 text-sm">
 									{reviewRes?.section[selectedSectionnumber]
 										?.avgCorrentSpentTime
-										? `${reviewRes?.section[selectedSectionnumber]?.avgCorrentSpentTime}s`
+										? `${reviewRes?.section[
+												selectedSectionnumber
+										  ]?.avgCorrentSpentTime?.toFixed(2)}s`
 										: "NA"}
 								</p>
 							</div>

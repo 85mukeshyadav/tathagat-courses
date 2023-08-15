@@ -49,33 +49,33 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-const Page404 = () => {
+const Page500 = () => {
 	const { classes } = useStyles();
 
 	return (
 		<Container className={classes.root}>
-			<div className={classes.label}>404</div>
-			<Title className={classes.title}>You have found a secret place.</Title>
+			<div className={classes.label}>500</div>
+			<Title className={classes.title}>Something bad just happened...</Title>
 			<Text
 				color="dimmed"
 				size="lg"
 				align="center"
 				className={classes.description}
 			>
-				Unfortunately, this is only a 404 page. You may have mistyped the
-				address, or the page has been moved to another URL.
+				Our servers could not handle your request. Don't worry, our development
+				team was already notified. Try refreshing the page.
 			</Text>
 			<Group position="center">
 				<Button
-					onClick={() => (window.location.href = "/")}
+					onClick={() => window.location.reload()}
 					variant="subtle"
 					size="md"
 				>
-					Take me back to home page
+					Refresh the page
 				</Button>
 			</Group>
 		</Container>
 	);
 };
 
-export default Page404;
+export default Page500;

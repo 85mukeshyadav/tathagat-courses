@@ -1,8 +1,6 @@
 import { Divider, RingProgress, Table, Tabs } from "@mantine/core";
+import clsx from "clsx";
 import dayjs from "dayjs";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import "highcharts/css/highcharts.css";
 import React, { useEffect, useState } from "react";
 import { AiOutlineAim } from "react-icons/ai";
 import { BiReceipt } from "react-icons/bi";
@@ -24,44 +22,10 @@ import {
 	YAxis,
 } from "recharts";
 
-import clsx from "clsx";
 import apiClient from "../../api/apiClient";
-
-require("highcharts/modules/exporting")(Highcharts);
-require("highcharts/modules/annotations")(Highcharts);
-require("highcharts/modules/accessibility")(Highcharts);
+import Loader from "../Loader";
 
 const Analysis = () => {
-	const [chartOptions, setChartOptions] = useState({
-		title: {
-			text: "Performance",
-		},
-		chart: {
-			type: "line",
-			width: window.innerWidth,
-			styledMode: true,
-		},
-		xAxis: {
-			categories: [],
-			title: {
-				text: "Marks Range",
-			},
-		},
-		yAxis: {
-			title: {
-				text: "Percentage of student",
-			},
-		},
-		credits: {
-			enabled: false,
-		},
-		series: [
-			{
-				showInLegend: false,
-				data: [],
-			},
-		],
-	});
 	const [performance, setPerformance] = useState({
 		rank: 0,
 		score: 0,
@@ -83,12 +47,13 @@ const Analysis = () => {
 	const [leaderboard, setLeaderboard] = useState([]);
 	const [quesList, setQuesList] = useState([]);
 	const [rightPercentage, setRightPercentage] = useState([]);
+	const [percentileDistribution, setPercentileDistribution] = useState([]);
+	const [cutoffMarks, setCutoffMarks] = useState(0);
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
 	const [questionIndex, setQuestionIndex] = useState(0);
 	const [modalIsOpen, setIsOpen] = useState(false);
-	// const [opened, { open, close }] = useDisclosure(false);
 
 	function openModal() {
 		setIsOpen(true);
@@ -108,152 +73,144 @@ const Analysis = () => {
 		}-${dayjs().daysInMonth()}`,
 	};
 
-	const getChartsData = async () => {
-		const response = await apiClient.post("/report-user-stand", param);
-		let dataArr = [];
-		let xAxisData = [];
-		let userMarksRange = response.data?.userMarksRange;
-		response.data?.studens_marks.map((item, i) => {
-			let tt = {
-				y: parseFloat(item.userPersentage.toFixed(2)),
-			};
-			if (userMarksRange == item.marks_range) {
-				tt = {
-					y: parseFloat(item.userPersentage.toFixed(2)),
-					dataLabels: {
-						className: "highlight",
-					},
-				};
-			}
-			dataArr.push(tt);
-			xAxisData.push(item.marks_range);
-		});
-		setChartOptions({
-			plotOptions: {
-				series: {
-					color: "#8884d8",
-					dataLabels: {
-						enabled: true,
-						borderRadius: 2,
-						y: -10,
-						shape: "callout",
-						formatter: function () {
-							if (userMarksRange == this.x)
-								return this.y + "% (You stand here)";
-						},
-					},
-				},
-			},
-			series: [{ data: dataArr }],
-			xAxis: { categories: xAxisData },
-		});
-	};
-
 	const getOverallPerformance = async () => {
 		setLoading(true);
-		const res = await apiClient.post("/overallPerformanceSummary", param);
-		const res1 = await apiClient.post("/getwritePercentage", param);
-		if (res.ok) {
-			console.log(
-				"🚀 ~ file: Analysis.js:125 ~ getOverallPerformance ~",
-				res.data?.data
-			);
-			setAnalysisData(res.data?.data);
-			setPerformance(res.data?.data?.section[0]?.overallPerformanceSummary);
-			setTotalQuestions(res.data?.data?.section[0]?.totalQuestions);
-			setTotalMarks(res.data?.data?.section[0]?.totalMarks);
-			setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
-			setTopper(res.data?.data?.topperObject);
-			setLeaderboard(res.data?.data?.leaderBoardList.reverse());
-			setQuesList(res.data?.data?.Qans?.Section[0]?.QuestionList);
-			const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
-			const students = res.data?.data?.AllStudent;
-			const averageScore =
-				students.reduce((sum, i) => sum + i.score, 0) / students.length;
-			setAverage(averageScore);
-			let distribution = [];
-			console.log(markDistribution.marks.endnumber);
-			for (
-				let i = markDistribution.marks.startnumber;
-				i < markDistribution.marks.endnumber;
-				i += 5
-			) {
-				// const noOfStudents = students.filter(
-				// 	(item) => item.score >= i && item.score <= i + 5
-				// ).length;
-				const percentageOfStudents =
-					(students.filter((item) => item.score >= i && item.score <= i + 5)
-						.length /
-						students.length) *
-					100;
-				const obj = {
-					marks:
-						i === markDistribution.marks.startnumber
-							? i + " to " + (i + 5)
-							: i + 1 + " to " + (i + 5),
-					noOfStudents: percentageOfStudents,
-					youarehere:
-						students.find(
-							(item) => item.userId === localStorage.getItem("user")
-						).score >= i &&
-						students.find(
-							(item) => item.userId === localStorage.getItem("user")
-						).score <
-							i + 5
-							? true
-							: false,
-				};
-				distribution.push(obj);
+		try {
+			const res = await apiClient.post("/overallPerformanceSummary", param);
+			const res1 = await apiClient.post("/getwritePercentage", param);
+			if (res.ok) {
+				console.log(
+					"🚀 ~ file: Analysis.js:125 ~ getOverallPerformance ~",
+					res.data?.data
+				);
+				setAnalysisData(res.data?.data);
+				setPerformance(res.data?.data?.section[0]?.overallPerformanceSummary);
+				setTotalQuestions(res.data?.data?.section[0]?.totalQuestions);
+				setTotalMarks(res.data?.data?.section[0]?.totalMarks);
+				setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
+				setTopper(res.data?.data?.topperObject);
+				setLeaderboard(res.data?.data?.leaderBoardList.reverse());
+				setQuesList(res.data?.data?.Qans?.Section[0]?.QuestionList);
+				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
+				const students = res.data?.data?.AllStudent;
+				const averageScore =
+					students.reduce((sum, i) => sum + i.score, 0) / students.length;
+				setAverage(averageScore);
+				let distribution = [];
+				console.log(markDistribution.marks.endnumber);
+				for (
+					let i = markDistribution.marks.startnumber;
+					i < markDistribution.marks.endnumber;
+					i += 5
+				) {
+					const percentageOfStudents =
+						(students.filter((item) => item.score >= i && item.score <= i + 5)
+							.length /
+							students.length) *
+						100;
+					const obj = {
+						marks:
+							i === markDistribution.marks.startnumber
+								? i + " to " + (i + 5)
+								: i + 1 + " to " + (i + 5),
+						noOfStudents: percentageOfStudents,
+						youarehere:
+							students.find(
+								(item) => item.userId === localStorage.getItem("user")
+							).score >= i &&
+							students.find(
+								(item) => item.userId === localStorage.getItem("user")
+							).score <
+								i + 5
+								? true
+								: false,
+					};
+					distribution.push(obj);
+				}
+				console.log(distribution);
+				setMarksDistribution(distribution);
+
+				const leaderboard = res.data?.data?.leaderBoardList.sort((a, b) => {
+					return b.netScore - a.netScore;
+				});
+				const cutoffMarks =
+					leaderboard[Math.floor((leaderboard.length * 80) / 100)].netScore;
+				setCutoffMarks(cutoffMarks);
+				let percentileData = [];
+				for (let i = 0; i < leaderboard.length; i++) {
+					const obj = {
+						score: leaderboard[i].netScore,
+						percentile: ((leaderboard.length - i) / leaderboard.length) * 100,
+						youarehere: leaderboard[i].userId === localStorage.getItem("user"),
+					};
+					percentileData.push(obj);
+				}
+				console.log("percentiledata ~", percentileData);
+				setPercentileDistribution(percentileData);
+			} else {
+				console.log(res.data);
 			}
-			console.log(distribution);
-			setMarksDistribution(distribution);
-		} else {
-			console.log(res.data);
+			if (res1.ok) {
+				setRightPercentage(res1.data?.data[0]?.question);
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
 		}
-		if (res1.ok) {
-			setRightPercentage(res1.data?.data[0]?.question);
-		}
-		setLoading(false);
 	};
 
 	const getTopperPerformance = async () => {
-		const res = await apiClient.post("/overallPerformanceSummary", {
-			userId: topper?.userId,
-			testId: localStorage.getItem("testid"),
-			packageId: localStorage.getItem("pkgid"),
-		});
-		if (res.ok) {
-			console.log(
-				"🚀 ~ file: Analysis.js:159 ~ getTopperPerformance ~",
-				res.data?.data
-			);
-			setTopperPerformance(
-				res.data?.data?.section[0]?.overallPerformanceSummary
-			);
-			setTopperAnalysisData(res.data?.data);
-		} else {
-			console.log(res.data);
+		setLoading(true);
+		try {
+			const res = await apiClient.post("/overallPerformanceSummary", {
+				userId: topper?.userId,
+				testId: localStorage.getItem("testid"),
+				packageId: localStorage.getItem("pkgid"),
+			});
+			if (res.ok) {
+				console.log(
+					"🚀 ~ file: Analysis.js:159 ~ getTopperPerformance ~",
+					res.data?.data
+				);
+				setTopperPerformance(
+					res.data?.data?.section[0]?.overallPerformanceSummary
+				);
+				setTopperAnalysisData(res.data?.data);
+			} else {
+				console.log(res.data);
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const getSectionFromTest = async () => {
-		const res = await apiClient.get(
-			"/gettest/" + localStorage.getItem("testid")
-		);
-		if (res.ok) {
-			console.log(
-				"🚀 ~ file: Analysis.js:171 ~ getSectionFromTest ~",
-				res.data
+		setLoading(true);
+		try {
+			const res = await apiClient.get(
+				"/gettest/" + localStorage.getItem("testid")
 			);
-			setSection(res.data[0]?.Section);
-			setActiveSectionTab(res.data[0]?.Section[0]?.sectionName);
-		} else {
-			console.log(res.data);
+			if (res.ok) {
+				console.log(
+					"🚀 ~ file: Analysis.js:171 ~ getSectionFromTest ~",
+					res.data
+				);
+				setSection(res.data[0]?.Section);
+				setActiveSectionTab(res.data[0]?.Section[0]?.sectionName);
+			} else {
+				console.log(res.data);
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		getChartsData();
 		getOverallPerformance();
 		getSectionFromTest();
 	}, []);
@@ -273,6 +230,10 @@ const Analysis = () => {
 			width: "80%",
 		},
 	};
+
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<div>
@@ -374,7 +335,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700">
-											{performance?.accuracy.toFixed(1) || "NA"}
+											{performance?.accuracy?.toFixed(1) || "NA"}
 										</p>
 										<p className="text-sm font-semibold ml-2 text-gray-400">
 											Accuracy
@@ -609,10 +570,13 @@ const Analysis = () => {
 																		"--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{rightPercentage[idx]?.writePercentage + "%"}
+																	{rightPercentage[
+																		idx
+																	]?.writePercentage?.toFixed(2) + "%"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques?.attemptOrder !== -1
+																	{ques?.attemptOrder &&
+																	ques?.attemptOrder !== -1
 																		? ques?.attemptOrder + 1
 																		: "--"}
 																</td>
@@ -940,7 +904,7 @@ const Analysis = () => {
 								<tr>
 									<td>You</td>
 									<td>{performance?.score}</td>
-									<td>{performance?.accuracy.toFixed(1) || "NA"}</td>
+									<td>{performance?.accuracy?.toFixed(1) || "NA"}</td>
 									<td>
 										{analysisData?.section &&
 											analysisData?.section[0]?.correctAnswers}
@@ -1002,7 +966,7 @@ const Analysis = () => {
 							<LineChart
 								data={marksDistribution}
 								margin={{
-									top: 5,
+									top: 10,
 									right: 30,
 									left: 50,
 									bottom: 20,
@@ -1033,7 +997,7 @@ const Analysis = () => {
 								</YAxis>
 								<Tooltip
 									formatter={(value) => {
-										return [value, "Students"];
+										return [`${value.toFixed(2)}%`, "Students"];
 									}}
 								/>
 								<Line
@@ -1099,7 +1063,130 @@ const Analysis = () => {
 					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
 						Percentile Distribution
 					</p>
-					<HighchartsReact highcharts={Highcharts} options={chartOptions} />
+					{/* <HighchartsReact highcharts={Highcharts} options={chartOptions} /> */}
+					<ResponsiveContainer width="100%" height={500}>
+						<LineChart
+							data={percentileDistribution}
+							margin={{
+								top: 20,
+								right: 120,
+								left: 50,
+								bottom: 20,
+							}}
+						>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="score">
+								<Label
+									value="Score"
+									offset={-20}
+									position="insideBottom"
+									style={{
+										fontSize: "1rem",
+										fontWeight: "600",
+									}}
+								/>
+							</XAxis>
+							<YAxis>
+								<Label
+									value="Percentile"
+									angle={-90}
+									position="insideLeft"
+									style={{
+										fontSize: "1rem",
+										fontWeight: "600",
+									}}
+								/>
+							</YAxis>
+							<Tooltip
+								formatter={(value) => {
+									return [`${value?.toFixed(2)}%`, "Percentile"];
+								}}
+							/>
+							<Line
+								type="monotone"
+								dataKey="percentile"
+								stroke="#8884d8"
+								strokeWidth={2}
+								activeDot={{ r: 8 }}
+								dot={(props) => {
+									const { payload } = props;
+									if (payload.youarehere || cutoffMarks === payload.score) {
+										return (
+											<>
+												<circle
+													cx={props.cx}
+													cy={props.cy}
+													fill="#8884d8"
+													r={6}
+													strokeWidth={props.strokeWidth}
+												/>
+												{cutoffMarks === payload.score && (
+													<>
+														<rect
+															x={props.cx - 110}
+															y={props.cy + 5}
+															width="100"
+															height="25"
+															fill="#F43F5E"
+															stroke="white"
+															strokeWidth="2"
+															rx="2"
+														/>
+														<text
+															x={props.cx - 100}
+															y={props.cy + 21}
+															fill="#FFF"
+															textAnchor="start"
+															fontWeight={600}
+															fontSize={12}
+														>
+															Cutoff Marks
+														</text>
+													</>
+												)}
+												{payload.youarehere && (
+													<>
+														<rect
+															x={props.cx}
+															y={props.cy}
+															width="90"
+															height="25"
+															fill="#8884d8"
+															stroke="white"
+															strokeWidth="2"
+															rx="2"
+														/>
+														<text
+															x={props.cx}
+															y={props.cy}
+															dx={12}
+															dy={16}
+															fill="#FFF"
+															textAnchor="start"
+															fontWeight={600}
+															fontSize={12}
+														>
+															You're here
+														</text>
+													</>
+												)}
+											</>
+										);
+									} else {
+										return (
+											<circle
+												cx={props.cx}
+												cy={props.cy}
+												fill="#8884d8"
+												r={6}
+												strokeWidth={props.strokeWidth}
+											/>
+										);
+									}
+								}}
+							/>
+						</LineChart>
+					</ResponsiveContainer>
 				</div>
 			</div>
 		</div>

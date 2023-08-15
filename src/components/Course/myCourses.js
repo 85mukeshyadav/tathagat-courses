@@ -39,7 +39,10 @@ const MyCourses = () => {
 							<Link
 								to={location}
 								props={res}
-								onClick={() => localStorage.setItem("pkgid", res.packageId)}
+								onClick={() => {
+									localStorage.setItem("pkgid", res.packageId);
+									localStorage.setItem("courseid", res.courseId);
+								}}
 							>
 								<div className="max-w-6xl mx-auto sm:my-0 my-4">
 									<div className="flex items-center justify-center">

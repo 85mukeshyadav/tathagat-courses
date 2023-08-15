@@ -2,13 +2,14 @@ import { Tooltip } from "@mantine/core";
 import axios from "axios";
 import clsx from "clsx";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { FaBookmark, FaInfo, FaRegBookmark, FaSearch } from "react-icons/fa";
+import { FaBookmark, FaInfo, FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
 import QuestionInput from "../Exam/Calculator/QuestionInput";
 import hideNavContext from "../context/AllprojectsContext";
 import Header from "./Header";
 import Loader from "./Loader";
+import TreeNode from "./TreeNode";
 
 const customStyles = {
 	content: {
@@ -78,6 +79,15 @@ const Bookmarks = React.memo(() => {
 	const [getMode, setMode] = useState("review");
 	const [loading, setLoading] = useState(false);
 	const [searchText, setSearchText] = useState("");
+	const [bookmarkTreeData, setBookmarkTreeData] = useState([]);
+	const [currentQues, setCurrentQues] = useState({
+		questionDesc: null,
+		question: "",
+		paragraph: null,
+		questionType: "",
+		questionmedia: null,
+		questionoption: [],
+	});
 
 	useEffect(async () => {
 		if (selectedSectionnumber > 0) {
@@ -167,6 +177,65 @@ const Bookmarks = React.memo(() => {
 			newDraft.push(true);
 		}
 		setBookmarks(newDraft);
+		setCurrentQues(bookmarkResp.data.data[0].questions_info);
+		let treeData = [];
+		// find unqiue courses from bookmark data and then unique subjects from courses and then unique topic from subjects and all the questions of that topic
+		bookmarkResp.data?.data.forEach((ques) => {
+			// console.log(ques.other_info);
+			let course = ques.other_info.co_courseName;
+			let subject = ques.other_info.sub_subjectName;
+			let topic = ques.other_info.top_topicName;
+			let question = ques.questions_info;
+
+			let courseIndex = treeData.findIndex((data) => data.name == course);
+			if (courseIndex != -1) {
+				let subjectIndex = treeData[courseIndex].children.findIndex(
+					(data) => data.name == subject
+				);
+				if (subjectIndex != -1) {
+					let topicIndex = treeData[courseIndex].children[
+						subjectIndex
+					].children.findIndex((data) => data.name == topic);
+					if (topicIndex != -1) {
+						treeData[courseIndex].children[subjectIndex].children[
+							topicIndex
+						].children.push(question);
+					} else {
+						treeData[courseIndex].children[subjectIndex].children.push({
+							name: topic,
+							children: [question],
+						});
+					}
+				} else {
+					treeData[courseIndex].children.push({
+						name: subject,
+						children: [
+							{
+								name: topic,
+								children: [question],
+							},
+						],
+					});
+				}
+			} else {
+				treeData.push({
+					name: course,
+					children: [
+						{
+							name: subject,
+							children: [
+								{
+									name: topic,
+									children: [question],
+								},
+							],
+						},
+					],
+				});
+			}
+		});
+		console.log("treeData ~", treeData);
+		setBookmarkTreeData(treeData);
 		setcurrentIndex(0);
 
 		let quesAnsArray = [];
@@ -197,47 +266,16 @@ const Bookmarks = React.memo(() => {
 	}, [selectedSectionnumber]);
 
 	useEffect(() => {
-		let notVisit = currentQuesStatus.notVisited.filter((res) => {
-			if (res == 1) {
-				return res;
-			}
-		});
-
-		// setAnswered(ans.length);
-		// setNotAnswer(notAns.length);
-		if (notVisit.length - 1 >= 0) {
-			// setNotVisited(notVisit.length - 1);
-		}
-
-		// setmarkedReview(markForRev.length);
-		// setBothAnsReview(bothAnsMark.length);
-		// console.log('qwqwqqw', currentQuesStatus)
-	}, [currentQuesStatus]);
-
-	useEffect(() => {
 		let qu = [...Question];
-		// console.log('ankit22222', getQuesAns)
 		if (qu.length && getQuesAns.length) {
 			qu[currentQuesIndex]["state"] = getQuesAns[currentQuesIndex]["state"];
 			setQuestion(qu);
 		}
 	}, [getQuesAns]);
 
-	const changeFinish = () => {
-		setFinishExam(true);
-	};
-
 	useEffect(() => {
 		sethidenav(true);
 	}, []);
-
-	const setModalIsOpenToFalse = () => {
-		setModalIsOpen(false);
-	};
-
-	const togglePopup = () => {
-		setIsOpen(!isOpen);
-	};
 
 	const getSolution = async (res) => {
 		console.log(res);
@@ -273,14 +311,75 @@ const Bookmarks = React.memo(() => {
 		for (let i = 0; i < bookmarkResp.data.data.length; i++) {
 			newDraft.push(true);
 		}
+		let treeData = [];
+		// find unqiue courses from bookmark data and then unique subjects from courses and then unique topic from subjects and all the questions of that topic
+		bookmarkResp.data?.data.forEach((ques) => {
+			console.log(ques.other_info);
+			let course = ques.other_info.co_courseName;
+			let subject = ques.other_info.sub_subjectName;
+			let topic = ques.other_info.top_topicName;
+			let question = ques.questions_info;
+
+			let courseIndex = treeData.findIndex((res) => res.name == course);
+			if (courseIndex == -1) {
+				treeData.push({
+					name: course,
+					children: [
+						{
+							name: subject,
+							children: [
+								{
+									name: topic,
+									children: [question],
+								},
+							],
+						},
+					],
+				});
+			} else {
+				let subjectIndex = treeData[courseIndex].children.findIndex(
+					(res) => res.name == subject
+				);
+				if (subjectIndex == -1) {
+					treeData[courseIndex].children.push({
+						name: subject,
+						children: [
+							{
+								name: topic,
+								children: [question],
+							},
+						],
+					});
+				} else {
+					let topicIndex = treeData[courseIndex].children[
+						subjectIndex
+					].children.findIndex((res) => res.name == topic);
+					if (topicIndex == -1) {
+						treeData[courseIndex].children[subjectIndex].children.push({
+							name: topic,
+							children: [question],
+						});
+					} else {
+						treeData[courseIndex].children[subjectIndex].children[
+							topicIndex
+						].children.push(question);
+					}
+				}
+			}
+		});
+		console.log("treeData ~", treeData);
+		setBookmarkTreeData(treeData);
 		setBookmarks(newDraft);
 	};
 
-	const handleBookmark = async (id, status) => {
+	const handleBookmark = async (ques, status) => {
 		const res = await axios.post(process.env.REACT_APP_API + "/addbookmark", {
 			userEmailId: localStorage.getItem("user"),
 			testId: localStorage.getItem("testid"),
-			questionsId: id,
+			questionsId: ques.questionId,
+			topicId: ques.topicId,
+			subjectId: ques.subjectId,
+			courseId: localStorage.getItem("courseid"),
 			status: status,
 		});
 		if (res.status == 200) {
@@ -296,9 +395,7 @@ const Bookmarks = React.memo(() => {
 			return bookmarksData?.data;
 		} else {
 			return bookmarksData?.data.filter((res) =>
-				res.questions_info.question
-					.toLowerCase()
-					.includes(searchText.toLowerCase())
+				currentQues?.question.toLowerCase().includes(searchText.toLowerCase())
 			);
 		}
 	}, [searchText, bookmarksData]);
@@ -327,88 +424,19 @@ const Bookmarks = React.memo(() => {
 				{/* left aside */}
 				<div className="w-1/3 h-[86vh] border-r border-gray-200">
 					<div className="flex flex-col h-full">
-						<div className="flex flex-row justify-between items-center p-2 border-b border-gray-200">
-							<div className="text-gray-500 font-semibold text-lg">
-								Bookmarks
-								{bookmarksData && bookmarksData.data.length > 0 ? (
-									<span className="text-gray-500 text-sm ml-2">
-										({bookmarksData.data.length})
-									</span>
-								) : (
-									""
-								)}
-							</div>
-						</div>
-						<div className="flex flex-col h-full overflow-y-scroll w-full">
-							<div className="flex flex-row justify-between items-center ml-2">
-								<FaSearch className="text-gray-500" />
-								<input
-									type="text"
-									className="border-b p-2 w-full text-gray-500 focus:outline-none"
-									placeholder="Search bookmarks"
-									onChange={(e) => setSearchText(e.target.value)}
+						<div className="tree-view mt-5">
+							{bookmarkTreeData.map((rootNode, index) => (
+								<TreeNode
+									key={rootNode.name}
+									node={rootNode}
+									index={index}
+									currentIndex={currentQuesIndex}
+									setCurrentIndex={setCurrentQuesIndex}
+									currentQuestion={currentQues}
+									setViewSection={setViewSection}
+									setCurrentQuestion={setCurrentQues}
 								/>
-							</div>
-							{filteredData?.length > 0 ? (
-								filteredData?.map((res, i) => (
-									<div
-										key={i}
-										className={`flex flex-row justify-between items-center p-2 border-b border-gray-200 cursor-pointer
-										${currentQuesIndex == i && "bg-gray-100"}`}
-										onClick={() => {
-											let filteredIndex = bookmarksData.data.findIndex(
-												(item) =>
-													item.questions_info.questionId ==
-													res.questions_info.questionId
-											);
-											setCurrentQuesIndex(filteredIndex);
-											setViewSection(false);
-										}}
-									>
-										<div className="flex flex-row">
-											<div className="text-gray-500 text-sm ml-2 flex text-left">
-												{res.questions_info.questionType == "paragraph" ? (
-													<>
-														<div
-															className="prow w-1/2"
-															style={{ height: "100%" }}
-														>
-															<div style={{ borderRight: "1px solid grey" }}>
-																<p className="w-8">Q.{i + 1}</p>
-																<p
-																	className="text-jusitfy"
-																	dangerouslySetInnerHTML={{
-																		__html: res.questions_info.paragraph
-																			.slice(0, 50)
-																			.concat("..."),
-																	}}
-																/>
-															</div>
-														</div>
-													</>
-												) : (
-													<>
-														<p className="w-8">Q.{i + 1}</p>
-														<p
-															dangerouslySetInnerHTML={{
-																__html: res.questions_info.question
-																	.slice(0, 50)
-																	.concat("..."),
-															}}
-														/>
-													</>
-												)}
-											</div>
-										</div>
-									</div>
-								))
-							) : (
-								<div className="items-center h-full">
-									<div className="mt-4 font-semibold text-gray-500">
-										No bookmarks found!
-									</div>
-								</div>
-							)}
+							))}
 						</div>
 					</div>
 				</div>
@@ -453,15 +481,14 @@ const Bookmarks = React.memo(() => {
 								<Tooltip label="Add this question to bookmarks">
 									<button
 										onClick={() => {
-											const quesId =
-												bookmarksData.data[currentQuesIndex].questions_info
-													.questionId;
+											const ques =
+												bookmarksData.data[currentQuesIndex].questions_info;
 											setBookmarks((draft) => {
 												let newDraft = [...draft];
 												newDraft[currentQuesIndex] =
 													!newDraft[currentQuesIndex];
 												handleBookmark(
-													quesId,
+													ques,
 													!newDraft[currentQuesIndex] ? 0 : 1
 												);
 												return newDraft;
@@ -477,168 +504,32 @@ const Bookmarks = React.memo(() => {
 								</Tooltip>
 							</div>
 
-							{Question.map((res, i) => {
-								console.log("🚀 ~ CurrQues ~", res);
-								return currentQuesIndex == i ? (
-									<div
-										key={i}
-										className="text-left justify-between overflow-y-scroll max-h-[500px] pl-2 w-full"
-										style={{ height: "100%" }}
-									>
-										{res.questions_info.questionType == "paragraph" ? (
-											<>
-												<div className="prow w-full" style={{ height: "100%" }}>
-													<div
-														className="pcolumn"
-														style={{ borderRight: "1px solid grey" }}
-													>
-														<p
-															dangerouslySetInnerHTML={{
-																__html: res.questions_info.paragraph,
-															}}
-														></p>
-													</div>
-													<div className="pcolumn">
-														<>
-															<p
-																className="p-4"
-																dangerouslySetInnerHTML={{
-																	__html: res.questions_info.question,
-																}}
-															></p>
-															{res.questions_info.optionType == "input" ? (
-																<div>
-																	<QuestionInput
-																		getMode={getMode}
-																		getAns={getAns}
-																		setAns={setAns}
-																		getQuesAns={getQuesAns}
-																		setQuesAns={setQuesAns}
-																		index={i}
-																	/>
-																</div>
-															) : (
-																<>
-																	{res.questions_info.questionoption[0] &&
-																		res.questions_info?.questionoption.map(
-																			(ans, iAns) => {
-																				return (
-																					<div
-																						key={iAns}
-																						className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
-																					>
-																						{console.log(
-																							"🚀 ~ file: index.js ~ line 687 ~ res.questionoption.map ~ ans",
-																							ans
-																						)}
-																						<div
-																							className={`flex items-center py-2 px-4 rounded-md
-																					${res.questions_info.correctoption == iAns + 1 && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "C" && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "W" && "bg-red-100"}
-																				`}
-																						>
-																							<input
-																								checked={
-																									iAns == getRadio
-																										? "checked"
-																										: null
-																								}
-																								type="radio"
-																								name={`ans` + i}
-																								disabled={true}
-																								className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																							/>
-																							<h3
-																								dangerouslySetInnerHTML={{
-																									// remove all br tags & &nbsp; from html
-																									__html: ans?.option
-																										.replace(/<br>/gi, "")
-																										.replace(/&nbsp;/gi, ""),
-																								}}
-																								className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
-																							></h3>
-																							{(reviewQues[i].answerStatus ==
-																								"C" &&
-																								iAns == getRadio) ||
-																							res.questions_info
-																								.correctoption ==
-																								iAns + 1 ? (
-																								<i className="mr-1 fa fa-check text-green-500 text-2xl" />
-																							) : (
-																								reviewQues[i].answerStatus ==
-																									"W" &&
-																								iAns == getRadio && (
-																									<i className="mr-1 fa fa-times text-red-500 text-2xl" />
-																								)
-																							)}
-																						</div>
-																					</div>
-																				);
-																			}
-																		)}
-																</>
-															)}
-															<div
-																style={{
-																	marginTop: "10px",
-																	minHeight: "200px",
-																}}
-															>
-																<button
-																	className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
-																	name="vieSec"
-																	onClick={() =>
-																		getSolution(res.questions_info)
-																	}
-																>
-																	{getViewSection ? (
-																		<p>Hide Solution</p>
-																	) : (
-																		<p>View Solution</p>
-																	)}
-																</button>
-																{getViewSection ? (
-																	getViewSolution &&
-																	typeof getViewSolution == "object" ? (
-																		<div
-																			className="mb-8"
-																			dangerouslySetInnerHTML={{
-																				__html: getViewSolution.q,
-																			}}
-																		></div>
-																	) : (
-																		<div
-																			className="mb-8"
-																			dangerouslySetInnerHTML={{
-																				__html: getViewSolution,
-																			}}
-																		></div>
-																	)
-																) : (
-																	""
-																)}
-															</div>
-														</>
-													</div>
-												</div>
-											</>
-										) : (
-											<>
+							<div
+								className="text-left justify-between overflow-y-scroll max-h-[500px] pl-2 w-full"
+								style={{ height: "100%" }}
+							>
+								{currentIndex?.questionType == "paragraph" ? (
+									<>
+										<div className="prow w-full" style={{ height: "100%" }}>
+											<div
+												className="pcolumn"
+												style={{ borderRight: "1px solid grey" }}
+											>
 												<p
 													dangerouslySetInnerHTML={{
-														__html: res.questions_info.paragraph,
+														__html: currentQues.paragraph,
 													}}
 												></p>
+											</div>
+											<div className="pcolumn">
 												<>
 													<p
-														className="w-10/12 p-4"
+														className="p-4"
 														dangerouslySetInnerHTML={{
-															__html: res.questions_info.question,
+															__html: currentQues?.question,
 														}}
 													></p>
-
-													{res.questions_info.optionType == "input" ? (
+													{currentQues?.optionType == "input" ? (
 														<div>
 															<QuestionInput
 																getMode={getMode}
@@ -646,67 +537,76 @@ const Bookmarks = React.memo(() => {
 																setAns={setAns}
 																getQuesAns={getQuesAns}
 																setQuesAns={setQuesAns}
-																index={i}
+																index={currentQuesIndex}
 															/>
 														</div>
 													) : (
 														<>
-															{res.questions_info.questionoption[0] &&
-																res?.questions_info?.questionoption.map(
-																	(ans, iAns) => {
-																		{
-																			console.log(
-																				"🚀 ~ file: index.js ~ line 808 ~ res.questionoption.map ~ ans",
-																				res.questions_info
-																			);
-																		}
-																		return (
+															{currentQues?.questionoption[0] &&
+																currentQues?.questionoption.map((ans, iAns) => {
+																	return (
+																		<div
+																			key={iAns}
+																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
+																		>
+																			{console.log(
+																				"🚀 ~ file: index.js ~ line 687 ~ res.questionoption.map ~ ans",
+																				ans
+																			)}
 																			<div
-																				key={iAns}
-																				className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
+																				className={`flex items-center py-2 px-4 rounded-md
+																					${currentQues?.correctoption == iAns + 1 && "bg-green-100 "}
+																					${reviewQues[currentQuesIndex].answerStatus == "C" && "bg-green-100 "}
+																					${reviewQues[currentQuesIndex].answerStatus == "W" && "bg-red-100"}
+																				`}
 																			>
-																				<div
-																					className={`flex items-center py-2 px-4 rounded-md
-																			${res.questions_info.correctoption == iAns + 1 && "bg-green-100 "}
-																			`}
-																				>
-																					<input
-																						checked={
-																							iAns == getRadio
-																								? "checked"
-																								: null
-																						}
-																						type="radio"
-																						name={`ans` + i}
-																						disabled={true}
-																						className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																					/>
-																					<h3
-																						dangerouslySetInnerHTML={{
-																							__html: ans?.option
-																								.replace(/<br>/gi, "")
-																								.replace(/&nbsp;/gi, ""),
-																						}}
-																						className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
-																					></h3>
-																					{res.questions_info.correctoption ==
-																						iAns + 1 && (
-																						<i className="mr-1 fa fa-check text-green-500 text-2xl" />
-																					)}
-																				</div>
+																				<input
+																					checked={
+																						iAns == getRadio ? "checked" : null
+																					}
+																					type="radio"
+																					name={`ans` + currentQuesIndex}
+																					disabled={true}
+																					className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																				/>
+																				<h3
+																					dangerouslySetInnerHTML={{
+																						// remove all br tags & &nbsp; from html
+																						__html: ans?.option
+																							.replace(/<br>/gi, "")
+																							.replace(/&nbsp;/gi, ""),
+																					}}
+																					className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
+																				></h3>
+																				{(reviewQues[currentQuesIndex]
+																					.answerStatus == "C" &&
+																					iAns == getRadio) ||
+																				currentQues?.correctoption ==
+																					iAns + 1 ? (
+																					<i className="mr-1 fa fa-check text-green-500 text-2xl" />
+																				) : (
+																					reviewQues[currentQuesIndex]
+																						.answerStatus == "W" &&
+																					iAns == getRadio && (
+																						<i className="mr-1 fa fa-times text-red-500 text-2xl" />
+																					)
+																				)}
 																			</div>
-																		);
-																	}
-																)}
+																		</div>
+																	);
+																})}
 														</>
 													)}
 													<div
-														style={{ marginTop: "10px", minHeight: "200px" }}
+														style={{
+															marginTop: "10px",
+															minHeight: "200px",
+														}}
 													>
 														<button
-															className="flex items-center px-4 py-2 rounded-sm font-semibold bg-blue-400 hover:bg-blue-500 transition text-gray-50 ml-4"
+															className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 															name="vieSec"
-															onClick={() => getSolution(res.questions_info)}
+															onClick={() => getSolution(currentQues)}
 														>
 															{getViewSection ? (
 																<p>Hide Solution</p>
@@ -718,14 +618,14 @@ const Bookmarks = React.memo(() => {
 															getViewSolution &&
 															typeof getViewSolution == "object" ? (
 																<div
-																	className="mt-5 mb-8 ml-5"
+																	className="mb-8"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution.q,
 																	}}
 																></div>
 															) : (
 																<div
-																	className="mt-5 mb-8 ml-5"
+																	className="mb-8"
 																	dangerouslySetInnerHTML={{
 																		__html: getViewSolution,
 																	}}
@@ -735,12 +635,114 @@ const Bookmarks = React.memo(() => {
 															""
 														)}
 													</div>
-												</>{" "}
-											</>
-										)}
-									</div>
-								) : null;
-							})}
+												</>
+											</div>
+										</div>
+									</>
+								) : (
+									<>
+										<p
+											dangerouslySetInnerHTML={{
+												__html: currentQues?.paragraph,
+											}}
+										></p>
+										<>
+											<p
+												className="w-10/12 p-4"
+												dangerouslySetInnerHTML={{
+													__html: currentQues?.question,
+												}}
+											></p>
+
+											{currentQues?.optionType == "input" ? (
+												<div>
+													<QuestionInput
+														getMode={getMode}
+														getAns={getAns}
+														setAns={setAns}
+														getQuesAns={getQuesAns}
+														setQuesAns={setQuesAns}
+														index={currentQuesIndex}
+													/>
+												</div>
+											) : (
+												<>
+													{currentQues?.questionoption &&
+														currentQues?.questionoption[0] &&
+														currentQues?.questionoption.map((ans, iAns) => {
+															return (
+																<div
+																	key={iAns}
+																	className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
+																>
+																	<div
+																		className={`flex items-center py-2 px-4 rounded-md
+																			${currentQues?.correctoption == iAns + 1 && "bg-green-100 "}
+																			`}
+																	>
+																		<input
+																			checked={
+																				iAns == getRadio ? "checked" : null
+																			}
+																			type="radio"
+																			name={`ans` + currentQuesIndex}
+																			disabled={true}
+																			className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																		/>
+																		<h3
+																			dangerouslySetInnerHTML={{
+																				__html: ans?.option
+																					.replace(/<br>/gi, "")
+																					.replace(/&nbsp;/gi, ""),
+																			}}
+																			className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
+																		></h3>
+																		{currentQues?.correctoption == iAns + 1 && (
+																			<i className="mr-1 fa fa-check text-green-500 text-2xl" />
+																		)}
+																	</div>
+																</div>
+															);
+														})}
+												</>
+											)}
+											<div style={{ marginTop: "10px", minHeight: "200px" }}>
+												<button
+													className="flex items-center px-4 py-2 rounded-sm font-semibold bg-blue-400 hover:bg-blue-500 transition text-gray-50 ml-4"
+													name="vieSec"
+													onClick={() => getSolution(currentQues)}
+												>
+													{getViewSection ? (
+														<p>Hide Solution</p>
+													) : (
+														<p>View Solution</p>
+													)}
+												</button>
+												{getViewSection ? (
+													getViewSolution &&
+													typeof getViewSolution == "object" ? (
+														<div
+															className="mt-5 mb-8 ml-5"
+															dangerouslySetInnerHTML={{
+																__html: getViewSolution.q,
+															}}
+														></div>
+													) : (
+														<div
+															className="mt-5 mb-8 ml-5"
+															dangerouslySetInnerHTML={{
+																__html: getViewSolution,
+															}}
+														></div>
+													)
+												) : (
+													""
+												)}
+											</div>
+										</>{" "}
+									</>
+								)}
+							</div>
 						</div>
 						<footer className="fixed w-full border-t-2 border-gray-300 p-2 bottom-0">
 							<div className="flex justify-between w-[240px] sm:w-[300px] ml-4">
@@ -749,6 +751,9 @@ const Bookmarks = React.memo(() => {
 										setViewSection(false);
 										if (currentQuesIndex - 1 >= 0) {
 											setCurrentQuesIndex(currentQuesIndex - 1);
+											setCurrentQues(
+												Question[currentQuesIndex - 1].questions_info
+											);
 										}
 									}}
 									className={clsx(
@@ -765,6 +770,9 @@ const Bookmarks = React.memo(() => {
 										setViewSection(false);
 										if (currentQuesIndex + 1 < Question.length) {
 											setCurrentQuesIndex(currentQuesIndex + 1);
+											setCurrentQues(
+												Question[currentQuesIndex + 1].questions_info
+											);
 										}
 									}}
 									className={clsx(
