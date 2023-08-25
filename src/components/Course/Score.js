@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const Score = () => {
 	const options = {
@@ -31,9 +31,7 @@ const Score = () => {
 		let correctAns = 0;
 		let wrongAns = 0;
 		let netScore = 0;
-		let percentile =
-			(respReview.data?.percentile && respReview.data?.percentile.toFixed(2)) ||
-			0;
+		let percentile = 0;
 		let totalMarks = 0;
 		let percentage = 0;
 		let rank = respReview.data?.rank;
@@ -49,6 +47,7 @@ const Score = () => {
 			questionAttempt = d.questionAttempt
 				? questionAttempt + d.questionAttempt
 				: totalQues;
+			percentile = percentile + d?.percentile || 0;
 		});
 		setTotalData({
 			totalQues,
@@ -56,7 +55,7 @@ const Score = () => {
 			correctAns,
 			wrongAns,
 			netScore,
-			percentile,
+			percentile: percentile.toFixed(2),
 			totalMarks,
 			percentage,
 			rank,
