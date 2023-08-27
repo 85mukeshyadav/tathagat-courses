@@ -1,5 +1,12 @@
 //import liraries
-import { Divider, Modal, Switch, Textarea, Tooltip } from "@mantine/core";
+import {
+	Divider,
+	Modal,
+	ScrollArea,
+	Switch,
+	Textarea,
+	Tooltip,
+} from "@mantine/core";
 import {
 	IconAlarm,
 	IconClock,
@@ -362,11 +369,14 @@ const Review = React.memo(() => {
 						</ul>
 					</div>
 					<div className="flex justify-end border-y-2 border-gray-300 pl-2 py-2 mt-2">
-						<p className="font-semibold text-sm sm:text-base mr-2">
+						<p className="py-2 font-semibold text-sm sm:text-lg mr-2 text-left">
 							Marks for Correct Answer:{" "}
-							{data[selectedSectionnumber]?.positiveMarks} | Negative Marks:{" "}
+							<span className="text-green-600">
+								{data[selectedSectionnumber]?.positiveMarks || ""}
+							</span>{" "}
+							| Negative Marks:{" "}
 							<span className="text-red-500">
-								{data[selectedSectionnumber]?.negativeMarks}
+								{Math.abs(data[selectedSectionnumber]?.negativeMarks) || ""}
 							</span>
 						</p>
 					</div>
@@ -449,91 +459,89 @@ const Review = React.memo(() => {
 							>
 								{res.questionType == "paragraph" ? (
 									<>
-										<div className="prow w-full" style={{ height: "100%" }}>
-											<div
-												className="pcolumn"
-												style={{ borderRight: "1px solid grey" }}
-											>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: res.paragraph,
-													}}
-												></p>
-											</div>
-											<div className="pcolumn">
-												<>
-													<p
-														className="p-4"
+										<div className="grid sm:grid-cols-2 grid-cols-1 grid-s w-full">
+											<div className="overflow-y-scroll p-4 border-r-[1px] border-gray-300">
+												<ScrollArea h={400}>
+													<div
+														className="pb-5 pr-4"
 														dangerouslySetInnerHTML={{
-															__html: res.question,
+															__html: res.paragraph,
 														}}
-													></p>
-													{res.optionType == "input" ? (
-														<div>
-															<QuestionInput
-																getMode={getMode}
-																getAns={getAns}
-																setAns={setAns}
-																getQuesAns={getQuesAns}
-																setQuesAns={setQuesAns}
-																index={i}
-															/>
-														</div>
-													) : (
-														<>
-															{/* <p className='w-10/12 p-4' dangerouslySetInnerHTML={{
+													/>
+												</ScrollArea>
+											</div>
+											<div className="overflow-y-scroll">
+												<ScrollArea h={400}>
+													<>
+														<p
+															className="p-4"
+															dangerouslySetInnerHTML={{
+																__html: res.question,
+															}}
+														></p>
+														{res.optionType == "input" ? (
+															<div>
+																<QuestionInput
+																	getMode={getMode}
+																	getAns={getAns}
+																	setAns={setAns}
+																	getQuesAns={getQuesAns}
+																	setQuesAns={setQuesAns}
+																	index={i}
+																/>
+															</div>
+														) : (
+															<>
+																{/* <p className='w-10/12 p-4' dangerouslySetInnerHTML={{
                                                                 __html: res.question
                                                             }}></p> */}
-															{res.questionoption[0] &&
-																res?.questionoption.map((ans, iAns) => {
-																	return (
-																		<div
-																			key={iAns}
-																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
-																		>
+																{res.questionoption[0] &&
+																	res?.questionoption.map((ans, idx) => {
+																		return (
 																			<div
-																				className={`flex items-center py-2 px-4 rounded-md
-																					${res.correctoption == iAns + 1 && showCorrectAns && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "C" && showCorrectAns && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "W" && "bg-red-100"}
-																				`}
+																				key={idx}
+																				className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																			>
-																				<input
-																					checked={
-																						iAns == getRadio ? "checked" : null
-																					}
-																					type="radio"
-																					name={`ans` + i}
-																					disabled={true}
-																					className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																				/>
-																				<h3
-																					dangerouslySetInnerHTML={{
-																						// remove all br tags & &nbsp; from html
-																						__html: ans?.option
-																							.replace(/<br>/gi, "")
-																							.replace(/&nbsp;/gi, ""),
-																					}}
-																					className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
-																				></h3>
-																				{(reviewQues[i].answerStatus == "C" &&
-																					showCorrectAns &&
-																					iAns == getRadio) ||
-																				(res.correctoption == iAns + 1 &&
-																					showCorrectAns) ? (
-																					<i className="mr-1 fa fa-check text-green-500 text-2xl" />
-																				) : (
-																					reviewQues[i].answerStatus == "W" &&
-																					iAns == getRadio && (
-																						<i className="mr-1 fa fa-times text-red-500 text-2xl" />
-																					)
-																				)}
+																				<div
+																					className={`flex items-center py-2 px-4 rounded-md
+																					${res.correctoption == idx + 1 && "bg-green-100 "}
+																					${reviewQues[i].answerStatus == "C" && idx == getRadio && "bg-green-100"}
+																					${reviewQues[i].answerStatus == "W" && idx == getRadio && "bg-red-100"}
+																				`}
+																				>
+																					<input
+																						checked={
+																							idx == getRadio ? "checked" : null
+																						}
+																						type="radio"
+																						name={`ans` + i}
+																						disabled={true}
+																						className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																					/>
+																					<h3
+																						dangerouslySetInnerHTML={{
+																							__html: ans?.option
+																								.replace(/<br>/gi, "")
+																								.replace(/&nbsp;/gi, ""),
+																						}}
+																						className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
+																					/>
+																					{(reviewQues[i].answerStatus == "C" &&
+																						idx == getRadio) ||
+																					res.correctoption == idx + 1 ? (
+																						<i className="mr-1 fa fa-check text-green-500 text-2xl" />
+																					) : (
+																						reviewQues[i].answerStatus == "W" &&
+																						idx == getRadio && (
+																							<i className="mr-1 fa fa-times text-red-500 text-2xl" />
+																						)
+																					)}
+																				</div>
 																			</div>
-																		</div>
-																	);
-																})}
+																		);
+																	})}
 
-															{/* <div style={{ marginTop: "10px", minHeight: '200px' }}>
+																{/* <div style={{ marginTop: "10px", minHeight: '200px' }}>
                                                                 <button className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50" name="vieSec" onClick={() => getSolution(res)}> View Solution </button> 
                                                                 {
                                                                     (getViewSection ? getViewSolution && typeof getViewSolution == 'object' ?
@@ -542,12 +550,12 @@ const Review = React.memo(() => {
                                                                     )
                                                                 }
                                                             </div> */}
-														</>
-													)}
-													<div
-														style={{ marginTop: "10px", minHeight: "200px" }}
-													>
-														{/* <button
+															</>
+														)}
+														<div
+															style={{ marginTop: "10px", minHeight: "200px" }}
+														>
+															{/* <button
 															className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 															name="vieSec"
 															onClick={() => getSolution(res)}
@@ -555,28 +563,29 @@ const Review = React.memo(() => {
 															{" "}
 															View Solution{" "}
 														</button> */}
-														{showCorrectAns ? (
-															getViewSolution &&
-															typeof getViewSolution == "object" ? (
-																<div
-																	className="mb-8"
-																	dangerouslySetInnerHTML={{
-																		__html: getViewSolution.q,
-																	}}
-																></div>
+															{showCorrectAns ? (
+																getViewSolution &&
+																typeof getViewSolution == "object" ? (
+																	<div
+																		className="mb-8"
+																		dangerouslySetInnerHTML={{
+																			__html: getViewSolution.q,
+																		}}
+																	></div>
+																) : (
+																	<div
+																		className="mb-8"
+																		dangerouslySetInnerHTML={{
+																			__html: getViewSolution,
+																		}}
+																	></div>
+																)
 															) : (
-																<div
-																	className="mb-8"
-																	dangerouslySetInnerHTML={{
-																		__html: getViewSolution,
-																	}}
-																></div>
-															)
-														) : (
-															""
-														)}
-													</div>
-												</>
+																""
+															)}
+														</div>
+													</>
+												</ScrollArea>
 											</div>
 										</div>
 									</>
@@ -609,26 +618,21 @@ const Review = React.memo(() => {
 											) : (
 												<>
 													{res.questionoption[0] &&
-														res?.questionoption.map((ans, iAns) => {
+														res?.questionoption.map((ans, idx) => {
 															return (
 																<div
-																	key={iAns}
+																	key={idx}
 																	className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
 																>
 																	<div
 																		className={`flex items-center py-2 px-4 rounded-md
-																			${res.correctoption == iAns + 1 && showCorrectAns && "bg-green-100 "}
-																			${
-																				reviewQues[i].answerStatus == "C" &&
-																				showCorrectAns &&
-																				iAns == getRadio &&
-																				"bg-green-100"
-																			}
-																			${reviewQues[i].answerStatus == "W" && iAns == getRadio && "bg-red-100"}`}
+																			${res.correctoption == idx + 1 && "bg-green-100 "}
+																			${reviewQues[i].answerStatus == "C" && idx == getRadio && "bg-green-100"}
+																			${reviewQues[i].answerStatus == "W" && idx == getRadio && "bg-red-100"}`}
 																	>
 																		<input
 																			checked={
-																				iAns == getRadio ? "checked" : null
+																				idx == getRadio ? "checked" : null
 																			}
 																			type="radio"
 																			name={`ans` + i}
@@ -644,14 +648,12 @@ const Review = React.memo(() => {
 																			className="ml-4 mr-2 text-gray-900 text-md font-semibold text-left"
 																		></h3>
 																		{(reviewQues[i].answerStatus == "C" &&
-																			showCorrectAns &&
-																			iAns == getRadio) ||
-																		(res.correctoption == iAns + 1 &&
-																			showCorrectAns) ? (
+																			idx == getRadio) ||
+																		res.correctoption == idx + 1 ? (
 																			<i className="mr-1 fa fa-check text-green-500 text-2xl" />
 																		) : (
 																			reviewQues[i].answerStatus == "W" &&
-																			iAns == getRadio && (
+																			idx == getRadio && (
 																				<i className="mr-1 fa fa-times text-red-500 text-2xl" />
 																			)
 																		)}

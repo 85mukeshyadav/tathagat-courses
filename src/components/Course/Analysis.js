@@ -131,19 +131,30 @@ const Analysis = () => {
 				setMarksDistribution(distribution);
 
 				const leaderboard = res.data?.data?.leaderBoardList.sort((a, b) => {
-					return b.netScore - a.netScore;
+					return a.netScore - b.netScore;
 				});
+				console.log(leaderboard);
 				const cutoffMarks =
 					leaderboard[Math.floor((leaderboard.length * 80) / 100)].netScore;
 				setCutoffMarks(cutoffMarks);
 				let percentileData = [];
-				for (let i = 0; i < leaderboard.length; i++) {
+				if (leaderboard.length == 1) {
 					const obj = {
-						score: leaderboard[i].netScore,
-						percentile: ((leaderboard.length - i) / leaderboard.length) * 100,
-						youarehere: leaderboard[i].userId === localStorage.getItem("user"),
+						score: leaderboard[0].netScore,
+						percentile: 100,
+						youarehere: leaderboard[0].userId === localStorage.getItem("user"),
 					};
 					percentileData.push(obj);
+				} else {
+					for (let i = 0; i < leaderboard.length; i++) {
+						const obj = {
+							score: leaderboard[i].netScore,
+							percentile: (i / (leaderboard.length - 1)) * 100,
+							youarehere:
+								leaderboard[i].userId === localStorage.getItem("user"),
+						};
+						percentileData.push(obj);
+					}
 				}
 				console.log("percentiledata ~", percentileData);
 				setPercentileDistribution(percentileData);
@@ -469,7 +480,7 @@ const Analysis = () => {
 															</td>
 															{/* <td className='text-left p-2'>{res.unanswered}</td> */}
 														</tr>
-														<tr>
+														{/* <tr>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
 																Average
 															</td>
@@ -478,7 +489,7 @@ const Analysis = () => {
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															{/* <td className='text-left p-1 sm:p-2'></td> */}
+															<td className='text-left p-1 sm:p-2'></td>
 														</tr>
 														<tr>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
@@ -489,8 +500,8 @@ const Analysis = () => {
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
 															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															{/* <td className='text-left p-2'></td> */}
-														</tr>
+															<td className='text-left p-2'></td>
+														</tr> */}
 													</tbody>
 												</Table>
 
@@ -516,10 +527,10 @@ const Analysis = () => {
 																Status
 															</th>
 															<th className="text-left p-2 text-sm sm:text-lg">
-																Your Answers
+																Your Answer
 															</th>
 															<th className="text-left p-2 text-sm sm:text-lg">
-																Correct Option
+																Correct Answer
 															</th>
 															<th className="text-left p-2 text-sm sm:text-lg">
 																Percentage of students who got it right
@@ -561,7 +572,7 @@ const Analysis = () => {
 																			? ques.usersAnswer
 																			: "--"
 																		: ques.usersAnswer != -1
-																		? ques.usersAnswer
+																		? ques.usersAnswer + 1
 																		: "--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
@@ -570,14 +581,15 @@ const Analysis = () => {
 																		"--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{rightPercentage[
-																		idx
-																	]?.writePercentage?.toFixed(2) + "%"}
+																	{(
+																		rightPercentage[idx]?.writePercentage *
+																			100 || 0
+																	).toFixed(2) + "%"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques?.attemptOrder &&
-																	ques?.attemptOrder !== -1
-																		? ques?.attemptOrder + 1
+																	{ques.hasOwnProperty("attemptOrder") &&
+																	ques?.attemptOrder != -1
+																		? ques.attemptOrder + 1
 																		: "--"}
 																</td>
 															</tr>
@@ -664,7 +676,7 @@ const Analysis = () => {
 				</div>
 				<div className="mt-10 bg-gray-100 py-5">
 					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
-						Question Distribution
+						Performance Distribution
 					</p>
 					<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
 						<div className="flex items-center">
@@ -1024,8 +1036,6 @@ const Analysis = () => {
 														width="90"
 														height="25"
 														fill="#F43F5E"
-														stroke="white"
-														strokeWidth="2"
 														rx="2"
 													/>
 													<text
@@ -1068,7 +1078,7 @@ const Analysis = () => {
 						<LineChart
 							data={percentileDistribution}
 							margin={{
-								top: 20,
+								top: 50,
 								right: 120,
 								left: 50,
 								bottom: 20,
@@ -1128,8 +1138,6 @@ const Analysis = () => {
 															width="100"
 															height="25"
 															fill="#F43F5E"
-															stroke="white"
-															strokeWidth="2"
 															rx="2"
 														/>
 														<text
@@ -1147,18 +1155,16 @@ const Analysis = () => {
 												{payload.youarehere && (
 													<>
 														<rect
-															x={props.cx}
-															y={props.cy}
-															width="90"
+															x={props.cx + 5}
+															y={props.cy - 28}
+															width="82"
 															height="25"
 															fill="#8884d8"
-															stroke="white"
-															strokeWidth="2"
 															rx="2"
 														/>
 														<text
 															x={props.cx}
-															y={props.cy}
+															y={props.cy - 28}
 															dx={12}
 															dy={16}
 															fill="#FFF"
