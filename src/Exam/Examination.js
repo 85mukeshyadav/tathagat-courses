@@ -1101,7 +1101,7 @@ const Examination = React.memo(() => {
 						Question Paper
 					</p>
 					<div>
-						{/* {Question.map((ques, i) => (
+						{Question.map((ques, i) => (
 							<div key={i} className="flex my-5">
 								<span className="font-bold text-gray-700 mr-4">Q{i + 1}.</span>
 								{ques.questionType == "single" && (
@@ -1114,17 +1114,27 @@ const Examination = React.memo(() => {
 									/>
 								)}
 								{ques.questionType == "paragraph" && (
-									<p
-										key={i}
-										className="font-semibold text-gray-700"
-										dangerouslySetInnerHTML={{
-											__html: ques.paragraph,
-										}}
-									/>
+									<div key={i}>
+										<p
+											className="font-semibold text-gray-700"
+											dangerouslySetInnerHTML={{
+												__html: ques.paragraph,
+											}}
+										/>
+										<div className="mt-2 ml-2 flex">
+											<span className="font-bold text-gray-700 mr-1">Q.</span>
+											<p
+												className="font-semibold text-gray-700"
+												dangerouslySetInnerHTML={{
+													__html: ques.question,
+												}}
+											/>
+										</div>
+									</div>
 								)}
 							</div>
-						))} */}
-						{Object.keys(groupedQuestions).map((key, index) => (
+						))}
+						{/* {Object.keys(groupedQuestions).map((key, index) => (
 							<div key={key} className="my-5">
 								{groupedQuestions[key].hasOwnProperty("questionType") ? (
 									<div className="flex">
@@ -1162,7 +1172,7 @@ const Examination = React.memo(() => {
 									</>
 								)}
 							</div>
-						))}
+						))} */}
 					</div>
 				</Modal>
 
@@ -1335,7 +1345,7 @@ const Examination = React.memo(() => {
 											<div className="overflow-y-scroll p-4 border-r-[1px] border-gray-300">
 												<ScrollArea h={400}>
 													<div
-														className="pb-5"
+														className="pb-5 pr-3"
 														dangerouslySetInnerHTML={{
 															__html: res.paragraph,
 														}}
@@ -1839,8 +1849,10 @@ const Examination = React.memo(() => {
 									);
 								}
 								setTimeSpent(localCount);
-								newObj["attemptOrder"][currentQuesIndex] = attemptOrder;
-								setAttemptOrder(attemptOrder + 1);
+								if (newObj["attemptOrder"][currentQuesIndex] == -1) {
+									newObj["attemptOrder"][currentQuesIndex] = attemptOrder;
+									setAttemptOrder(attemptOrder + 1);
+								}
 								if (newArry[currentQuesIndex]["optionType"] == "input") {
 									if (getAns) {
 										newArry[currentQuesIndex]["quesAns"] = getAns;
@@ -2048,8 +2060,10 @@ const Examination = React.memo(() => {
 									);
 								}
 								setTimeSpent(localCount);
-								newObj["attemptOrder"][currentQuesIndex] = attemptOrder;
-								setAttemptOrder(attemptOrder + 1);
+								if (newObj["attemptOrder"][currentQuesIndex] == -1) {
+									newObj["attemptOrder"][currentQuesIndex] = attemptOrder;
+									setAttemptOrder(attemptOrder + 1);
+								}
 								if (
 									newArry[currentQuesIndex]["quesAns"] == -1 &&
 									newArry[currentQuesIndex]["optionType"] == "input"
