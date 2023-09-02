@@ -482,7 +482,8 @@ const Examination = React.memo(() => {
 								};
 							}
 						});
-						console.log(groupedQuestions);
+						quesAnsArray[0]["state"] = 2;
+						quesAnsArray[0]["isClicked"] = true;
 						setGroupedQuestions(groupedQuestions);
 						setCurrentQuesStatus(objArray);
 						setQuesAns(quesAnsArray);
@@ -1713,8 +1714,8 @@ const Examination = React.memo(() => {
 													setRadio(-1);
 												}
 
-												// newArray[i]['state'] = 2;
-												// newArray[i]['isClicked'] = true;
+												newArray[i]["state"] = 2;
+												newArray[i]["isClicked"] = true;
 											}
 											setQuesAns(newArray);
 											localStorage.setItem(
