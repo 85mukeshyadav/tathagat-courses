@@ -461,9 +461,8 @@ const Review = React.memo(() => {
 									<>
 										<div className="grid sm:grid-cols-2 grid-cols-1 grid-s w-full">
 											<div className="overflow-y-scroll p-4 border-r-[1px] border-gray-300">
-												<ScrollArea h={400}>
+												<ScrollArea h={400} className="p-4 pb-6">
 													<div
-														className="pb-5 pr-4"
 														dangerouslySetInnerHTML={{
 															__html: res.paragraph,
 														}}
@@ -471,10 +470,9 @@ const Review = React.memo(() => {
 												</ScrollArea>
 											</div>
 											<div className="overflow-y-scroll">
-												<ScrollArea h={400}>
+												<ScrollArea h={450} className="p-4 pb-6">
 													<>
 														<p
-															className="p-4"
 															dangerouslySetInnerHTML={{
 																__html: res.question,
 															}}
@@ -504,8 +502,15 @@ const Review = React.memo(() => {
 																			>
 																				<div
 																					className={`flex items-center py-2 px-4 rounded-md
-																					${res.correctoption == idx + 1 && "bg-green-100 "}
-																					${reviewQues[i].answerStatus == "C" && idx == getRadio && "bg-green-100"}
+																					${
+																						(reviewQues[i].answerStatus ==
+																							"C" &&
+																							idx == getRadio) ||
+																						(res.correctoption == idx + 1 &&
+																							showCorrectAns)
+																							? "bg-green-100"
+																							: ""
+																					}
 																					${reviewQues[i].answerStatus == "W" && idx == getRadio && "bg-red-100"}
 																				`}
 																				>
@@ -528,7 +533,8 @@ const Review = React.memo(() => {
 																					/>
 																					{(reviewQues[i].answerStatus == "C" &&
 																						idx == getRadio) ||
-																					res.correctoption == idx + 1 ? (
+																					(res.correctoption == idx + 1 &&
+																						showCorrectAns) ? (
 																						<i className="mr-1 fa fa-check text-green-500 text-2xl" />
 																					) : (
 																						reviewQues[i].answerStatus == "W" &&
@@ -552,9 +558,7 @@ const Review = React.memo(() => {
                                                             </div> */}
 															</>
 														)}
-														<div
-															style={{ marginTop: "10px", minHeight: "200px" }}
-														>
+														<div className="mt-4">
 															{/* <button
 															className="flex items-center border-2  p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm font-semibold bg-blue-400 text-gray-50"
 															name="vieSec"
@@ -626,8 +630,14 @@ const Review = React.memo(() => {
 																>
 																	<div
 																		className={`flex items-center py-2 px-4 rounded-md
-																			${res.correctoption == idx + 1 && "bg-green-100 "}
-																			${reviewQues[i].answerStatus == "C" && idx == getRadio && "bg-green-100"}
+																			${
+																				(reviewQues[i].answerStatus == "C" &&
+																					idx == getRadio) ||
+																				(res.correctoption == idx + 1 &&
+																					showCorrectAns)
+																					? "bg-green-100"
+																					: ""
+																			}
 																			${reviewQues[i].answerStatus == "W" && idx == getRadio && "bg-red-100"}`}
 																	>
 																		<input
@@ -649,7 +659,8 @@ const Review = React.memo(() => {
 																		></h3>
 																		{(reviewQues[i].answerStatus == "C" &&
 																			idx == getRadio) ||
-																		res.correctoption == idx + 1 ? (
+																		(res.correctoption == idx + 1 &&
+																			showCorrectAns) ? (
 																			<i className="mr-1 fa fa-check text-green-500 text-2xl" />
 																		) : (
 																			reviewQues[i].answerStatus == "W" &&

@@ -985,7 +985,13 @@ const Analysis = () => {
 								}}
 							>
 								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="marks">
+								<XAxis
+									dataKey="marks"
+									style={{
+										fontSize: "0.8rem",
+										fontWeight: "700",
+									}}
+								>
 									<Label
 										value="Marks"
 										offset={-20}
@@ -1085,7 +1091,13 @@ const Analysis = () => {
 							}}
 						>
 							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="score">
+							<XAxis
+								dataKey="score"
+								style={{
+									fontSize: "0.8rem",
+									fontWeight: "700",
+								}}
+							>
 								<Label
 									value="Score"
 									offset={-20}
