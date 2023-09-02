@@ -18,13 +18,12 @@ const Score = () => {
 			testId: localStorage.getItem("testid"),
 			packageId: localStorage.getItem("pkgid"),
 		};
-		const respReview = await axios.post(
-			process.env.REACT_APP_API + "/reviewTest",
+		const res = await axios.post(
+			process.env.REACT_APP_API + "/overallPerformanceSummary",
 			param,
 			options
 		);
-		console.log(respReview.data);
-		setReviewData(respReview.data);
+		setReviewData(res.data?.data);
 
 		let totalQues = 0;
 		let quesAttempt = 0;
@@ -34,20 +33,25 @@ const Score = () => {
 		let percentile = 0;
 		let totalMarks = 0;
 		let percentage = 0;
-		let rank = respReview.data?.rank;
+		let rank = res.data?.data?.rank;
 		let questionAttempt = 0;
-		respReview.data?.section.map((d, i) => {
+		res.data?.data?.section.map((d, i) => {
 			totalQues = totalQues + d.question.length;
 			quesAttempt = quesAttempt + d.answered;
 			correctAns = correctAns + d.correctAnswers;
 			wrongAns = wrongAns + d.wrongAnswers;
 			totalMarks = totalMarks + d.totalMarks;
 			netScore = netScore + d.score;
-			percentage = ((netScore / totalMarks) * 100).toFixed(2);
+			percentage =
+				percentage +
+				((d.correctAnswers * d.positiveMarks -
+					d.wrongAnswers * Math.abs(d.negativeMarks)) /
+					d.totalMarks) *
+					100;
 			questionAttempt = d.questionAttempt
 				? questionAttempt + d.questionAttempt
 				: totalQues;
-			percentile = percentile + d?.percentile || 0;
+			percentile = percentile + parseFloat(d?.percentile) || 0;
 		});
 		setTotalData({
 			totalQues,
@@ -153,7 +157,7 @@ const Score = () => {
 											{res?.rank <= 20 ? res?.rank : "NA*"}
 										</td>
 										<td className="text-left p-2 text-xs sm:text-base">
-											{res?.percentile && res?.percentile.toFixed(2)}
+											{res?.percentile}
 										</td>
 									</tr>
 								))}
@@ -181,8 +185,8 @@ const Score = () => {
 										{getTotalData.netScore}
 									</th>
 									<th className="text-left p-2 text-xs sm:text-base">
-										{getTotalData.percentage >= 0
-											? getTotalData.percentage
+										{getTotalData.percentage?.toFixed(2) >= 0
+											? getTotalData.percentage?.toFixed(2)
 											: "NA"}
 									</th>
 									<th className="text-left p-2 text-xs sm:text-base">
