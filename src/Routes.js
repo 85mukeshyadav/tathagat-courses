@@ -5,6 +5,7 @@ import Review from "./Exam/Review";
 import TestExam from "./Exam/TestExam";
 import Exam from "./Exam/examScreen";
 import Page404 from "./components/404";
+import About from "./components/About";
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import Signin from "./components/Auth/signin";
@@ -56,6 +57,7 @@ const Rout = (props) => (
 		<Route exact path="/terms-conditions" element={<Terms />} />
 		<Route exact path="/privacy-policy" element={<Privacy />} />
 		<Route exact path="/refund-policy" element={<Refund />} />
+		<Route exact path="/about-us" element={<About />} />
 		<Route exact path="*" element={<Page404 />} />
 	</Routes>
 );
