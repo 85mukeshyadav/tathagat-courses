@@ -17,8 +17,8 @@ import examnotification from "../assets/exam-notification.png";
 import examIc from "../assets/examic.png";
 import heroimage from "../assets/heroimage.jpg";
 import hideNavContext from "../context/AllprojectsContext";
-import Loader from "./Loader";
 import slugify from "../utils/slugify";
+import Loader from "./Loader";
 
 // create a component
 const Homepage = () => {
@@ -137,7 +137,7 @@ const Homepage = () => {
 													}}
 												>
 													<div className="flex justify-between items-center">
-														<div className="flex bg-blue-200 w-14 h-10 items-center justify-center rounded-md">
+														<div className="flex bg-blue-200 px-2 h-10 items-center justify-center rounded-md">
 															<p className="font-bold text-xl text-blue-700">
 																₹{res?.price}
 															</p>

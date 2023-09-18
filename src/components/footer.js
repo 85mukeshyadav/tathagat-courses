@@ -1,6 +1,6 @@
 //import liraries
 import React from "react";
-import { Link, BrowserRouter as Router } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // create a component
 const Footer = () => {
@@ -35,25 +35,35 @@ const Footer = () => {
 					<div className="px-4 text-left sm:w-1/2 md:w-1/3 mt-4 md:mt-0 text-white">
 						<h6 className="font-bold mb-2">Address</h6>
 						<address className="not-italic mb-4 text-sm">
-							115, 1st Floor, New Delhi House Connaught Place
+							113, 1st Floor, New Delhi House Connaught Place
 							<br />
 							New Delhi - 110001
 							<br />
 						</address>
 					</div>
 					<div className="text-white px-4 text-left md:ml-20">
-						<ul>
-							<li className="py-1">About us</li>
-							<li className="py-1">Course Details</li>
-							<li className="py-1">Testimonials</li>
-							<li className="py-1">Faculty</li>
-							<li className="py-1">Contact Us</li>
+						<ul className="font-semibold">
+							<li className="py-1">
+								<a href="/about-us">About us</a>
+							</li>
+							<li className="py-1">
+								<a href="/contact">Contact Us</a>
+							</li>
+							<li className="py-1">
+								<a href="/privacy-policy">Privacy Policy</a>
+							</li>
+							<li className="py-1">
+								<a href="/terms-conditions">Terms & Conditions</a>
+							</li>
+							<li className="py-1">
+								<a href="/refund-policy">Refund Policy</a>
+							</li>
 						</ul>
 					</div>
 				</div>
 			</div>
 			<div className="text-center">
-				<h6 className="text-sm mt-4 text-gray-200 mb-2">
+				<h6 className="mt-4 text-gray-200 mb-2">
 					Copyright © 2021 Tathagat. Brands are the property of their respective
 					owners.
 				</h6>
