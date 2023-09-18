@@ -12,7 +12,7 @@ import Signin from "./components/Auth/signin";
 import Blogs from "./components/Blogs";
 import Bookmarks from "./components/Bookmarks";
 import Contact from "./components/Contact";
-import Analysis from "./components/Course/Analysis";
+import AnalysisProvider from "./components/Course/AnalysisProvider";
 import CourseDetails from "./components/Course/courseDetails";
 import CourseInfo from "./components/Course/courseInfo";
 import CourseList from "./components/Course/courselist";
@@ -45,7 +45,7 @@ const Rout = (props) => (
 		<Route exact path="Exam" element={<Exam />} />
 		<Route exact path="examination" element={<Examination />} />
 		<Route exact path="review" element={<Review />} />
-		<Route exact path="analysis" element={<Analysis />} />
+		<Route exact path="analysis" element={<AnalysisProvider />} />
 		<Route exact path="" element={<Homepage />} />
 		<Route exact path="/blogs" element={<Blogs />} />
 		<Route exact path="/test/:pkgid/:testid" element={<TestExam />} />
