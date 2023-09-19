@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
 import React from "react";
+import Marquee from "react-fast-marquee";
 import { FiFile, FiVideo } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import apiClient from "../../api/apiClient";
@@ -31,6 +32,13 @@ const CourseList = () => {
 
 	return (
 		<div className="bg-white">
+			<Marquee
+				className="bg-blue-200 text-blue-600 text-center py-2 font-semibold"
+				pauseOnHover
+			>
+				🚀 We are happy to inform all TGits that we have upgraded our test
+				portal. New features will be shown on your new test attempts. 🚀
+			</Marquee>
 			<div className="mx-auto py-16 px-4 sm:py-24 sm:px-6">
 				<p className="text-gray-500 text-5xl font-bold mb-10">All Courses</p>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-2">

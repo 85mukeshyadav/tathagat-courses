@@ -42,7 +42,9 @@ const style = {
 function Counter(props) {
 	const remainingTime = JSON.parse(localStorage.getItem("time"));
 	const testid = localStorage.getItem("testid");
-	const [count, setCount] = useState(props.time);
+	const [count, setCount] = useState(
+		remainingTime?.testid === testid ? remainingTime?.time : props.time
+	);
 
 	useInterval(() => {
 		// Your custom logic here
@@ -128,25 +130,61 @@ const Examination = React.memo(() => {
 
 	const lastQuesAttempt = JSON.parse(localStorage.getItem("lastQuesAttempt"));
 	const testid = localStorage.getItem("testid");
-	const [currentQuesIndex, setCurrentQuesIndex] = useState(0);
+	const [currentQuesIndex, setCurrentQuesIndex] = useState(
+		lastQuesAttempt?.testid === testid
+			? lastQuesAttempt.currentQuesIndex < 9
+				? lastQuesAttempt.currentQuesIndex + 1
+				: lastQuesAttempt.currentQuesIndex
+			: 0
+	);
 	const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
 	// const quesAttempted = JSON.parse(Cookies.get("quesAttempted") || "{}");
 	const [currentQuesStatus, setCurrentQuesStatus] = useState({
-		answered: [],
-		notAnswered: [],
-		notVisited: [],
-		markForReview: [],
-		bothAnsReview: [],
-		timeTaken: [],
-		attemptOrder: [],
+		answered:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["answered"]
+				: [],
+		notAnswered:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["notAnswered"]
+				: [],
+		notVisited:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["notVisited"]
+				: [],
+		markForReview:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["markForReview"]
+				: [],
+		bothAnsReview:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["bothAnsReview"]
+				: [],
+		timeTaken:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["timeTaken"]
+				: [],
+		attemptOrder:
+			quesAttempted?.testid === testid
+				? quesAttempted?.objArray["attemptOrder"]
+				: [],
 	});
 
 	const [timeSpent, setTimeSpent] = useState(0);
 	const [notAnswered, setNotAnswer] = useState(0);
 	const [notVisited, setNotVisited] = useState(0);
 	const savedSession = JSON.parse(localStorage.getItem("savedSession"));
-	const [getQuesAns, setQuesAns] = useState([]);
-	const [getRadio, setRadio] = useState(-1);
+	// const savedSession = JSON.parse(Cookies.get("savedSession") || "{}");
+	const [getQuesAns, setQuesAns] = useState(
+		// savedSession?.testid === testid ? savedSession?.getQuesAns : []
+		[]
+	);
+	const [getRadio, setRadio] = useState(
+		// savedSession?.testid === testid
+		// 	? savedSession?.getQuesAns[currentQuesIndex]?.quesAns
+		// 	: -1
+		-1
+	);
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [modalInsOpen, setModalInsOpen] = useState(false);
 	const [modalQuesAlertOpen, setModalQuesAlertOpen] = useState(false);
@@ -261,7 +299,10 @@ const Examination = React.memo(() => {
 			setCurrentQuesIndex(0);
 			setNotAnswer(0);
 			setNotVisited(0);
-			setQuesAns([]);
+			setQuesAns(
+				// savedSession?.testid === testid ? savedSession?.getQuesAns : []
+				[]
+			);
 			setRadio(-1);
 			setModalIsOpen(false);
 			setModalInsOpen(false);
@@ -319,13 +360,34 @@ const Examination = React.memo(() => {
 			setTestName(res.data[0].TestTitle);
 			// const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
 			let objArray = {
-				notAnswered: [],
-				notVisited: [],
-				answered: [],
-				markForReview: [],
-				bothAnsReview: [],
-				timeTaken: [],
-				attemptOrder: [],
+				notAnswered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notAnswered"]
+						: [],
+				notVisited:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["notVisited"]
+						: [],
+				answered:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["answered"]
+						: [],
+				markForReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["markForReview"]
+						: [],
+				bothAnsReview:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["bothAnsReview"]
+						: [],
+				timeTaken:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["timeTaken"]
+						: [],
+				attemptOrder:
+					quesAttempted?.testid === testid
+						? quesAttempted?.objArray["attemptOrder"]
+						: [],
 			};
 			console.log("objArray", objArray);
 			let quesAnsArray = [];
@@ -337,29 +399,71 @@ const Examination = React.memo(() => {
 						setSectionId(res.sectionId);
 
 						let newQues = res.QuestionList.map((ques, idx) => {
-							objArray.notAnswered[idx] = 1;
-							objArray.notVisited[idx] = 1;
-							objArray.answered[idx] = 0;
-							objArray.markForReview[idx] = 0;
-							objArray.bothAnsReview[idx] = 0;
-							objArray.timeTaken[idx] = 0;
-							objArray.attemptOrder[idx] = -1;
+							objArray.notAnswered[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.notAnswered[idx]
+									: 1;
+							objArray.notVisited[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.notVisited[idx]
+									: 1;
+							objArray.answered[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.answered[idx]
+									: 0;
+							objArray.markForReview[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.markForReview[idx]
+									: 0;
+							objArray.bothAnsReview[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.bothAnsReview[idx]
+									: 0;
+							objArray.timeTaken[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.timeTaken[idx]
+									: 0;
+							objArray.attemptOrder[idx] =
+								quesAttempted?.testid === testid
+									? quesAttempted?.objArray?.attemptOrder[idx]
+									: -1;
 							let everyQues = {
 								isClicked: false,
+								// savedSession?.testid === testid
+								// 	? savedSession?.getQuesAns[idx]?.isClicked
+								// 	: false,
 								quesId: ques.questionId,
 								quesAns: -1,
+								// savedSession?.testid === testid
+								// 	? savedSession?.getQuesAns[idx]?.quesAns
+								// 	: -1,
 								state: 3,
+								// savedSession?.testid === testid
+								// 	? savedSession?.getQuesAns[idx]?.state
+								// 	: 3,
 								ansStatus: "",
+								// savedSession?.testid === testid
+								// 	? savedSession?.getQuesAns[idx]?.ansStatus
+								// 	: "",
 								optionType: ques.optionType,
 								subjectId: ques.subjectId,
 								chapterChapterId: ques.chapterChapterId,
 								topicId: ques.topicId,
 								optionType: ques.optionType,
-								timeTaken: 0,
-								attemptOrder: -1,
+								timeTaken:
+									quesAttempted?.testid === testid
+										? quesAttempted?.objArray["timeTaken"][idx]
+										: 0,
+								attemptOrder:
+									quesAttempted?.testid === testid
+										? quesAttempted?.objArray["attemptOrder"][idx]
+										: -1,
 							};
 							quesAnsArray.push(everyQues);
-							ques["state"] = 3;
+							ques["state"] =
+								savedSession?.testid === testid
+									? savedSession?.getQuesAns[idx]?.state
+									: 3;
 							return ques;
 						});
 
@@ -1182,6 +1286,7 @@ const Examination = React.memo(() => {
 									key={i}
 									onClick={() => {
 										if (selectedSectionnumber < i) setAlertbox(false);
+										// setselectedcategorynumber(i);
 									}}
 									className={`flex items-center border-2 ml-2 mt-2 p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm ${
 										selectedSectionnumber == i ? "bg-blue-400" : "bg-gray-100"

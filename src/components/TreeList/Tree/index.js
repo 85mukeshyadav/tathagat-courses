@@ -133,7 +133,13 @@ const TreeNode = ({ node, setNodeClick }) => {
 											<button
 												onClick={() => {
 													localStorage.setItem("testid", node.id);
-													redirectTo("/analysis");
+													navigate("/analysis", {
+														state: {
+															testid: node.id,
+															attempt_id: node.attempt_id,
+															submitted_at: node.submitted_at,
+														},
+													});
 												}}
 												className="items-center w-32 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50"
 											>

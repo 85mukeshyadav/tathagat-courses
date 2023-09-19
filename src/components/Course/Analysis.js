@@ -1,6 +1,8 @@
 import { Divider, RingProgress, Table, Tabs } from "@mantine/core";
 import clsx from "clsx";
 import dayjs from "dayjs";
+import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import React, { useEffect, useState } from "react";
 import { AiOutlineAim } from "react-icons/ai";
 import { BiReceipt } from "react-icons/bi";
@@ -89,7 +91,7 @@ const Analysis = () => {
 				setTotalMarks(res.data?.data?.section[0]?.totalMarks);
 				setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 				setTopper(res.data?.data?.topperObject);
-				setLeaderboard(res.data?.data?.leaderBoardList.reverse());
+				setLeaderboard(res.data?.data?.leaderBoardList);
 				setQuesList(res.data?.data?.Qans?.Section[0]?.QuestionList);
 				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 				const students = res.data?.data?.AllStudent;
@@ -130,28 +132,34 @@ const Analysis = () => {
 				console.log(distribution);
 				setMarksDistribution(distribution);
 
-				const leaderboard = res.data?.data?.leaderBoardList.sort((a, b) => {
-					return a.netScore - b.netScore;
-				});
-				console.log(leaderboard);
+				const tempLeaderboard = sortBy(res.data?.data?.leaderBoardList, [
+					"netScore",
+				]);
+				console.log(
+					"🚀 ~ file: Analysis.js:104 ~ tempLeaderboard ~ tempLeaderboard:",
+					tempLeaderboard
+				);
 				const cutoffMarks =
-					leaderboard[Math.floor((leaderboard.length * 80) / 100)].netScore;
+					tempLeaderboard[Math.floor((tempLeaderboard.length * 80) / 100)]
+						.netScore;
 				setCutoffMarks(cutoffMarks);
 				let percentileData = [];
-				if (leaderboard.length == 1) {
+				if (tempLeaderboard.length == 1) {
 					const obj = {
-						score: leaderboard[0].netScore,
+						score: tempLeaderboard[0].netScore,
 						percentile: 100,
-						youarehere: leaderboard[0].userId === localStorage.getItem("user"),
+						youarehere:
+							tempLeaderboard[0].userId === localStorage.getItem("user"),
 					};
 					percentileData.push(obj);
 				} else {
-					for (let i = 0; i < leaderboard.length; i++) {
+					const uniqueLeaderboard = uniqBy(tempLeaderboard, "netScore");
+					for (let i = 0; i < uniqueLeaderboard.length; i++) {
 						const obj = {
-							score: leaderboard[i].netScore,
-							percentile: (i / (leaderboard.length - 1)) * 100,
+							score: uniqueLeaderboard[i].netScore,
+							percentile: (i / (uniqueLeaderboard.length - 1)) * 100,
 							youarehere:
-								leaderboard[i].userId === localStorage.getItem("user"),
+								uniqueLeaderboard[i].userId === localStorage.getItem("user"),
 						};
 						percentileData.push(obj);
 					}
@@ -663,7 +671,7 @@ const Analysis = () => {
 														Rank: {i + 1}
 													</p>
 													<p className="text-sm font-semibold text-gray-400">
-														Score: {student?.netScore || "NA"}
+														Score: {student?.netScore}
 													</p>
 												</div>
 											</div>
@@ -1167,16 +1175,16 @@ const Analysis = () => {
 												{payload.youarehere && (
 													<>
 														<rect
-															x={props.cx + 5}
-															y={props.cy - 28}
+															x={props.cx + 34}
+															y={props.cy - 18}
 															width="82"
 															height="25"
 															fill="#8884d8"
 															rx="2"
 														/>
 														<text
-															x={props.cx}
-															y={props.cy - 28}
+															x={props.cx + 28}
+															y={props.cy - 18}
 															dx={12}
 															dy={16}
 															fill="#FFF"

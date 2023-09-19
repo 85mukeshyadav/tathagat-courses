@@ -571,14 +571,14 @@ const Review = React.memo(() => {
 																getViewSolution &&
 																typeof getViewSolution == "object" ? (
 																	<div
-																		className="mb-8"
+																		className="mb-8 pb-10"
 																		dangerouslySetInnerHTML={{
 																			__html: getViewSolution.q,
 																		}}
 																	></div>
 																) : (
 																	<div
-																		className="mb-8"
+																		className="mb-8 pb-10"
 																		dangerouslySetInnerHTML={{
 																			__html: getViewSolution,
 																		}}
@@ -701,7 +701,7 @@ const Review = React.memo(() => {
 																Solution:
 															</p>
 															<div
-																className="mb-8 pl-5 sm:pl-10 pt-5"
+																className="mb-8 pb-10 pl-5 sm:pl-10 pt-5"
 																dangerouslySetInnerHTML={{
 																	__html: getViewSolution.q,
 																}}
@@ -713,7 +713,7 @@ const Review = React.memo(() => {
 																Solution:
 															</p>
 															<div
-																className="mb-8 pl-5 sm:pl-10 pt-5"
+																className="mb-8 pb-10 pl-5 sm:pl-10 pt-5"
 																dangerouslySetInnerHTML={{
 																	__html: getViewSolution,
 																}}
