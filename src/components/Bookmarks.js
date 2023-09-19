@@ -1,13 +1,11 @@
 import { Tooltip } from "@mantine/core";
 import axios from "axios";
 import clsx from "clsx";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaBookmark, FaInfo, FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useImmer } from "use-immer";
 import QuestionInput from "../Exam/Calculator/QuestionInput";
-import hideNavContext from "../context/AllprojectsContext";
-import Header from "./Header";
 import Loader from "./Loader";
 import TreeNode from "./TreeNode";
 
@@ -35,8 +33,6 @@ const Bookmarks = React.memo(() => {
 
 	const [Question, setQuestion] = useState([]);
 	const [currentIndex, setcurrentIndex] = useState(0);
-	const { sethidenav } = useContext(hideNavContext);
-	const [count, setCount] = useState(1200);
 	const [Alert, setAlertbox] = useState(false);
 	const [SectionName, setSectionName] = useState();
 	const [sectionId, setSectionId] = useState();
@@ -273,10 +269,6 @@ const Bookmarks = React.memo(() => {
 		}
 	}, [getQuesAns]);
 
-	useEffect(() => {
-		sethidenav(true);
-	}, []);
-
 	const getSolution = async (res) => {
 		console.log(res);
 		if (res.explantation) {
@@ -419,10 +411,9 @@ const Bookmarks = React.memo(() => {
 
 	return (
 		<div className="h-full overflow-hidden">
-			<Header />
 			<div className="flex flex-row h-full mt-4">
 				{/* left aside */}
-				<div className="w-1/3 h-[86vh] border-r border-gray-200">
+				<div className="w-1/3 h-[82vh] border-r border-gray-200">
 					<div className="flex flex-col h-full">
 						<div className="tree-view mt-5">
 							{bookmarkTreeData.map((rootNode, index) => (
@@ -441,7 +432,7 @@ const Bookmarks = React.memo(() => {
 					</div>
 				</div>
 				<div className="flex flex-col h-full w-full">
-					<div id="quesAns" className="sm:flex block justify-between">
+					<div id="quesAns" className="block justify-between mr-4">
 						<div className="w-full mr-4">
 							<div>
 								<ul className="flex">
@@ -744,7 +735,7 @@ const Bookmarks = React.memo(() => {
 								)}
 							</div>
 						</div>
-						<footer className="fixed w-full border-t-2 border-gray-300 p-2 bottom-0">
+						<footer className="w-full border-t-2 border-gray-300 p-2">
 							<div className="flex justify-between w-[240px] sm:w-[300px] ml-4">
 								<button
 									onClick={() => {

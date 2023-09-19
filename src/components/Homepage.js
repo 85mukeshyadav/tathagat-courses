@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
 import React, { useContext, useEffect } from "react";
+import Marquee from "react-fast-marquee";
 import { FaChalkboardTeacher, FaLanguage } from "react-icons/fa";
 import {
 	FiArrowRight,
@@ -37,6 +38,13 @@ const Homepage = () => {
 
 	return (
 		<>
+			<Marquee
+				className="bg-blue-200 text-blue-600 text-center py-2 font-semibold"
+				pauseOnHover
+			>
+				🚀 We are happy to inform all TGits that we have upgraded our test
+				portal. New features will be shown on your new test attempts. 🚀
+			</Marquee>
 			<div className="relative flex flex-col lg:flex-row bg-white overflow-hidden p-2  ">
 				<div className="max-w-7xl mx-auto">
 					<div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
