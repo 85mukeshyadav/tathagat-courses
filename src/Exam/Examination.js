@@ -214,6 +214,8 @@ const Examination = React.memo(() => {
 					chapterChapterId: data.chapterChapterId,
 					topicId: data.topicId,
 					optionType: data.optionType,
+					timeTaken: data.timeTaken,
+					attemptOrder: data.attemptOrder,
 				};
 				question.push(qu);
 			});
