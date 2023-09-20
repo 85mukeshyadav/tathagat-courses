@@ -1,6 +1,7 @@
 //import liraries
 import {
 	Divider,
+	LoadingOverlay,
 	Modal,
 	ScrollArea,
 	Switch,
@@ -80,6 +81,7 @@ const Review = React.memo(() => {
 	const [showCorrectAns, setShowCorrectAns] = useState(false);
 	const [isReportVisible, setIsReportVisible] = useState(false);
 	const [reviewRes1, setReviewRes1] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	const handleBookmark = async (ques, status) => {
 		console.log("status", status);
@@ -165,7 +167,7 @@ const Review = React.memo(() => {
 			setCurrentQuesStatus(newState);
 		}
 
-		// const res = await fetch(`https://opentdb.com/api.php?amount=30&category=${categorynumber[ selectedSectionnumber ].number}&type=multiple`)
+		setLoading(true);
 		const res = await axios.get(
 			process.env.REACT_APP_API + "/gettest/" + localStorage.getItem("testid"),
 			options
@@ -258,6 +260,8 @@ const Review = React.memo(() => {
 				}
 			});
 
+		setLoading(false);
+
 		return null;
 	}, [selectedSectionnumber]);
 
@@ -299,6 +303,11 @@ const Review = React.memo(() => {
 
 	return (
 		<div className="bg-gray-50 h-full overflow-hidden">
+			<LoadingOverlay
+				visible={loading}
+				zIndex={1000}
+				overlayProps={{ radius: "lg", blur: 4 }}
+			/>
 			<nav className="sm:flex block justify-between bg-slate-600 p-2 py-6">
 				<div className="text-yellow-400 font-semibold">{SectionName}</div>
 				<div className="text-yellow-400 sm:text-lg font-semibold">
@@ -350,6 +359,7 @@ const Review = React.memo(() => {
 									onClick={() => {
 										if (selectedSectionnumber < i) setAlertbox(true);
 										setViewSection(false);
+										setSelectedCategoryNumber(i);
 									}}
 									className={`flex items-center border-2 ml-2 mt-2 p-1 pl-4 pr-4 disabled:cursor-not-allowed rounded-sm ${
 										selectedSectionnumber == i ? "bg-blue-400" : "bg-gray-100"
@@ -358,7 +368,7 @@ const Review = React.memo(() => {
 											? "text-gray-50"
 											: "text-gray-500"
 									} font-semibold`}
-									disabled={selectedSectionnumber > i ? true : false}
+									// disabled={selectedSectionnumber > i ? true : false}
 								>
 									{res.sectionName}
 									<div key={i} className="bg-blue-400 p-1 rounded-full ml-2">
