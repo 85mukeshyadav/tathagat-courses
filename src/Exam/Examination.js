@@ -163,6 +163,7 @@ const Examination = React.memo(() => {
 	const [getExamLevel, setExamLevel] = useState(1);
 	const [getTestName, setTestName] = useState("");
 	const [groupedQuestions, setGroupedQuestions] = useState({});
+	const [instructions, setInstructions] = useState("");
 
 	const [
 		questionPaperOpened,
@@ -196,6 +197,7 @@ const Examination = React.memo(() => {
 	useEffect(async () => {
 		if (selectedSectionnumber > 0) {
 			setQuestion([]);
+			setAttemptOrder(0);
 			let question = [];
 			let correctAnswers = 0;
 			let wrongAnswers = 0;
@@ -319,6 +321,7 @@ const Examination = React.memo(() => {
 			setAns(getQuesAns[currentQuesIndex]?.quesAns || "");
 			setExamLevel(res.data[0].examLevel);
 			setTestName(res.data[0].TestTitle);
+			setInstructions(res.data[0]?.instructions);
 			// const quesAttempted = JSON.parse(localStorage.getItem("quesAttempted"));
 			let objArray = {
 				notAnswered: [],
@@ -1088,7 +1091,15 @@ const Examination = React.memo(() => {
 						Note that the timer is running. Kindly close the instructions to
 						attend the questions.
 					</p>
-					{getExamLevel == 4 || getExamLevel == 3 || getExamLevel == 2 ? (
+					{instructions ? (
+						<>
+							<p className="text-xl font-bold">Test Instructions:</p>
+							<div
+								className="mt-4 pl-2 pb-4"
+								dangerouslySetInnerHTML={{ __html: instructions }}
+							/>
+						</>
+					) : getExamLevel == 4 || getExamLevel == 3 || getExamLevel == 2 ? (
 						<embed
 							src={pms}
 							type="application/pdf"
