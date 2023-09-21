@@ -51,6 +51,9 @@ const Analysis = () => {
 	const [rightPercentage, setRightPercentage] = useState([]);
 	const [percentileDistribution, setPercentileDistribution] = useState([]);
 	const [cutoffMarks, setCutoffMarks] = useState(0);
+	const [overallPerformanceSummary, setOverallPerformanceSummary] = useState(
+		{}
+	);
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
@@ -85,10 +88,15 @@ const Analysis = () => {
 					"🚀 ~ file: Analysis.js:125 ~ getOverallPerformance ~",
 					res.data?.data
 				);
+				setOverallPerformanceSummary(res.data?.data?.overallPerformanceSummary);
 				setAnalysisData(res.data?.data);
 				setPerformance(res.data?.data?.section[0]?.overallPerformanceSummary);
-				setTotalQuestions(res.data?.data?.section[0]?.totalQuestions);
-				setTotalMarks(res.data?.data?.section[0]?.totalMarks);
+				setTotalQuestions(
+					res.data?.data?.section?.reduce((sum, i) => sum + i.totalQuestions, 0)
+				);
+				setTotalMarks(
+					res.data?.data?.section?.reduce((sum, i) => sum + i.totalMarks, 0)
+				);
 				setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 				setTopper(res.data?.data?.topperObject);
 				setLeaderboard(res.data?.data?.leaderBoardList);
@@ -309,7 +317,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700">
-											{performance?.rank || "NA"}
+											{overallPerformanceSummary?.rank || "NA"}
 										</p>
 										<p className="text-sm font-semibold ml-2 text-gray-400">
 											Rank
@@ -322,7 +330,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700 ml-2">
-											{performance?.score}{" "}
+											{overallPerformanceSummary?.score || 0}
 											<span className="text-sm text-gray-400">
 												/ {totalMarks}
 											</span>
@@ -338,7 +346,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700">
-											{performance?.attempted}{" "}
+											{overallPerformanceSummary?.attempted || 0}{" "}
 											<span className="text-sm text-gray-400">
 												/ {totalQuestions}
 											</span>
@@ -354,7 +362,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700">
-											{performance?.accuracy?.toFixed(1) || "NA"}
+											{overallPerformanceSummary?.accuracy?.toFixed(1) || "NA"}
 										</p>
 										<p className="text-sm font-semibold ml-2 text-gray-400">
 											Accuracy
@@ -367,7 +375,7 @@ const Analysis = () => {
 									</div>
 									<div>
 										<p className="text-lg font-semibold text-gray-700 ml-2">
-											{performance?.percentile + "%" || "NA"}
+											{overallPerformanceSummary?.percentile || 0 + "%" || "NA"}
 										</p>
 										<p className="text-sm font-semibold ml-2 text-gray-400">
 											Percentile
