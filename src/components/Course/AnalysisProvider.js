@@ -10,7 +10,7 @@ export default function AnalysisProvider() {
 
 	return (
 		<>
-			{dayjs(submitted_at).isBefore("2023-09-19") ? (
+			{dayjs(submitted_at).isBefore("2023-09-23") ? (
 				<AnalysisOld />
 			) : (
 				<Analysis />
