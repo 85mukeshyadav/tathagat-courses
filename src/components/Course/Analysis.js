@@ -100,7 +100,7 @@ const Analysis = () => {
 				setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 				setTopper(res.data?.data?.topperObject);
 				setLeaderboard(res.data?.data?.leaderBoardList);
-				setQuesList(res.data?.data?.Qans?.Section[0]?.QuestionList);
+				setQuesList(res.data?.data?.Qans?.Section);
 				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 				const students = res.data?.data?.AllStudent;
 				const averageScore =
@@ -178,7 +178,7 @@ const Analysis = () => {
 				console.log(res.data);
 			}
 			if (res1.ok) {
-				setRightPercentage(res1.data?.data[0]?.question);
+				setRightPercentage(res1.data?.data);
 			}
 		} catch (error) {
 			console.log(error);
@@ -593,12 +593,12 @@ const Analysis = () => {
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(quesList.length > 0 &&
-																		quesList[idx]?.correctoption) ||
+																		quesList[i]?.QuestionList[idx]?.correctoption) ||
 																		"--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(
-																		rightPercentage[idx]?.writePercentage *
+																		rightPercentage[i]?.question[idx]?.writePercentage *
 																			100 || 0
 																	).toFixed(2) + "%"}
 																</td>
