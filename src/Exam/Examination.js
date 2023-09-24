@@ -1296,9 +1296,8 @@ const Examination = React.memo(() => {
 																	return (
 																		<div
 																			key={iAns}
-																			className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
+																			className="flex items-center cursor-pointer pl-4 py-2"
 																		>
-																			<>
 																				<input
 																					checked={
 																						newObj["answered"][i] == 1 &&
@@ -1371,16 +1370,15 @@ const Examination = React.memo(() => {
 																					}}
 																					type="radio"
 																					name={`ans` + i}
-																					className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																					className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
 																				/>
 
-																				<h3
+																				<p
 																					dangerouslySetInnerHTML={{
 																						__html: ans?.option,
 																					}}
-																					className="text-gray-900 group-hover:text-white text-sm font-semibold text-left"
-																				></h3>
-																			</>
+																					className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
+																				/>
 																		</div>
 																	);
 																})}
@@ -1428,7 +1426,7 @@ const Examination = React.memo(() => {
 															return (
 																<div
 																	key={iAns}
-																	className="flex items-center space-x-3 cursor-pointer px-4 py-2 rounded-sm"
+																	className="flex items-center cursor-pointer pl-4 py-2"
 																>
 																	<input
 																		checked={
@@ -1492,16 +1490,16 @@ const Examination = React.memo(() => {
 																		}}
 																		type="radio"
 																		name={`ans` + i}
-																		className="appearance checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																		className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
 																	/>
 
-																	<h3
+																	<p
 																		dangerouslySetInnerHTML={{
 																			__html: ans?.option,
 																		}}
-																		className="text-gray-900 group-hover:text-white text-sm font-semibold text-left"
+																		className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
 																		key={i + iAns + "p"}
-																	></h3>
+																	/>
 																</div>
 															);
 														})}
