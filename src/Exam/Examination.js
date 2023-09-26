@@ -1,6 +1,7 @@
 import { Modal, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
+import clsx from "clsx";
 import Cookies from "js-cookie";
 import katex from "katex";
 import "katex/dist/katex.min.css";
@@ -1298,87 +1299,79 @@ const Examination = React.memo(() => {
 																			key={iAns}
 																			className="flex items-center cursor-pointer pl-4 py-2"
 																		>
-																				<input
-																					checked={
-																						newObj["answered"][i] == 1 &&
-																						iAns == getRadio
-																							? "checked"
-																							: null
+																			<input
+																				checked={
+																					newObj["answered"][i] == 1 &&
+																					iAns == getRadio
+																						? "checked"
+																						: null
+																				}
+																				onChange={() => {
+																					SelectAnswer(i);
+																					setselectedAns(iAns);
+																					setRadio(iAns);
+																					// newObj['answered'][i] = 1;
+																					// newObj['notAnswered'][i] = 0;
+																					setCurrentQuesStatus(newObj);
+																					localStorage.setItem(
+																						"quesAttempted",
+																						JSON.stringify({
+																							testid:
+																								localStorage.getItem("testid"),
+																							objArray: newObj,
+																						})
+																					);
+																					Cookies.set(
+																						"quesAttempted",
+																						JSON.stringify({
+																							testid:
+																								localStorage.getItem("testid"),
+																							objArray: newObj,
+																						})
+																					);
+
+																					let newArry = [...getQuesAns];
+																					newArry[i]["quesAns"] = iAns;
+																					newArry[i]["isClicked"] = true;
+																					newArry[i]["state"] = 2;
+
+																					if (iAns + 1 == res.correctoption) {
+																						console.log(
+																							"🚀 ~ Examination.js ~ line 1141 ~ correctans"
+																						);
+																						newArry[i]["ansStatus"] = "C";
+																					} else {
+																						newArry[i]["ansStatus"] = "W";
 																					}
-																					onChange={() => {
-																						SelectAnswer(i);
-																						setselectedAns(iAns);
-																						setRadio(iAns);
-																						// newObj['answered'][i] = 1;
-																						// newObj['notAnswered'][i] = 0;
-																						setCurrentQuesStatus(newObj);
-																						localStorage.setItem(
-																							"quesAttempted",
-																							JSON.stringify({
-																								testid:
-																									localStorage.getItem(
-																										"testid"
-																									),
-																								objArray: newObj,
-																							})
-																						);
-																						Cookies.set(
-																							"quesAttempted",
-																							JSON.stringify({
-																								testid:
-																									localStorage.getItem(
-																										"testid"
-																									),
-																								objArray: newObj,
-																							})
-																						);
+																					setQuesAns(newArry);
+																					localStorage.setItem(
+																						"savedSession",
+																						JSON.stringify({
+																							testid:
+																								localStorage.getItem("testid"),
+																							getQuesAns: newArry,
+																						})
+																					);
+																					Cookies.set(
+																						"savedSession",
+																						JSON.stringify({
+																							testid:
+																								localStorage.getItem("testid"),
+																							getQuesAns: newArry,
+																						})
+																					);
+																				}}
+																				type="radio"
+																				name={`ans` + i}
+																				className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																			/>
 
-																						let newArry = [...getQuesAns];
-																						newArry[i]["quesAns"] = iAns;
-																						newArry[i]["isClicked"] = true;
-																						newArry[i]["state"] = 2;
-
-																						if (iAns + 1 == res.correctoption) {
-																							console.log(
-																								"🚀 ~ Examination.js ~ line 1141 ~ correctans"
-																							);
-																							newArry[i]["ansStatus"] = "C";
-																						} else {
-																							newArry[i]["ansStatus"] = "W";
-																						}
-																						setQuesAns(newArry);
-																						localStorage.setItem(
-																							"savedSession",
-																							JSON.stringify({
-																								testid:
-																									localStorage.getItem(
-																										"testid"
-																									),
-																								getQuesAns: newArry,
-																							})
-																						);
-																						Cookies.set(
-																							"savedSession",
-																							JSON.stringify({
-																								testid:
-																									localStorage.getItem(
-																										"testid"
-																									),
-																								getQuesAns: newArry,
-																							})
-																						);
-																					}}
-																					type="radio"
-																					name={`ans` + i}
-																					className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
-																				/>
-
-																				<p
-																					dangerouslySetInnerHTML={{
-																						__html: ans?.option,
-																					}}
-																					className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
-																				/>
+																			<p
+																				dangerouslySetInnerHTML={{
+																					__html: ans?.option,
+																				}}
+																				className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
+																			/>
 																		</div>
 																	);
 																})}
@@ -2120,7 +2113,12 @@ const Examination = React.memo(() => {
 									})
 								);
 							}}
-							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 mr-4"
+							className={clsx(
+								"bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 sm:mr-10",
+								Question.length == 0 &&
+									"bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+							)}
+							disabled={Question.length == 0}
 						>
 							Save & Next
 						</button>
@@ -2130,7 +2128,12 @@ const Examination = React.memo(() => {
 								_submitPreTest();
 								setFinishExam(true);
 							}}
-							className="bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 sm:mr-10"
+							className={clsx(
+								"bg-sky-500 text-white hover:bg-sky-600 transition font-semibold rounded-sm px-4 py-2 sm:mr-10",
+								Question.length == 0 &&
+									"bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+							)}
+							disabled={Question.length == 0}
 						>
 							Submit
 						</button>

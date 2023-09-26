@@ -65,11 +65,11 @@ const MyCourses = () => {
 												}}
 											>
 												<div className="flex justify-between items-center">
-													<div className="flex bg-blue-200 px-2 h-10 items-center justify-center rounded-md">
+													{/* <div className="flex bg-blue-200 px-2 h-10 items-center justify-center rounded-md">
 														<p className="font-bold text-xl text-blue-600">
 															₹{res?.packagePrice}
 														</p>
-													</div>
+													</div> */}
 													<div className="flex">
 														<div className="h-10 w-10 flex bg-red-200 justify-center items-center rounded-full">
 															<i className="fas fa-heart text-red-500 text-2xl" />
