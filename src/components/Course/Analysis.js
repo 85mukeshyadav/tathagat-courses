@@ -54,6 +54,7 @@ const Analysis = () => {
 	const [overallPerformanceSummary, setOverallPerformanceSummary] = useState(
 		{}
 	);
+	const [testTitle, setTestTitle] = useState("");
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
@@ -101,6 +102,7 @@ const Analysis = () => {
 				setTopper(res.data?.data?.topperObject);
 				setLeaderboard(res.data?.data?.leaderBoardList);
 				setQuesList(res.data?.data?.Qans?.Section);
+				setTestTitle(res.data?.data?.Qans?.TestTitle);
 				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 				const students = res.data?.data?.AllStudent;
 				const averageScore =
@@ -304,6 +306,9 @@ const Analysis = () => {
 				></div>
 			</Modal>
 			<div>
+				<h1 className="mt-10 mb-5 font-bold text-gray-700 text-4xl">
+					{testTitle}
+				</h1>
 				<div className="flex">
 					<div className="w-3/4">
 						<div className="mt-10 bg-gray-100 pb-10">
@@ -593,13 +598,14 @@ const Analysis = () => {
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(quesList.length > 0 &&
-																		quesList[i]?.QuestionList[idx]?.correctoption) ||
+																		quesList[i]?.QuestionList[idx]
+																			?.correctoption) ||
 																		"--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(
-																		rightPercentage[i]?.question[idx]?.writePercentage *
-																			100 || 0
+																		rightPercentage[i]?.question[idx]
+																			?.writePercentage * 100 || 0
 																	).toFixed(2) + "%"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
