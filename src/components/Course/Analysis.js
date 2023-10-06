@@ -25,6 +25,7 @@ import {
 } from "recharts";
 
 import apiClient from "../../api/apiClient";
+import { secondsToMinutes } from "../../utils/date";
 import Loader from "../Loader";
 
 const Analysis = () => {
@@ -54,6 +55,7 @@ const Analysis = () => {
 	const [overallPerformanceSummary, setOverallPerformanceSummary] = useState(
 		{}
 	);
+	const [testTitle, setTestTitle] = useState("");
 
 	const [loading, setLoading] = useState(false);
 	const [activeTimeManagmentTab, setActiveTimeManagmentTab] = useState("");
@@ -101,6 +103,7 @@ const Analysis = () => {
 				setTopper(res.data?.data?.topperObject);
 				setLeaderboard(res.data?.data?.leaderBoardList);
 				setQuesList(res.data?.data?.Qans?.Section);
+				setTestTitle(res.data?.data?.Qans?.TestTitle);
 				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
 				const students = res.data?.data?.AllStudent;
 				const averageScore =
@@ -304,6 +307,9 @@ const Analysis = () => {
 				></div>
 			</Modal>
 			<div>
+				<h1 className="mt-10 mb-5 font-bold text-gray-700 text-4xl">
+					{testTitle}
+				</h1>
 				<div className="flex">
 					<div className="w-3/4">
 						<div className="mt-10 bg-gray-100 pb-10">
@@ -593,13 +599,14 @@ const Analysis = () => {
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(quesList.length > 0 &&
-																		quesList[i]?.QuestionList[idx]?.correctoption) ||
+																		quesList[i]?.QuestionList[idx]
+																			?.correctoption) ||
 																		"--"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{(
-																		rightPercentage[i]?.question[idx]?.writePercentage *
-																			100 || 0
+																		rightPercentage[i]?.question[idx]
+																			?.writePercentage * 100 || 0
 																	).toFixed(2) + "%"}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
@@ -638,7 +645,7 @@ const Analysis = () => {
 																	{chap.chapterName}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{chap.scale}
+																	{chap.scale?.toFixed(2)}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{chap.remarks}
@@ -766,12 +773,12 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question.reduce(
+														label={secondsToMinutes(
+															section.question.reduce(
 																(sum, i) => sum + i.timeTaken,
 																0
-															) || 0) + "s"
-														}
+															) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Total Time Taken</p>
@@ -780,12 +787,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.answerStatus === "C")
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Correct Answers</p>
@@ -794,12 +800,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.answerStatus === "W")
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Incorrect Answers</p>
@@ -808,12 +813,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.usersAnswer === -1)
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Unanswered</p>

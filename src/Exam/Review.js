@@ -26,6 +26,7 @@ import { userInfo } from "../api/checkAuth";
 import Answered from "../assets/Answered.png";
 import notans from "../assets/notans.png";
 import hideNavContext from "../context/AllprojectsContext";
+import { secondsToMinutes } from "../utils/date";
 import QuestionInput from "./Calculator/QuestionInput";
 
 const Review = React.memo(() => {
@@ -759,7 +760,11 @@ const Review = React.memo(() => {
 									reviewRes?.section[selectedSectionnumber]?.question[
 										currentQuesIndex
 									]?.timeTaken?.length > 0
-										? `${reviewRes?.section[selectedSectionnumber]?.question[currentQuesIndex]?.timeTaken}s`
+										? `${secondsToMinutes(
+												reviewRes?.section[selectedSectionnumber]?.question[
+													currentQuesIndex
+												]?.timeTaken
+										  )}`
 										: "NA"}
 								</p>
 							</div>
