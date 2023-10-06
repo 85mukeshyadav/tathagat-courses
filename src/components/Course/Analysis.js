@@ -25,6 +25,7 @@ import {
 } from "recharts";
 
 import apiClient from "../../api/apiClient";
+import { secondsToMinutes } from "../../utils/date";
 import Loader from "../Loader";
 
 const Analysis = () => {
@@ -644,7 +645,7 @@ const Analysis = () => {
 																	{chap.chapterName}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
-																	{chap.scale}
+																	{chap.scale?.toFixed(2)}
 																</td>
 																<td className="text-left p-2 text-xs sm:text-lg">
 																	{chap.remarks}
@@ -772,12 +773,12 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question.reduce(
+														label={secondsToMinutes(
+															section.question.reduce(
 																(sum, i) => sum + i.timeTaken,
 																0
-															) || 0) + "s"
-														}
+															) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Total Time Taken</p>
@@ -786,12 +787,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.answerStatus === "C")
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Correct Answers</p>
@@ -800,12 +800,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.answerStatus === "W")
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Incorrect Answers</p>
@@ -814,12 +813,11 @@ const Analysis = () => {
 													<RingProgress
 														size={120}
 														thickness={10}
-														label={
-															(section.question
+														label={secondsToMinutes(
+															section.question
 																.filter((i) => i.usersAnswer === -1)
-																.reduce((sum, i) => sum + i.timeTaken, 0) ||
-																0) + "s"
-														}
+																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+														)}
 														sections={[{ value: 100, color: "#8884d8" }]}
 													/>
 													<p>Unanswered</p>
