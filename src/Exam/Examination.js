@@ -1,4 +1,4 @@
-import { Modal, ScrollArea } from "@mantine/core";
+import { LoadingOverlay, Modal, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import clsx from "clsx";
@@ -165,6 +165,7 @@ const Examination = React.memo(() => {
 	const [getTestName, setTestName] = useState("");
 	const [groupedQuestions, setGroupedQuestions] = useState({});
 	const [instructions, setInstructions] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const [
 		questionPaperOpened,
@@ -284,6 +285,7 @@ const Examination = React.memo(() => {
 			setCurrentQuesStatus(newState);
 		}
 
+		setLoading(true);
 		// const res = await fetch(`https://opentdb.com/api.php?amount=30&category=${categorynumber[ selectedSectionnumber ].number}&type=multiple`)
 		const isPackageAccess = await axios.get(
 			process.env.REACT_APP_API +
@@ -396,6 +398,7 @@ const Examination = React.memo(() => {
 				});
 
 			setAllData(res.data);
+			setLoading(false);
 		} else {
 			console.log("Exam not accessible!", isPackageAccess);
 		}
@@ -904,6 +907,11 @@ const Examination = React.memo(() => {
 
 	return (
 		<div className="bg-gray-50 h-full overflow-hidden">
+			<LoadingOverlay
+				visible={loading}
+				zIndex={1000}
+				overlayProps={{ radius: "lg", blur: 4 }}
+			/>
 			{FinishExam ? <SubmitExam /> : null}
 			{Alert ? (
 				<main className="absolute w-full z-10 bg-[#0000002f] text-gray-900 font-sans overflow-x-hidden">
@@ -1295,7 +1303,7 @@ const Examination = React.memo(() => {
 																	// );
 																	// setTimeSpent(count);
 																	return (
-																		<div
+																		<label
 																			key={iAns}
 																			className="flex items-center cursor-pointer pl-4 py-2"
 																		>
@@ -1363,16 +1371,16 @@ const Examination = React.memo(() => {
 																				}}
 																				type="radio"
 																				name={`ans` + i}
-																				className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																				className="checked:text-indigo-500 hover:ring-2 h-6 w-6 cursor-pointer"
 																			/>
 
-																			<p
+																			<span
 																				dangerouslySetInnerHTML={{
 																					__html: ans?.option,
 																				}}
 																				className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
 																			/>
-																		</div>
+																		</label>
 																	);
 																})}
 														</div>
@@ -1417,7 +1425,7 @@ const Examination = React.memo(() => {
 															// );
 															// setTimeSpent(count);
 															return (
-																<div
+																<label
 																	key={iAns}
 																	className="flex items-center cursor-pointer pl-4 py-2"
 																>
@@ -1483,17 +1491,17 @@ const Examination = React.memo(() => {
 																		}}
 																		type="radio"
 																		name={`ans` + i}
-																		className="checked:text-indigo-500 hover:ring-2 h-6 w-6"
+																		className="checked:text-indigo-500 hover:ring-2 h-6 w-6 cursor-pointer"
 																	/>
 
-																	<p
+																	<span
 																		dangerouslySetInnerHTML={{
 																			__html: ans?.option,
 																		}}
 																		className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
 																		key={i + iAns + "p"}
 																	/>
-																</div>
+																</label>
 															);
 														})}
 												</div>
