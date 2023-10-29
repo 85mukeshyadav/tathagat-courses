@@ -1,8 +1,6 @@
 import { Divider, RingProgress, Table, Tabs } from "@mantine/core";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
 import React, { useEffect, useState } from "react";
 import { AiOutlineAim } from "react-icons/ai";
 import { BiReceipt } from "react-icons/bi";
@@ -90,6 +88,7 @@ const Analysis = () => {
 					"🚀 ~ file: Analysis.js:125 ~ getOverallPerformance ~",
 					res.data?.data
 				);
+				setLeaderboard(res.data?.data?.leaderBoardList);
 				setOverallPerformanceSummary(res.data?.data?.overallPerformanceSummary);
 				setAnalysisData(res.data?.data);
 				setPerformance(res.data?.data?.section[0]?.overallPerformanceSummary);
@@ -101,7 +100,6 @@ const Analysis = () => {
 				);
 				setActiveTimeManagmentTab(res.data?.data?.section[0]?.sectionName);
 				setTopper(res.data?.data?.topperObject);
-				setLeaderboard(res.data?.data?.leaderBoardList);
 				setQuesList(res.data?.data?.Qans?.Section);
 				setTestTitle(res.data?.data?.Qans?.TestTitle);
 				const markDistribution = res.data?.data?.section[0]?.marksDistributtion;
@@ -143,13 +141,12 @@ const Analysis = () => {
 				console.log(distribution);
 				setMarksDistribution(distribution);
 
-				const tempLeaderboard = sortBy(res.data?.data?.leaderBoardList, [
-					"netScore",
-				]);
-				console.log(
-					"🚀 ~ file: Analysis.js:104 ~ tempLeaderboard ~ tempLeaderboard:",
-					tempLeaderboard
-				);
+				function reverse(arr) {
+					return arr.map((_, idx) => arr[arr.length - 1 - idx]);
+				}
+
+				const tempLeaderboard = reverse(res.data?.data?.leaderBoardList);
+
 				const cutoffMarks =
 					tempLeaderboard[Math.floor((tempLeaderboard.length * 80) / 100)]
 						.netScore;
@@ -164,19 +161,29 @@ const Analysis = () => {
 					};
 					percentileData.push(obj);
 				} else {
-					const uniqueLeaderboard = uniqBy(tempLeaderboard, "netScore");
-					for (let i = 0; i < uniqueLeaderboard.length; i++) {
+					for (let i = 0; i < tempLeaderboard.length; i++) {
 						const obj = {
-							score: uniqueLeaderboard[i].netScore,
-							percentile: (i / (uniqueLeaderboard.length - 1)) * 100,
+							score: tempLeaderboard[i].netScore,
+							percentile: (i / tempLeaderboard.length) * 100,
 							youarehere:
-								uniqueLeaderboard[i].userId === localStorage.getItem("user"),
+								tempLeaderboard[i].userId == localStorage.getItem("user"),
 						};
 						percentileData.push(obj);
 					}
 				}
-				console.log("percentiledata ~", percentileData);
-				setPercentileDistribution(percentileData);
+				let uniquePercentileData = [];
+				for (let i = 0; i < percentileData.length; i++) {
+					let index = uniquePercentileData.findIndex(
+						(item) => item.score === percentileData[i].score
+					);
+
+					if (index === -1) {
+						uniquePercentileData.push(percentileData[i]);
+					} else if (!uniquePercentileData[index].youarehere) {
+						uniquePercentileData[index] = percentileData[i];
+					}
+				}
+				setPercentileDistribution(uniquePercentileData);
 			} else {
 				console.log(res.data);
 			}
@@ -1187,16 +1194,16 @@ const Analysis = () => {
 												{payload.youarehere && (
 													<>
 														<rect
-															x={props.cx + 34}
-															y={props.cy - 18}
+															x={props.cx + 10}
+															y={props.cy - 10}
 															width="82"
 															height="25"
 															fill="#8884d8"
 															rx="2"
 														/>
 														<text
-															x={props.cx + 28}
-															y={props.cy - 18}
+															x={props.cx + 5}
+															y={props.cy - 10}
 															dx={12}
 															dy={16}
 															fill="#FFF"
@@ -1209,16 +1216,6 @@ const Analysis = () => {
 													</>
 												)}
 											</>
-										);
-									} else {
-										return (
-											<circle
-												cx={props.cx}
-												cy={props.cy}
-												fill="#8884d8"
-												r={6}
-												strokeWidth={props.strokeWidth}
-											/>
 										);
 									}
 								}}
