@@ -93,7 +93,7 @@ const CourseInfo = () => {
 								Rating:
 								<Rating value={3.5} fractions={2} readOnly />
 							</Group>
-							8.5k+ students enrolled till now
+							{/* 8.5k+ students enrolled till now */}
 						</div>
 					</div>
 				</div>

@@ -170,9 +170,9 @@ const Homepage = () => {
 													<p className="uppercase tracking-wide text-md font-bold text-gray-700">
 														{res.courseName}
 													</p>
-													<p className="text-cyan-700">
+													{/* <p className="text-cyan-700">
 														8.5k+ Students Enrolled{" "}
-													</p>
+													</p> */}
 												</div>
 												<div
 													style={{ display: "none" }}
