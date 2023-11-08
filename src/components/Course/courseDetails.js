@@ -820,9 +820,9 @@ const CourseDetails = (props) => {
 													{res.name}
 												</p>
 												<p className="text-xl text-gray-900">Rs {res?.price}</p>
-												<p className="text-gray-700">
+												{/* <p className="text-gray-700">
 													8.5k+ Students Enrolled{" "}
-												</p>
+												</p> */}
 											</div>
 											<div className="flex p-4 border-t border-gray-300 text-gray-700 gap-4">
 												<div className="flex-1 inline-flex items-center gap-2">
