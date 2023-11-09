@@ -11,7 +11,10 @@ import Loader from "../Loader";
 const CourseList = () => {
 	const { data, isLoading } = useQuery({
 		queryKey: ["allpackages"],
-		queryFn: () => apiClient.get("/getallpackages").then((res) => res.data),
+		queryFn: () =>
+			apiClient
+				.get("/getallpackages")
+				.then((res) => res.data?.filter((i) => i?.show_to_all == 1)),
 		staleTime: ms("24h"),
 	});
 
