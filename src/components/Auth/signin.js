@@ -186,7 +186,7 @@ const Signin = () => {
 					>
 						Don't have an account? Register
 					</Link>
-					<a
+					{/* <a
 						href={`${process.env.REACT_APP_SSO_URL}/simplesso/login?serviceURL=${process.env.REACT_APP_REDIRECT_URL}`}
 						// target="_blank"
 						rel="noopener noreferrer"
@@ -210,7 +210,7 @@ const Signin = () => {
 							</svg>
 						</span>
 						SSO Sign in
-					</a>
+					</a> */}
 				</div>
 			</form>
 		</div>

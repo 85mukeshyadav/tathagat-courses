@@ -1,4 +1,4 @@
-import { LoadingOverlay, Modal, ScrollArea } from "@mantine/core";
+import { LoadingOverlay, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import clsx from "clsx";
@@ -1264,128 +1264,128 @@ const Examination = React.memo(() => {
 									<>
 										<div className="grid sm:grid-cols-2 grid-cols-1 grid-s w-full">
 											<div className="overflow-y-scroll p-4 border-r-[1px] border-gray-300">
-												<ScrollArea h={400}>
-													<div
-														className="pb-5 pr-3"
-														dangerouslySetInnerHTML={{
-															__html: res.paragraph,
-														}}
-													/>
-												</ScrollArea>
+												{/* <ScrollArea h={400}> */}
+												<div
+													className="pb-5 pr-3 h-[400px] overflow-y-scroll"
+													dangerouslySetInnerHTML={{
+														__html: res.paragraph,
+													}}
+												/>
+												{/* </ScrollArea> */}
 											</div>
 											<div className="overflow-y-scroll">
-												<ScrollArea h={400}>
-													<div
-														className="p-4"
-														dangerouslySetInnerHTML={{
-															__html: res.question,
-														}}
-													/>
+												{/* <ScrollArea h={400}> */}
+												<div
+													className="p-4 h-[400px] overflow-y-scroll"
+													dangerouslySetInnerHTML={{
+														__html: res.question,
+													}}
+												/>
 
-													{res.optionType == "input" ? (
-														<div>
-															<QuestionInput
-																getMode={getMode}
-																getAns={getAns}
-																setAns={setAns}
-																getQuesAns={getQuesAns}
-																setQuesAns={setQuesAns}
-																index={i}
-															/>
-														</div>
-													) : (
-														<div className="mb-12">
-															{res.questionoption[0] &&
-																res?.questionoption.map((ans, iAns) => {
-																	let newObj = { ...currentQuesStatus };
-																	// newObj["timeTaken"][iAns] = Math.abs(
-																	// 	timeSpent - count
-																	// );
-																	// setTimeSpent(count);
-																	return (
-																		<label
-																			key={iAns}
-																			className="flex items-center cursor-pointer pl-4 py-2"
-																		>
-																			<input
-																				checked={
-																					newObj["answered"][i] == 1 &&
-																					iAns == getRadio
-																						? "checked"
-																						: null
+												{res.optionType == "input" ? (
+													<div>
+														<QuestionInput
+															getMode={getMode}
+															getAns={getAns}
+															setAns={setAns}
+															getQuesAns={getQuesAns}
+															setQuesAns={setQuesAns}
+															index={i}
+														/>
+													</div>
+												) : (
+													<div className="mb-12">
+														{res.questionoption[0] &&
+															res?.questionoption.map((ans, iAns) => {
+																let newObj = { ...currentQuesStatus };
+																// newObj["timeTaken"][iAns] = Math.abs(
+																// 	timeSpent - count
+																// );
+																// setTimeSpent(count);
+																return (
+																	<label
+																		key={iAns}
+																		className="flex items-center cursor-pointer pl-4 py-2"
+																	>
+																		<input
+																			checked={
+																				newObj["answered"][i] == 1 &&
+																				iAns == getRadio
+																					? "checked"
+																					: null
+																			}
+																			onChange={() => {
+																				SelectAnswer(i);
+																				setselectedAns(iAns);
+																				setRadio(iAns);
+																				// newObj['answered'][i] = 1;
+																				// newObj['notAnswered'][i] = 0;
+																				setCurrentQuesStatus(newObj);
+																				localStorage.setItem(
+																					"quesAttempted",
+																					JSON.stringify({
+																						testid:
+																							localStorage.getItem("testid"),
+																						objArray: newObj,
+																					})
+																				);
+																				Cookies.set(
+																					"quesAttempted",
+																					JSON.stringify({
+																						testid:
+																							localStorage.getItem("testid"),
+																						objArray: newObj,
+																					})
+																				);
+
+																				let newArry = [...getQuesAns];
+																				newArry[i]["quesAns"] = iAns;
+																				newArry[i]["isClicked"] = true;
+																				newArry[i]["state"] = 2;
+
+																				if (iAns + 1 == res.correctoption) {
+																					console.log(
+																						"🚀 ~ Examination.js ~ line 1141 ~ correctans"
+																					);
+																					newArry[i]["ansStatus"] = "C";
+																				} else {
+																					newArry[i]["ansStatus"] = "W";
 																				}
-																				onChange={() => {
-																					SelectAnswer(i);
-																					setselectedAns(iAns);
-																					setRadio(iAns);
-																					// newObj['answered'][i] = 1;
-																					// newObj['notAnswered'][i] = 0;
-																					setCurrentQuesStatus(newObj);
-																					localStorage.setItem(
-																						"quesAttempted",
-																						JSON.stringify({
-																							testid:
-																								localStorage.getItem("testid"),
-																							objArray: newObj,
-																						})
-																					);
-																					Cookies.set(
-																						"quesAttempted",
-																						JSON.stringify({
-																							testid:
-																								localStorage.getItem("testid"),
-																							objArray: newObj,
-																						})
-																					);
+																				setQuesAns(newArry);
+																				localStorage.setItem(
+																					"savedSession",
+																					JSON.stringify({
+																						testid:
+																							localStorage.getItem("testid"),
+																						getQuesAns: newArry,
+																					})
+																				);
+																				Cookies.set(
+																					"savedSession",
+																					JSON.stringify({
+																						testid:
+																							localStorage.getItem("testid"),
+																						getQuesAns: newArry,
+																					})
+																				);
+																			}}
+																			type="radio"
+																			name={`ans` + i}
+																			className="checked:text-indigo-500 hover:ring-2 h-6 w-6 cursor-pointer"
+																		/>
 
-																					let newArry = [...getQuesAns];
-																					newArry[i]["quesAns"] = iAns;
-																					newArry[i]["isClicked"] = true;
-																					newArry[i]["state"] = 2;
-
-																					if (iAns + 1 == res.correctoption) {
-																						console.log(
-																							"🚀 ~ Examination.js ~ line 1141 ~ correctans"
-																						);
-																						newArry[i]["ansStatus"] = "C";
-																					} else {
-																						newArry[i]["ansStatus"] = "W";
-																					}
-																					setQuesAns(newArry);
-																					localStorage.setItem(
-																						"savedSession",
-																						JSON.stringify({
-																							testid:
-																								localStorage.getItem("testid"),
-																							getQuesAns: newArry,
-																						})
-																					);
-																					Cookies.set(
-																						"savedSession",
-																						JSON.stringify({
-																							testid:
-																								localStorage.getItem("testid"),
-																							getQuesAns: newArry,
-																						})
-																					);
-																				}}
-																				type="radio"
-																				name={`ans` + i}
-																				className="checked:text-indigo-500 hover:ring-2 h-6 w-6 cursor-pointer"
-																			/>
-
-																			<span
-																				dangerouslySetInnerHTML={{
-																					__html: ans?.option,
-																				}}
-																				className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
-																			/>
-																		</label>
-																	);
-																})}
-														</div>
-													)}
-												</ScrollArea>
+																		<span
+																			dangerouslySetInnerHTML={{
+																				__html: ans?.option,
+																			}}
+																			className="text-gray-900 text-sm font-semibold text-left ml-3 w-full"
+																		/>
+																	</label>
+																);
+															})}
+													</div>
+												)}
+												{/* </ScrollArea> */}
 											</div>
 										</div>
 									</>
