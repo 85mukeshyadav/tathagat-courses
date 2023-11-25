@@ -1921,7 +1921,7 @@ const Examination = React.memo(() => {
 							Clear Response
 						</button>
 					</div>
-					<div className="flex flex-row mt-3 sm:mt-0 sm:justify-around justify-center items-center">
+					<div className="flex flex-row mt-3 sm:mt-0 justify-around items-center">
 						<button
 							onClick={() => {
 								let countQues = 0;
