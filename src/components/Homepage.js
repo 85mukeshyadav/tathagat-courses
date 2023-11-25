@@ -23,7 +23,7 @@ import Loader from "./Loader";
 
 // create a component
 const Homepage = () => {
-	const { hidenav, sethidenav } = useContext(hideNavContext);
+	const { sethidenav } = useContext(hideNavContext);
 	const { data, isLoading } = useQuery({
 		queryKey: ["getrandomPkg"],
 		queryFn: () => apiClient.get("/getrndmpkg").then((res) => res.data),
@@ -109,7 +109,7 @@ const Homepage = () => {
 				</div>
 			</div>
 
-			<div className="bg-indigo-50">
+			<div className="bg-indigo-50 text-center">
 				<div className="mx-auto py-16 px-4 sm:py-24 sm:px-6">
 					<p className="text-gray-500 text-5xl font-bold mb-10">
 						Popular Courses

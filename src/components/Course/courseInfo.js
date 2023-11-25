@@ -69,7 +69,7 @@ const CourseInfo = () => {
 						<p className="text-white pt-4 text-justify sm:ml-24 px-8 sm:px-0 font-semibold text-lg">
 							{data[0].PackageDesc}
 						</p>
-						<div className="w-1/2 ml-6">
+						<div className="w-1/2 ml-6 text-center">
 							<button
 								onClick={() => {
 									handlePayment({
@@ -84,7 +84,7 @@ const CourseInfo = () => {
 							</button>
 						</div>
 					</div>
-					<div className="sm:mt-24 mt-8">
+					<div className="sm:mt-24 mt-8 text-center">
 						<p className="text-white font-bold text-4xl pt-12">
 							₹{data[0].PackagePrice}/-
 						</p>
@@ -107,18 +107,20 @@ const CourseInfo = () => {
 					__html: data[0].officialDesc,
 				}}
 			/>
-			<button
-				onClick={() => {
-					handlePayment({
-						price: parseInt(data[0].PackagePrice),
-						packageId: data[0].packageId,
-					});
-				}}
-				className="py-4 mb-8 justify-center items-center mt-5 rounded-md px-6 bg-blue-400 text-white text-xl font-bold hover:bg-blue-500"
-			>
-				<i className="fas fa-cart-shopping text-white mr-2"></i>
-				Buy Now
-			</button>
+			<div className="text-center">
+				<button
+					onClick={() => {
+						handlePayment({
+							price: parseInt(data[0].PackagePrice),
+							packageId: data[0].packageId,
+						});
+					}}
+					className="py-4 mb-8 justify-center items-center mt-5 rounded-md px-6 bg-blue-400 text-white text-xl font-bold hover:bg-blue-500"
+				>
+					<i className="fas fa-cart-shopping text-white mr-2"></i>
+					Buy Now
+				</button>
+			</div>
 		</div>
 	);
 };

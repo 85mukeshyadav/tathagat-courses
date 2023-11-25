@@ -116,7 +116,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 												}}
 												className="items-center w-32 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50"
 											>
-												<i className="fa fa-eye"></i> {"  "}
+												<i className="fa fa-eye mr-2"></i>
 												Review
 											</button>
 
@@ -127,7 +127,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 												}}
 												className="items-center w-32 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50"
 											>
-												<i className="fas fa-trophy"></i> {"  "}
+												<i className="fas fa-trophy mr-2"></i>
 												Score
 											</button>
 											<button
@@ -141,9 +141,9 @@ const TreeNode = ({ node, setNodeClick }) => {
 														},
 													});
 												}}
-												className="items-center w-32 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50"
+												className="items-center w-36 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50"
 											>
-												<i className="fas fa-chart-bar"></i> {"  "}
+												<i className="fas fa-chart-bar mr-2"></i>
 												Analysis
 											</button>
 										</div>
@@ -159,7 +159,7 @@ const TreeNode = ({ node, setNodeClick }) => {
 										}}
 									>
 										<button className="items-center w-34 m-2 p-2 px-4 rounded-md font-semibold bg-blue-400 text-gray-50">
-											<i className="fas fa-play mr-1"></i> {"  "}
+											<i className="fas fa-play mr-2"></i>
 											{node.id === localStorage.getItem("testid")
 												? "Resume Test"
 												: "Start Test"}

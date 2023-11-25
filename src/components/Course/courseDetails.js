@@ -844,12 +844,14 @@ const CourseDetails = (props) => {
 													</p>
 												</div>
 											</div>
-											<button
-												className="px-4 pt-3 w-full shadow-inner pb-4 border-t border-gray-300 items-center bg-indigo-500 
+											<div className="text-center">
+												<button
+													className="px-4 pt-3 w-full shadow-inner pb-4 border-t border-gray-300 items-center bg-indigo-500 
                                                 text-white text-xl font-bold"
-											>
-												Buy now
-											</button>
+												>
+													Buy now
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>

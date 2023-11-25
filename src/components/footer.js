@@ -1,6 +1,5 @@
 //import liraries
 import React from "react";
-import { Link } from "react-router-dom";
 
 // create a component
 const Footer = () => {
@@ -15,58 +14,102 @@ const Footer = () => {
 
 	return (
 		// <Router>
-		<footer className="footer-1 bg-grey-500 py-2 sm:py-12 md:py-2">
-			<div className="container mx-auto px-4">
-				<div className="sm:flex sm:flex-wrap justify-center items-center sm:-mx-4 mt-6 pt-6 sm:mt-12 sm:pt-12 lg:pt-1">
-					<div className="sm:w-full px-4 md:w-1/3 flex flex-col items-baseline">
-						<img src="https://www.tathagat.co.in/assets/img/logo.png"></img>
-						<Link to="tel:9205534439" className="text-left text-white">
-							{" "}
-							9205534439{" "}
-						</Link>
-						<Link
-							to="mailTo:info@tathagat.co.in"
-							className="text-left text-white"
-						>
-							{" "}
-							info@tathagat.co.in{" "}
-						</Link>
-					</div>
-					<div className="px-4 text-left sm:w-1/2 md:w-1/3 mt-4 md:mt-0 text-white">
-						<h6 className="font-bold mb-2">Address</h6>
-						<address className="not-italic mb-4 text-sm">
-							113, 1st Floor, New Delhi House Connaught Place
-							<br />
-							New Delhi - 110001
-							<br />
-						</address>
-					</div>
-					<div className="text-white px-4 text-left md:ml-20">
-						<ul className="font-semibold">
-							<li className="py-1">
-								<a href="/about-us">About us</a>
-							</li>
-							<li className="py-1">
-								<a href="/contact">Contact Us</a>
-							</li>
-							<li className="py-1">
-								<a href="/privacy-policy">Privacy Policy</a>
-							</li>
-							<li className="py-1">
-								<a href="/terms-conditions">Terms & Conditions</a>
-							</li>
-							<li className="py-1">
-								<a href="/refund-policy">Refund Policy</a>
-							</li>
-						</ul>
+		<footer id="footer">
+			<div
+				className="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
+				data-wow-delay="0.1s"
+			>
+				<div className="container py-5">
+					<div className="row g-5">
+						<div className="col-lg-4 col-md-6">
+							<h4 className="text-white mb-3">Quick Link</h4>
+							<a className="btn btn-link" href="#">
+								About Us
+							</a>
+							<a className="btn btn-link" href="#">
+								Popular Courses
+							</a>
+							<a href="#" className="btn btn-link">
+								Faculty
+							</a>
+							<a className="btn btn-link" href="#">
+								Contact Us
+							</a>
+						</div>
+						<div className="col-lg-4 col-md-6">
+							<h4 className="text-white mb-3">Contact</h4>
+							<p className="mb-2">
+								<i className="fa fa-map-marker-alt me-3" />
+								115, 1st Floor, New Delhi House Connaught Place New Delhi -
+								110001
+							</p>
+							{/* <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 95355 01234</p> */}
+							<p className="mb-2">
+								<i className="fa fa-envelope me-3" />
+								<a href="mailto:info@tathagat.co.in">info@tathagat.co.in</a>
+							</p>
+							<p className="mb-2">
+								<i className="fa fa-phone me-3" />{" "}
+								<a href="tel:+919205534439">+919205534439</a>
+							</p>
+							<div className="d-flex pt-2">
+								<a className="btn btn-outline-light btn-social" href="">
+									<i className="fab fa-twitter" />
+								</a>
+								<a className="btn btn-outline-light btn-social" href="">
+									<i className="fab fa-facebook-f" />
+								</a>
+								<a className="btn btn-outline-light btn-social" href="">
+									<i className="fab fa-youtube" />
+								</a>
+								<a className="btn btn-outline-light btn-social" href="">
+									<i className="fab fa-linkedin-in" />
+								</a>
+							</div>
+						</div>
+						<div className="col-lg-4 col-md-6">
+							<h4 className="text-white mb-3">Newsletter</h4>
+							<p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+							<div
+								className="position-relative mx-auto"
+								style={{ maxWidth: 400 }}
+							>
+								<input
+									className="form-control border-0 w-100 py-3 ps-4 pe-5"
+									type="text"
+									placeholder="Your email"
+								/>
+								<button
+									type="button"
+									className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2"
+								>
+									SignUp
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div className="text-center">
-				<h6 className="mt-4 text-gray-200 mb-2">
-					Copyright © 2021 Tathagat. Brands are the property of their respective
-					owners.
-				</h6>
+				<div className="container">
+					<div className="copyright">
+						<div className="row">
+							<div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
+								<p>
+									Copyright © 2021 Tathagat. Brands are the property of their
+									respective owners.
+								</p>
+								{/*/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. *** /
+            Designed By <a class="border-bottom" href="https://ismudigital.com">Ismu Digital</a><br><br> */}
+							</div>
+							<div className="col-md-6 text-center text-md-end">
+								<div className="footer-menu">
+									<a href="#">Home</a>
+									<a href="#">Help</a>
+									<a href="#">FQAs</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</footer>
 	);
