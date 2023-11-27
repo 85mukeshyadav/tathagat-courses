@@ -19,14 +19,16 @@ const Header = () => {
 			>
 				<img src={logo} alt="logo" width={150} />
 			</Link>
-			<button
-				type="button"
-				className="navbar-toggler me-4"
-				data-bs-toggle="collapse"
-				data-bs-target="#navbarCollapse"
-			>
-				<span className="navbar-toggler-icon" />
-			</button>
+			{isAuth && (
+				<button
+					type="button"
+					className="navbar-toggler me-4"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarCollapse"
+				>
+					<span className="navbar-toggler-icon" />
+				</button>
+			)}
 			<div
 				className={clsx("collapse navbar-collapse", !isAuth && "justify-end")}
 				id="navbarCollapse"
