@@ -159,6 +159,9 @@ img {
 .banner {
 	position: relative;
 }
+.banner img{
+	width: 100%;
+}
 .carousel-wrapper {
 	background: #d15940;
 	text-align: center;
@@ -203,11 +206,24 @@ img {
 	text-align: center;
 	line-height: 40px;
 }
-.carousel-wrapper .owl-carousel.owl-drag .owl-carousel-item {
+.carousel-wrapper .slick-carousel-item {
 	border: 1px solid #eee;
 }
-.carousel-wrapper .owl-carousel.owl-drag .owl-item:last-child {
-	border-right: none;
+.slick-slider {
+    margin:0 -5px;
+}
+.slick-slide {
+    padding:5px;
+    padding:5px;
+}
+#footer .mx-auto {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+.navbar-light .navbar-toggler{
+	background: #fff;
+	border-radius: 5px;
+    padding: 1px 6px;
 }
 
 @media (min-width: 992px) {
@@ -359,6 +375,7 @@ img {
 .category img,
 .course-item img {
 	transition: 0.5s;
+	max-height: 354px;
 }
 
 .category a:hover img,
@@ -652,4 +669,48 @@ img {
 	border: 3px solid #18d26e;
 	border-top-color: #eee;
 	animation: animate-loading 1s linear infinite;
+}
+
+
+@media (max-width: 767px) {
+.banner {
+    min-height: 340px;
+    background: #040252;
+}
+.banner img{
+	height: 100%;
+	object-fit: cover;
+	display: none;
+}
+.display-4{
+	margin-bottom: 15px;
+}
+.py-5 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+.slick-slider {
+    margin: 0px;
+	padding: 0;
+}
+.carousel-wrapper .container {
+    padding: 0 45px;
+}
+.back-to-top {
+    right: 15px;
+    bottom: 15px;
+}
+.banner .container.text-left {
+    padding: 0 20px;
+}
+.all-post{
+	gap: 15px;
+}
+.courses-item .icon{
+	min-height: auto;
+}
+#nav-tab{
+	justify-content: flex-start;
+	gap: 10px;
+}
 }
