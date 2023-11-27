@@ -10,6 +10,8 @@ import AuthContext from "../context/AuthCntx";
 import slugify from "../utils/slugify";
 import Loader from "./Loader";
 import about from "./images/about.jpg";
+import avatar from "./images/avtar.png";
+import courseDefault from "./images/course-default.jpg";
 import homebanner from "./images/homebanner1.jpg";
 import improvement from "./images/improvement.png";
 import language from "./images/language.png";
@@ -100,7 +102,7 @@ const Home = () => {
 							<div className="row justify-content-start">
 								<div className="col-sm-10 col-lg-7">
 									<h5 className="text-primary text-uppercase mb-3 animated slideInDown">
-										Welcome to the mytathagat
+										Welcome to tathagat
 									</h5>
 									<h1 className="display-4 text-white animated slideInDown">
 										India's Best Online Exam Platform
@@ -559,11 +561,7 @@ const Home = () => {
 													<div className="p-2">
 														<i className="icon">
 															<img
-																src={
-																	res?.thumbnail
-																		? res.thumbnail
-																		: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
-																}
+																src={res?.thumbnail || courseDefault}
 																alt="learn"
 															/>
 														</i>
@@ -800,7 +798,7 @@ const Home = () => {
 									<div className="author">
 										<img
 											className="avatar border rounded-circle p-2"
-											src="images/avtar.png"
+											src={avatar}
 										/>
 										<div className="author-text">
 											<p>
@@ -828,7 +826,7 @@ const Home = () => {
 									<div className="author">
 										<img
 											className="avatar border rounded-circle p-2"
-											src="images/avtar.png"
+											src={avatar}
 										/>
 										<div className="author-text">
 											<p>
@@ -857,7 +855,7 @@ const Home = () => {
 									<div className="author">
 										<img
 											className="avatar border rounded-circle p-2"
-											src="images/avtar.png"
+											src={avatar}
 										/>
 										<div className="author-text">
 											<p>
