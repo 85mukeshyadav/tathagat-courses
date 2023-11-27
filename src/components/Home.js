@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 import apiClient from "../api/apiClient";
 import AuthContext from "../context/AuthCntx";
 import slugify from "../utils/slugify";
@@ -31,6 +34,53 @@ const Home = () => {
 			</div>
 		);
 
+	var HeaderSettings = {
+		dots: false,
+		infinite: true,
+		speed: 500,
+		slidesToShow: 6,
+		slidesToScroll: 1,
+		autoplay: true,
+		responsive: [
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 3,
+				},
+			},
+			{
+				breakpoint: 480,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	};
+
+	var settings = {
+		dots: false,
+		infinite: true,
+		speed: 500,
+		slidesToShow: 3,
+		slidesToScroll: 1,
+		autoplay: true,
+		arrows: false,
+		responsive: [
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 2,
+				},
+			},
+			{
+				breakpoint: 480,
+				settings: {
+					slidesToShow: 1,
+				},
+			},
+		],
+	};
+
 	return (
 		<>
 			<meta charSet="utf-8" />
@@ -48,7 +98,7 @@ const Home = () => {
 					<div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center">
 						<div className="container text-left">
 							<div className="row justify-content-start">
-								<div className="col-sm-10 col-lg-8">
+								<div className="col-sm-10 col-lg-7">
 									<h5 className="text-primary text-uppercase mb-3 animated slideInDown">
 										Welcome to the mytathagat
 									</h5>
@@ -83,29 +133,29 @@ const Home = () => {
 				<div className="carousel-wrapper">
 					<div className="container">
 						<div className="row">
-							<div className="owl-carousel header-carousel">
-								<div className="owl-carousel-item position-relative">
+							<Slider {...HeaderSettings} v className="header-carousel">
+								<div className="slick-carousel-item position-relative">
 									<p>Interview Courses</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p>Career Skills</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p>Internship Courses</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p>2000+ Ebooks</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p>500+ Videos</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p> 2000+ Exams</p>
 								</div>
-								<div className="owl-carousel-item">
+								<div className="slick-carousel-item">
 									<p> 2000+ Exams</p>
 								</div>
-							</div>
+							</Slider>
 						</div>
 					</div>
 					{/* Carousel End */}
@@ -404,7 +454,7 @@ const Home = () => {
 								</h6>
 								<h1 className="mb-5">Courses</h1>
 							</div>
-							<div className="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+							{/* <div className="nav nav-tabs mb-3" id="nav-tab" role="tablist">
 								<button
 									className="nav-link active"
 									id="nav-home-tab"
@@ -477,7 +527,7 @@ const Home = () => {
 								>
 									Banking
 								</button>
-							</div>
+							</div> */}
 						</nav>
 						<div className="tab-content p-3" id="nav-tabContent">
 							<div
@@ -563,7 +613,10 @@ const Home = () => {
 						</h6>
 						<h1 className="mb-5">Our Students Say!</h1>
 					</div>
-					<div className="owl-carousel testimonial-carousel position-relative">
+					<Slider
+						{...settings}
+						className="testimonial-carousel position-relative"
+					>
 						<div className="testimonial-item text-center">
 							<img
 								className="border rounded-circle p-2 mx-auto mb-3"
@@ -640,7 +693,83 @@ const Home = () => {
 								</p>
 							</div>
 						</div>
-					</div>
+						<div className="testimonial-item text-center">
+							<img
+								className="border rounded-circle p-2 mx-auto mb-3"
+								src="https://online.tathagat.co.in/wp-content/uploads/elementor/thumbs/saurabh-q7sumabdmwtgrpbxgia3oeabpzab0jfkrpc7zua2g8.jpeg"
+								style={{ width: 80, height: 80 }}
+							/>
+							<h5 className="mb-0">Saurabh Siddhartha - IIM Calcutta</h5>
+							<p>Student</p>
+							<div className="testimonial-text bg-light text-center p-4">
+								<p className="mb-0">
+									I joined Tathagat in August to start my preparation for CAT.
+									While scanning the options before me, I was looking for an
+									institution that could provide me with sufficient personal
+									attention and Tathagat seemed the best option on that front. I
+									was privileged to be guided by the excellent faculty at
+									Tathagat in all three areas – VA, LR-DI and QA. Tathagat's
+									workshops helped me the most. These workshops were
+									question-intensive and on occasions went on for 8 hours.
+									Lastly, Tathagat was very instrumental in helping me prepare
+									for my interviews post CAT. It helped me gain immense
+									confidence to compete with the best.{" "}
+								</p>
+								<div className="stars">
+									<i className="fa fa-star" />
+								</div>
+							</div>
+						</div>
+						<div className="testimonial-item text-center">
+							<img
+								className="border rounded-circle p-2 mx-auto mb-3"
+								src="https://online.tathagat.co.in/wp-content/uploads/elementor/thumbs/ambuj-q7sumgw8yr2h0z2de34hnumjvodvif5p4lwmcs0b8o.jpeg"
+								style={{ width: 80, height: 80 }}
+							/>
+							<h5 className="mb-0">Ambuj Gupta - IIM INDORE</h5>
+							<p>Student</p>
+							<div className="testimonial-text bg-light text-center p-4">
+								<p className="mb-0">
+									The experience at TG is something that one can’t really put
+									words to. It would be legit to conclude that I came looking
+									for a CAT coaching but on top of that I found guidance and
+									true pioneering. It’s not just a business entity providing
+									services in lieu of monetary benefits, TG is an experience.
+									There have been 2-3 stints in my life that I have cherished
+									and TG is indubitably an important one of them. One witnesses
+									transformation not only in VA, QA, LRDI skills but also in the
+									basic perception of different elements of life. Interactions
+									with teachers such as Gautam Sir, Kamal Sir, Kumar Sir, and
+									Munish Sir leave you with little anecdotes which help you sail
+									all along. It would have been a great regret if TG wasn’t
+									there, though I wouldn’t have known but now that I do, I
+									realize the difference.{" "}
+								</p>
+							</div>
+						</div>
+						<div className="testimonial-item text-center">
+							<img
+								className="border rounded-circle p-2 mx-auto mb-3"
+								src="https://online.tathagat.co.in/wp-content/uploads/elementor/thumbs/pratishtha-q7sumd4w7exbqj7u01hzdvkpi4wenmqrs3aofo5vxk.jpeg"
+								style={{ width: 80, height: 80 }}
+							/>
+							<h5 className="mb-0">Pratishtha Gupta - XLRI Jamshedpur</h5>
+							<p>Student</p>
+							<div className="testimonial-text bg-light text-center p-4">
+								<p className="mb-0">
+									If I were to credit my success at cracking a top-notch
+									B-school it would only be to Tathagat. The topics were taught
+									in a way for one to understand the logic behind everything and
+									then shortcuts were taught to be able to take the test easily.
+									Every doubt of mine was given so much attention and time that
+									I got my basics thoroughly cleared. The GD/PI sessions helped
+									me find ways to answer any and every question that could be
+									asked. Tathagat helped me not only learn what was to be learnt
+									for CAT but also taught me lessons for the lifetime.{" "}
+								</p>
+							</div>
+						</div>
+					</Slider>
 				</div>
 			</div>
 			{/* Testimonial End */}
