@@ -1,19 +1,7 @@
-//import liraries
 import React from "react";
 
-// create a component
 const Footer = () => {
-	const openmenuHandler = (e) => {
-		let menu = document.getElementById("meunId");
-		menu.style.display = "block";
-	};
-	const closeMenuHandler = (e) => {
-		let menu = document.getElementById("meunId");
-		menu.style.display = "none";
-	};
-
 	return (
-		// <Router>
 		<footer id="footer">
 			<div
 				className="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
@@ -22,25 +10,28 @@ const Footer = () => {
 				<div className="container py-5">
 					<div className="row g-5">
 						<div className="col-lg-4 col-md-6">
-							<h4 className="text-white mb-3">Quick Link</h4>
-							<a className="btn btn-link" href="#">
+							<h4 className="text-white mb-3 text-left">Quick Link</h4>
+							<a className="btn btn-link" href="/about-us">
 								About Us
 							</a>
-							<a className="btn btn-link" href="#">
-								Popular Courses
-							</a>
-							<a href="#" className="btn btn-link">
-								Faculty
-							</a>
-							<a className="btn btn-link" href="#">
+							<a className="btn btn-link" href="/contact">
 								Contact Us
+							</a>
+							<a className="btn btn-link" href="/privacy-policy">
+								Privacy Policy
+							</a>
+							<a className="btn btn-link" href="/terms-conditions">
+								Terms & Conditions
+							</a>
+							<a className="btn btn-link" href="/refund-policy">
+								Refund Policy
 							</a>
 						</div>
 						<div className="col-lg-4 col-md-6">
-							<h4 className="text-white mb-3">Contact</h4>
-							<p className="mb-2">
+							<h4 className="text-white mb-3 text-left">Contact</h4>
+							<p className="mb-2 text-left">
 								<i className="fa fa-map-marker-alt me-3" />
-								115, 1st Floor, New Delhi House Connaught Place New Delhi -
+								113, 1st Floor, New Delhi House Connaught Place New Delhi -
 								110001
 							</p>
 							{/* <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 95355 01234</p> */}
@@ -68,8 +59,10 @@ const Footer = () => {
 							</div>
 						</div>
 						<div className="col-lg-4 col-md-6">
-							<h4 className="text-white mb-3">Newsletter</h4>
-							<p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+							<h4 className="text-white mb-3 text-left">Newsletter</h4>
+							<p className="mb-2 text-left">
+								Subscribe to our newsletter and get latest updates.
+							</p>
 							<div
 								className="position-relative mx-auto"
 								style={{ maxWidth: 400 }}
@@ -81,9 +74,9 @@ const Footer = () => {
 								/>
 								<button
 									type="button"
-									className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2"
+									className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 bg-[#11308e]"
 								>
-									SignUp
+									Sign Up
 								</button>
 							</div>
 						</div>
@@ -94,18 +87,9 @@ const Footer = () => {
 						<div className="row">
 							<div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
 								<p>
-									Copyright © 2021 Tathagat. Brands are the property of their
+									Copyright © 2023 Tathagat. Brands are the property of their
 									respective owners.
 								</p>
-								{/*/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. *** /
-            Designed By <a class="border-bottom" href="https://ismudigital.com">Ismu Digital</a><br><br> */}
-							</div>
-							<div className="col-md-6 text-center text-md-end">
-								<div className="footer-menu">
-									<a href="#">Home</a>
-									<a href="#">Help</a>
-									<a href="#">FQAs</a>
-								</div>
 							</div>
 						</div>
 					</div>

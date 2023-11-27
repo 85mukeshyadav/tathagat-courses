@@ -31,7 +31,12 @@ const CourseList = () => {
 
 	console.log("🚀 ~ file:courselist.js ~ line 19 ~ CourseList", data);
 
-	if (isLoading) return <Loader />;
+	if (isLoading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<div className="bg-white">

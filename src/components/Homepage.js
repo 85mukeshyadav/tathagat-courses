@@ -34,7 +34,12 @@ const Homepage = () => {
 		sethidenav(false);
 	}, []);
 
-	if (isLoading) return <Loader />;
+	if (isLoading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<>

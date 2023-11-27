@@ -19,7 +19,6 @@ import CourseList from "./components/Course/courselist";
 import MyCourses from "./components/Course/myCourses";
 import ExamFinished from "./components/ExamFinished";
 import Home from "./components/Home";
-import Homepage from "./components/Homepage";
 import PaymentSuccess from "./components/PaymentSuccess";
 import Privacy from "./components/Privacy";
 import Profile from "./components/Profile";
@@ -47,7 +46,7 @@ const Rout = (props) => (
 		<Route exact path="examination" element={<Examination />} />
 		<Route exact path="review" element={<Review />} />
 		<Route exact path="analysis" element={<AnalysisProvider />} />
-		<Route exact path="" element={<Homepage />} />
+		<Route exact path="" element={<Home />} />
 		<Route exact path="/blogs" element={<Blogs />} />
 		<Route exact path="/test/:pkgid/:testid" element={<TestExam />} />
 		<Route exact path="/ssologin/:token/:user" element={<Login />} />
@@ -60,7 +59,7 @@ const Rout = (props) => (
 		<Route exact path="/refund-policy" element={<Refund />} />
 		<Route exact path="/about-us" element={<About />} />
 		<Route exact path="*" element={<Page404 />} />
-		<Route exact path="/home" element={<Home />} />
+		{/* <Route exact path="/home" element={<Home />} /> */}
 	</Routes>
 );
 

@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/apiClient";
+import AuthContext from "../context/AuthCntx";
 import slugify from "../utils/slugify";
 import Loader from "./Loader";
 import about from "./images/about.jpg";
@@ -12,6 +14,7 @@ import learn from "./images/learn.png";
 import practice from "./images/practice.png";
 
 const Home = () => {
+	const { isAuth } = useContext(AuthContext);
 	const { data, isLoading } = useQuery({
 		queryKey: ["getrandomPkg"],
 		queryFn: () =>
@@ -21,7 +24,12 @@ const Home = () => {
 		staleTime: ms("24h"),
 	});
 
-	if (isLoading) return <Loader />;
+	if (isLoading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<>
@@ -38,7 +46,7 @@ const Home = () => {
 				<div className="banner">
 					<img className="img-fluid" src={homebanner} alt="" />
 					<div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center">
-						<div className="container">
+						<div className="container text-left">
 							<div className="row justify-content-start">
 								<div className="col-sm-10 col-lg-8">
 									<h5 className="text-primary text-uppercase mb-3 animated slideInDown">
@@ -50,18 +58,22 @@ const Home = () => {
 									<p className="fs-5 text-white mb-4 pb-2">
 										One Destination for Complete Exam Preparation
 									</p>
-									<a
-										href="https://mytathagat.com/signup"
-										className="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"
-									>
-										Signup
-									</a>
-									<a
-										href="https://mytathagat.com/signin"
-										className="btn btn-light py-md-3 px-md-5 animated slideInRight"
-									>
-										Login
-									</a>
+									{!isAuth && (
+										<div className="flex">
+											<Link
+												to="signup"
+												className="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"
+											>
+												Signup
+											</Link>
+											<Link
+												to="signin"
+												className="btn btn-light py-md-3 px-md-5 animated slideInRight"
+											>
+												Login
+											</Link>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
@@ -108,7 +120,7 @@ const Home = () => {
 								data-wow-delay="0.1s"
 							>
 								<div className="service-item text-center pt-3">
-									<div className="p-4">
+									<div className="p-4 flex flex-col items-center">
 										<i className="icon">
 											<img src={learn} alt="learn" />
 										</i>
@@ -128,7 +140,7 @@ const Home = () => {
 								data-wow-delay="0.3s"
 							>
 								<div className="service-item text-center pt-3">
-									<div className="p-4">
+									<div className="p-4 flex flex-col items-center">
 										<i className="icon">
 											<img src={practice} alt="learn" />
 										</i>
@@ -148,7 +160,7 @@ const Home = () => {
 								data-wow-delay="0.5s"
 							>
 								<div className="service-item text-center pt-3">
-									<div className="p-4">
+									<div className="p-4 flex flex-col items-center">
 										<i className="icon">
 											<img src={improvement} alt="learn" />
 										</i>
@@ -168,7 +180,7 @@ const Home = () => {
 								data-wow-delay="0.7s"
 							>
 								<div className="service-item text-center pt-3">
-									<div className="p-4">
+									<div className="p-4 flex flex-col items-center">
 										<i className="icon">
 											<img src={language} alt="learn" />
 										</i>
@@ -190,7 +202,10 @@ const Home = () => {
 				<div className="container-xxl py-5">
 					<div className="container">
 						<div className="row g-5">
-							<div className="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+							<div
+								className="col-lg-6 wow fadeInUp text-left"
+								data-wow-delay="0.3s"
+							>
 								<h6 className="section-title bg-white text-start text-primary pe-3">
 									About Us
 								</h6>
@@ -200,7 +215,7 @@ const Home = () => {
 									SENIOR CAT TRAINERS +CURRICULUM TUNED TO MAJOR MBA ENTRANCE
 									EXAMS.
 								</p>
-								<div className="row gy-2 gx-4 mb-4">
+								<div className="row gy-2 gx-4 mb-4 text-left">
 									<div className="col-sm-6">
 										<p className="mb-0">
 											<i className="fa fa-chevron-right text-primary me-2" />
@@ -491,22 +506,37 @@ const Home = () => {
 										>
 											<div data-wow-delay="0.5s">
 												<div className="courses-item text-center pt-3">
-													<div className="p-4">
+													<div className="p-2">
 														<i className="icon">
-															<img src={res?.thumbnail} alt="learn" />
+															<img
+																src={
+																	res?.thumbnail
+																		? res.thumbnail
+																		: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+																}
+																alt="learn"
+															/>
 														</i>
-														<h5 className="mb-3">GK for IIFT &amp; SNAP</h5>
+														<h5 className="mb-3 text-2xl font-bold text-gray-700">
+															{res?.name}
+														</h5>
 														<div className="course-details">
-															<p>
-																Package Details( 75 tests):
-																<br />
-																36 GK Topic Based Tests. <br />
-																52 Weekly Tests on Current Affair
+															<p className="my-5 font-bold text-xl">
+																Price: ₹<span>{res?.price}</span>
 															</p>
 															<p>
 																<a
 																	className="btn"
-																	href="https://pages.razorpay.com/Target-GK-SNAP-IIFT"
+																	onClick={() => {
+																		if (!res.officialDesc) {
+																			localStorage.setItem(
+																				"pkgid",
+																				res.packageId
+																			);
+																			if (res.payment_url)
+																				window.open(res.payment_url, "_blank");
+																		}
+																	}}
 																>
 																	Read more
 																</a>
@@ -616,7 +646,7 @@ const Home = () => {
 			{/* Testimonial End */}
 			{/*  Blog Start */}
 			<div className="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
-				<div className="container">
+				<div className="container text-left">
 					<div className="text-center wow fadeInUp" data-wow-delay="0.1s">
 						<h6 className="section-title bg-white text-center text-primary px-3">
 							Latest Post

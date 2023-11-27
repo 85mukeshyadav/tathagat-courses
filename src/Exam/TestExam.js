@@ -46,7 +46,12 @@ const TestExam = () => {
 		checkIfTestExists();
 	}, []);
 
-	if (loading) return <Loader />;
+	if (loading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<div

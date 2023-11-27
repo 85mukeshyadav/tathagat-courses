@@ -115,7 +115,12 @@ const Profile = () => {
 		getUserProfile();
 	}, []);
 
-	if (loading) return <Loader />;
+	if (loading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<div className="max-w-md h-full mx-auto px-6 py-10 my-10 bg-white rounded-lg shadow-lg">

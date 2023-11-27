@@ -28,7 +28,12 @@ const MyCourses = () => {
 		refetch();
 	}, []);
 
-	if (isLoading) return <Loader />;
+	if (isLoading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	return (
 		<div className="bg-white">

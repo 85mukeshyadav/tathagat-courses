@@ -392,7 +392,12 @@ const Bookmarks = React.memo(() => {
 		}
 	}, [searchText, bookmarksData]);
 
-	if (loading) return <Loader />;
+	if (loading)
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 
 	if (bookmarksData && bookmarksData.data.length == 0) {
 		return (
