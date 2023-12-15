@@ -400,7 +400,7 @@ const Examination = React.memo(() => {
 			setAllData(res.data);
 			setLoading(false);
 		} else {
-			alert("Test not accessible!");
+			console.log("Exam not accessible!", isPackageAccess);
 		}
 
 		return null;

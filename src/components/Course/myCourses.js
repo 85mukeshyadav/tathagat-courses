@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import ms from "ms";
 import React, { useEffect } from "react";
 import Marquee from "react-fast-marquee";
@@ -29,20 +28,6 @@ const MyCourses = () => {
 		refetch();
 	}, []);
 
-	const assignPackage = (pkgid) => {
-		axios.post(process.env.REACT_APP_API + "/assignStudentToPackage", {
-			packageId: pkgid,
-			studentList: [
-				{
-					status: 1,
-					checked: true,
-					email_Id: localStorage.getItem("user"),
-					user_type: "student",
-				},
-			],
-		});
-	};
-
 	if (isLoading) return <Loader />;
 
 	return (
@@ -62,7 +47,6 @@ const MyCourses = () => {
 							to={location}
 							props={res}
 							onClick={() => {
-								assignPackage(res.packageId);
 								localStorage.setItem("pkgid", res.packageId);
 								localStorage.setItem("courseid", res.courseId);
 							}}

@@ -75,7 +75,7 @@ const CourseList = () => {
 												<div className="flex justify-between items-center">
 													<div className="flex bg-blue-200 px-2 h-10 items-center justify-center rounded-md">
 														<p className="font-bold text-xl text-blue-700 p-4">
-															{res?.price == 0 ? "Free" : `₹ ${res?.price}`}
+															₹{res?.price}
 														</p>
 													</div>
 													<div className="flex">
