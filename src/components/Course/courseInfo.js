@@ -2,8 +2,9 @@ import { Group, Rating } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ms from "ms";
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import apiClient from "../../api/apiClient";
 import useRazorPay from "../../hooks/useRazorpay";
 import Loader from "../Loader";
@@ -11,12 +12,48 @@ import Loader from "../Loader";
 const CourseInfo = () => {
 	const { pkgid } = useParams();
 	const { displayRazorpay } = useRazorPay();
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
 
 	const { data, isLoading } = useQuery({
 		queryKey: ["package", pkgid],
 		queryFn: () => apiClient.get(`/pacakge/${pkgid}`).then((res) => res.data),
 		staleTime: ms("24h"),
 	});
+
+	const assignPackage = () => {
+		setLoading(true);
+		axios
+			.post(process.env.REACT_APP_API + "/assignStudentToPackage", {
+				packageId: pkgid,
+				studentList: [
+					{
+						status: 1,
+						checked: true,
+						email_Id: localStorage.getItem("user"),
+						user_type: "student",
+					},
+				],
+			})
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 200) {
+					localStorage.setItem("pkgid", pkgid);
+					localStorage.setItem("courseid", data[0]?.courseCourseId);
+					toast.success("Enrolled into course successfully", {
+						position: "bottom-center",
+					});
+					navigate("/courseDetails/myCourse");
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				toast.error("Something went wrong", {
+					position: "bottom-center",
+				});
+			})
+			.finally(() => setLoading(false));
+	};
 
 	const handlePayment = async (info) => {
 		console.log(info);
@@ -48,7 +85,7 @@ const CourseInfo = () => {
 
 	console.log("🚀 ~ file: courseInfo.js ~ line 18 ~ CourseInfo ~ data", data);
 
-	if (isLoading || !data)
+	if (loading || isLoading || !data)
 		return (
 			<div className="min-h-screen">
 				<Loader />
@@ -77,21 +114,25 @@ const CourseInfo = () => {
 						{/* <div className=""> */}
 						<button
 							onClick={() => {
-								handlePayment({
-									price: parseInt(data[0].PackagePrice),
-									packageId: data[0].packageId,
-								});
+								if (data[0].PackagePrice == 0) {
+									assignPackage();
+								} else {
+									handlePayment({
+										price: parseInt(data[0].PackagePrice),
+										packageId: data[0].packageId,
+									});
+								}
 							}}
 							className="py-2 justify-center items-center mt-4 rounded-md sm:px-6 px-4 bg-blue-500 text-white sm:text-xl text-lg font-bold hover:bg-blue-600"
 						>
 							<i className="fas fa-cart-shopping text-white mr-2"></i>
-							Buy Now
+							{data[0].PackagePrice == 0 ? "Enroll Now" : "Buy Now"}
 						</button>
 						{/* </div> */}
 					</div>
 					<div className="sm:mt-24 mt-8 text-center">
 						<p className="text-white font-bold text-4xl pt-12">
-							₹{data[0].PackagePrice}/-
+							{data[0].PackagePrice == 0 ? "Free" : `₹ ${data[0].PackagePrice}`}
 						</p>
 						<div className="text-white font-medium text-lg pt-2 mx-auto">
 							<Group position="center">
