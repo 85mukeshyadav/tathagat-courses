@@ -778,7 +778,7 @@ const Home = () => {
 						<h6 className="section-title bg-white text-center text-primary px-3">
 							Latest Post
 						</h6>
-						<h1 className="mb-5">BLogs</h1>
+						<h1 className="mb-5">Blogs</h1>
 					</div>
 					<div className="all-post row">
 						<div className="col-lg-4 col-sm-6" data-wow-delay="0.5s">
