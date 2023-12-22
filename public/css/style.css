@@ -105,10 +105,10 @@ img {
 .footer a {
 	color: #fff;
 }
-.footer a:hover,
+/* .footer a:hover,
 .footer .btn.btn-link:hover {
-	color: var(--primary);
-}
+	color: var(--dark);
+} */
 .btn-sm-square {
 	width: 32px;
 	height: 32px;

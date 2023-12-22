@@ -12,7 +12,7 @@ const Header = () => {
 	const currentRoute = window.location.pathname;
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light shadow sticky-top p-0">
+		<nav className="bg-[#323333] navbar navbar-expand-lg navbar-light shadow sticky-top p-0">
 			<Link
 				to="/"
 				className="navbar-brand d-flex align-items-center px-4 px-lg-5"
