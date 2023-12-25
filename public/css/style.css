@@ -627,7 +627,7 @@ img {
 .login-menu:hover {
 	color: #fff !important;
 	background-color: #0991cd;
-	border-color: #1fc2d1;
+	/* border-color: #1fc2d1; */
 }
 
 .hidden-div .error-message {
