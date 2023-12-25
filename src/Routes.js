@@ -7,6 +7,7 @@ import Exam from "./Exam/examScreen";
 import Page404 from "./components/404";
 import About from "./components/About";
 import Login from "./components/Auth/Login";
+import OtpInput from "./components/Auth/OtpInput";
 import Signup from "./components/Auth/Signup";
 import Signin from "./components/Auth/signin";
 import Blogs from "./components/Blogs";
@@ -33,6 +34,7 @@ const Rout = (props) => (
 	<Routes>
 		<Route exact path="signin" element={<Signin />} />
 		<Route exact path="signup" element={<Signup />} />
+		<Route exact path="verify" element={<OtpInput />} />
 		<Route exact path="courses" element={<CourseList />} />
 		<Route exact path="courses/:slug/:pkgid" element={<CourseInfo />} />
 		<Route exact path="myCourses" element={<MyCourses />} />
