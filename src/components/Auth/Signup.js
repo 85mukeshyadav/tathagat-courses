@@ -124,7 +124,11 @@ const Signup = () => {
 	};
 
 	if (loading) {
-		return <Loader />;
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 	}
 
 	return (

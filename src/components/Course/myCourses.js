@@ -150,6 +150,10 @@ const MyCourses = () => {
 			console.log(error);
 			if (data?.is_referral_required == 1) {
 				open();
+			} else {
+				localStorage.setItem("pkgid", data?.packageId);
+				localStorage.setItem("courseid", data?.courseId);
+				navigate("/courseDetails/myCourse");
 			}
 		} finally {
 			setLoadingCourse(false);
@@ -157,7 +161,11 @@ const MyCourses = () => {
 	};
 
 	if (isLoading || loadingCourse) {
-		return <Loader />;
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 	}
 
 	return (

@@ -63,7 +63,11 @@ const OtpInput = () => {
 	}, []);
 
 	if (loading) {
-		<Loader />;
+		return (
+			<div className="min-h-screen">
+				<Loader />
+			</div>
+		);
 	}
 
 	return (
