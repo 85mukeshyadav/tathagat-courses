@@ -1,14 +1,47 @@
+import { Box, Button, Divider, Group, Modal, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ms from "ms";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { FiFile, FiVideo } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import apiClient from "../../api/apiClient";
 import Loader from "../Loader";
 
 const MyCourses = () => {
+	const navigate = useNavigate();
+	const [opened, { open, close }] = useDisclosure(false);
+	const [packageId, setPackageId] = useState("");
+	const [courseId, setCourseId] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [loadingCourse, setLoadingCourse] = useState(false);
+	const form = useForm({
+		initialValues: {
+			friend1Name: "",
+			friend1Mobile: "",
+			friend2Name: "",
+			friend2Mobile: "",
+		},
+		validate: {
+			friend1Name: (value) =>
+				value.trim().length > 0 ? null : "Please enter a valid name",
+			friend1Mobile: (value) =>
+				/^[6-9]\d{9}$/.test(value)
+					? null
+					: "Please enter a valid mobile number",
+			friend2Name: (value) =>
+				value.trim().length > 0 ? null : "Please enter a valid name",
+			friend2Mobile: (value) =>
+				/^[6-9]\d{9}$/.test(value)
+					? null
+					: "Please enter a valid mobile number",
+		},
+	});
+
 	const params = {
 		userId: localStorage.getItem("user"),
 	};
@@ -20,35 +53,112 @@ const MyCourses = () => {
 		staleTime: ms("24h"),
 	});
 
-	const location = {
-		pathname: "/courseDetails/myCourse",
-		state: { fromDashboard: true },
-	};
+	// const location = {
+	// 	pathname: "/courseDetails/myCourse",
+	// 	state: { fromDashboard: true },
+	// };
 
 	useEffect(() => {
 		refetch();
 	}, []);
 
-	const assignPackage = (pkgid) => {
-		axios.post(process.env.REACT_APP_API + "/assignStudentToPackage", {
-			packageId: pkgid,
-			studentList: [
-				{
-					status: 1,
-					checked: true,
-					email_Id: localStorage.getItem("user"),
-					user_type: "student",
-				},
-			],
-		});
+	const handleReferral = () => {
+		const user = JSON.parse(localStorage.getItem("userDetails"));
+
+		if (
+			form.values.friend1Mobile == user?.mobileNumber ||
+			form.values.friend2Mobile == user?.mobileNumber
+		) {
+			toast.error("You cannot refer yourself", {
+				position: "top-right",
+				autoClose: 2000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+			});
+			return;
+		}
+
+		if (form.values.friend1Mobile == form.values.friend2Mobile) {
+			toast.error("Please enter different mobile numbers", {
+				position: "top-right",
+				autoClose: 2000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+			});
+			return;
+		}
+		setLoading(true);
+		axios
+			.post(process.env.REACT_APP_API + "/addreferral", {
+				userEmailId: localStorage.getItem("user"),
+				referee_1_name: form.values.friend1Name,
+				referee_1_phone: form.values.friend1Mobile,
+				referee_2_name: form.values.friend2Name,
+				referee_2_phone: form.values.friend2Mobile,
+			})
+			.then(() => {
+				axios
+					.post(process.env.REACT_APP_API + "/assignStudentToPackage", {
+						packageId: packageId,
+						studentList: [
+							{
+								status: 1,
+								checked: true,
+								email_Id: localStorage.getItem("user"),
+								user_type: "student",
+							},
+						],
+					})
+					.then(() => {
+						localStorage.setItem("pkgid", packageId);
+						localStorage.setItem("courseid", courseId);
+						close();
+						navigate("/courseDetails/myCourse");
+					})
+					.finally(() => setLoading(false));
+			});
 	};
 
-	if (isLoading)
-		return (
-			<div className="min-h-screen">
-				<Loader />
-			</div>
-		);
+	const checkIfPackageIsAssigned = async (data) => {
+		setPackageId(data?.packageId);
+		setCourseId(data?.courseId);
+
+		if (data?.packagePrice != 0) {
+			localStorage.setItem("pkgid", data?.packageId);
+			localStorage.setItem("courseid", data?.courseId);
+			navigate("/courseDetails/myCourse");
+			return;
+		}
+
+		setLoadingCourse(true);
+		try {
+			const res = await axios.get(process.env.REACT_APP_API + "/getreferral", {
+				params: {
+					userEmailId: localStorage.getItem("user"),
+				},
+			});
+			if (res.status == 200) {
+				localStorage.setItem("pkgid", data?.packageId);
+				localStorage.setItem("courseid", data?.courseId);
+				navigate("/courseDetails/myCourse");
+			}
+		} catch (error) {
+			console.log(error);
+			if (data?.is_referral_required == 1) {
+				open();
+			}
+		} finally {
+			setLoadingCourse(false);
+		}
+	};
+
+	if (isLoading || loadingCourse) {
+		return <Loader />;
+	}
 
 	return (
 		<div className="bg-white">
@@ -59,18 +169,64 @@ const MyCourses = () => {
 				🚀 We are happy to inform all TGits that we have upgraded our test
 				portal. New features will be shown on your new test attempts. 🚀
 			</Marquee>
+			<Modal
+				opened={opened}
+				onClose={close}
+				title="Refer 2 friends to access this package."
+				centered
+			>
+				<Box maw={340} mx="auto">
+					<form onSubmit={form.onSubmit(handleReferral)}>
+						<p className="text-xl font-bold text-gray-700 mb-2">Referral - 1</p>
+						<TextInput
+							label="Name"
+							placeholder="Name of Friend 1"
+							{...form.getInputProps("friend1Name")}
+						/>
+						<TextInput
+							mt="md"
+							label="Mobile"
+							placeholder="Mobile of Friend 1"
+							{...form.getInputProps("friend1Mobile")}
+						/>
+
+						<Divider mt="xl" />
+
+						<p className="text-xl font-bold text-gray-700 mt-4 mb-2">
+							Referral - 2
+						</p>
+						<TextInput
+							label="Name"
+							placeholder="Name of Friend 2"
+							{...form.getInputProps("friend2Name")}
+						/>
+
+						<TextInput
+							mt="md"
+							label="Mobile"
+							placeholder="Mobile of Friend 2"
+							{...form.getInputProps("friend2Mobile")}
+						/>
+
+						<Group justify="center" mt="xl">
+							<Button
+								className="bg-blue-500 mx-auto"
+								type="submit"
+								loading={loading}
+							>
+								Submit
+							</Button>
+						</Group>
+					</form>
+				</Box>
+			</Modal>
 			<div className="mx-auto py-16 px-4 sm:py-24 sm:px-6">
 				<p className="text-gray-500 text-5xl font-bold mb-10">My Courses</p>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:gap-14 md:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-2">
 					{data.data.map((res, i) => (
-						<Link
-							to={location}
-							props={res}
-							onClick={() => {
-								assignPackage(res.packageId);
-								localStorage.setItem("pkgid", res.packageId);
-								localStorage.setItem("courseid", res.courseId);
-							}}
+						<div
+							className="cursor-pointer"
+							onClick={() => checkIfPackageIsAssigned(res)}
 						>
 							<div className="max-w-6xl mx-auto sm:my-0 my-4">
 								<div className="flex items-center justify-center">
@@ -136,7 +292,7 @@ const MyCourses = () => {
 									</div>
 								</div>
 							</div>
-						</Link>
+						</div>
 					))}
 				</div>
 			</div>
