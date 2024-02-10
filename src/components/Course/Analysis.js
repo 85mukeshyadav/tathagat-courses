@@ -9,6 +9,7 @@ import { FaAward } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal";
+import { useSearchParams } from "react-router-dom";
 import {
 	Bar,
 	BarChart,
@@ -34,6 +35,7 @@ const Analysis = () => {
 		accuracy: 0,
 		percentile: 0,
 	});
+	const [searchParams] = useSearchParams();
 	const [analysisData, setAnalysisData] = useState({});
 	const [section, setSection] = useState([]);
 	const [currentSection, setCurrentSection] = useState(0);
@@ -69,9 +71,9 @@ const Analysis = () => {
 	}
 
 	const param = {
-		userId: localStorage.getItem("user"),
-		testId: localStorage.getItem("testid"),
-		packageId: localStorage.getItem("pkgid"),
+		userId: searchParams.get("user") || localStorage.getItem("user"),
+		testId: searchParams.get("testid") || localStorage.getItem("testid"),
+		packageId: searchParams.get("pkgid") || localStorage.getItem("pkgid"),
 		startDate: `${dayjs().year()}-${dayjs().month() + 1}-01`,
 		endDate: `${dayjs().year()}-${
 			dayjs().month() + 1
@@ -228,7 +230,8 @@ const Analysis = () => {
 		setLoading(true);
 		try {
 			const res = await apiClient.get(
-				"/gettest/" + localStorage.getItem("testid")
+				"/gettest/" +
+					(searchParams.get("testid") || localStorage.getItem("testid"))
 			);
 			if (res.ok) {
 				console.log(

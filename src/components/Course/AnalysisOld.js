@@ -3,6 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import "highcharts/css/highcharts.css";
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 require("highcharts/modules/exporting")(Highcharts);
 require("highcharts/modules/annotations")(Highcharts);
@@ -16,6 +17,7 @@ const AnalysisOld = () => {
 		},
 	};
 
+	const [searchParams] = useSearchParams();
 	const [hoverData, setHoverData] = useState(null);
 	const [getAnalysisData, setAnalysisData] = useState({});
 	const [getChartReportData, setChartReportData] = useState({});
@@ -58,9 +60,9 @@ const AnalysisOld = () => {
 
 	useEffect(async () => {
 		let param = {
-			userId: localStorage.getItem("user"),
-			testId: localStorage.getItem("testid"),
-			packageId: localStorage.getItem("pkgid"),
+			userId: searchParams.get("user") || localStorage.getItem("user"),
+			testId: searchParams.get("testid") || localStorage.getItem("testid"),
+			packageId: searchParams.get("pkgid") || localStorage.getItem("pkgid"),
 		};
 		const resp = await axios.post(
 			process.env.REACT_APP_API + "/test-analysis",
