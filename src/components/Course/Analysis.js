@@ -320,16 +320,16 @@ const Analysis = () => {
 				></div>
 			</Modal>
 			<div>
-				<h1 className="mt-10 mb-5 font-bold text-gray-700 text-4xl">
+				<h1 className="mt-10 mb-5 font-bold text-gray-700 sm:text-4xl text-2xl">
 					{testTitle}
 				</h1>
-				<div className="flex">
-					<div className="w-3/4">
+				<div className="sm:flex block">
+					<div className="sm:w-3/4 w-full">
 						<div className="mt-10 bg-gray-100 pb-10">
-							<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+							<p className="sm:text-2xl text-xl text-left font-bold ml-10 py-4 text-gray-700">
 								Overall Performance Summary
 							</p>
-							<div className="flex items-center sm:justify-around py-6 bg-white shadow sm:mx-10 overflow-x-auto">
+							<div className="flex items-center sm:justify-around py-6 bg-white shadow sm:mx-10 mx-2 overflow-x-auto">
 								<div className="flex items-center justify-center ml-6 mr-6 sm:ml-0 sm:mr-0">
 									<div className="h-10 w-10 rounded-full bg-rose-500 flex items-center justify-center">
 										<FaAward size={20} color="white" />
@@ -404,7 +404,7 @@ const Analysis = () => {
 							</div>
 						</div>
 						<div className="mt-10">
-							<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+							<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 								Test Summary
 							</p>
 							<div className="mx-2 sm:mx-10 table-auto overflow-x-auto">
@@ -417,34 +417,36 @@ const Analysis = () => {
 								>
 									<thead>
 										<tr>
-											<th>Section</th>
-											<th>Attempted</th>
-											<th>Correct</th>
-											<th>Incorrect</th>
-											<th>Skipped</th>
-											<th>Accuracy</th>
-											<th>Score</th>
-											<th>Rank</th>
-											<th>Time</th>
+											<th className="text-center">Section</th>
+											<th className="text-center">Attempted</th>
+											<th className="text-center">Correct</th>
+											<th className="text-center">Incorrect</th>
+											<th className="text-center">Skipped</th>
+											<th className="text-center">Accuracy</th>
+											<th className="text-center">Score</th>
+											<th className="text-center">Rank</th>
+											<th className="text-center">Time</th>
 										</tr>
 									</thead>
 									<tbody>
 										{analysisData?.section?.map((item, i) => (
 											<tr key={i}>
-												<td>{item?.sectionName || "NA"}</td>
-												<td>{item?.answered}</td>
-												<td>{item?.correctAnswers}</td>
-												<td>{item?.wrongAnswers}</td>
-												<td>{item?.unanswered}</td>
-												<td>
+												<td className="text-center">
+													{item?.sectionName || "NA"}
+												</td>
+												<td className="text-center">{item?.answered}</td>
+												<td className="text-center">{item?.correctAnswers}</td>
+												<td className="text-center">{item?.wrongAnswers}</td>
+												<td className="text-center">{item?.unanswered}</td>
+												<td className="text-center">
 													{(
 														(item?.correctAnswers / item?.answered) *
 														100
 													).toFixed(1) || "NA"}
 												</td>
-												<td>{item?.score}</td>
-												<td>{item?.rank || "NA"}</td>
-												<td>
+												<td className="text-center">{item?.score}</td>
+												<td className="text-center">{item?.rank || "NA"}</td>
+												<td className="text-center">
 													{item?.question.reduce(
 														(sum, i) => sum + i.timeTaken,
 														0
@@ -456,7 +458,7 @@ const Analysis = () => {
 								</Table>
 							</div>
 						</div>
-						<div className="mt-16 px-4 anal-tab">
+						<div className="mt-16 sm:px-4 anal-tab">
 							<div>
 								<div className="text-2xl font-bold my-2">
 									Section Wise Performance
@@ -468,205 +470,174 @@ const Analysis = () => {
 												<div className="font-bold sm:text-xl my-4">
 													Section Name - {res.sectionName}{" "}
 												</div>
-												<Table
-													withBorder
-													withColumnBorders
-													striped
-													className="table-auto sm:w-full"
-												>
-													<tbody>
-														<tr>
-															<th className="text-left"></th>
-															<th className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Score
-															</th>
-															<th className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Attempted
-															</th>
-															<th className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Correct
-															</th>
-															<th className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Incorrect
-															</th>
-															<th className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Un-attempted
-															</th>
-															{/* <th className='text-left p-2'>Accuracy</th> */}
-														</tr>
-														<tr>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																User
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																{res.score}
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																{res.answered}
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																{res.correctAnswers}
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																{res.wrongAnswers}
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																{res.unanswered}
-															</td>
-															{/* <td className='text-left p-2'>{res.unanswered}</td> */}
-														</tr>
-														{/* <tr>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Average
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className='text-left p-1 sm:p-2'></td>
-														</tr>
-														<tr>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg">
-																Median
-															</td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className="text-left p-1 sm:p-2 text-xs sm:text-lg"></td>
-															<td className='text-left p-2'></td>
-														</tr> */}
-													</tbody>
-												</Table>
-
+												<div className="mx-2 table-auto overflow-x-auto">
+													<Table
+														withBorder
+														withColumnBorders
+														striped
+														className="table-auto sm:w-full"
+														verticalSpacing="lg"
+														fontSize="md"
+													>
+														<thead>
+															<tr>
+																<th></th>
+																<th className="text-center">Score</th>
+																<th className="text-center">Attempted</th>
+																<th className="text-center">Correct</th>
+																<th className="text-center">Incorrect</th>
+																<th className="text-center">Un-attempted</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td className="text-center">User</td>
+																<td className="text-center">{res.score}</td>
+																<td className="text-center">{res.answered}</td>
+																<td className="text-center">
+																	{res.correctAnswers}
+																</td>
+																<td className="text-center">
+																	{res.wrongAnswers}
+																</td>
+																<td className="text-center">
+																	{res.unanswered}
+																</td>
+															</tr>
+														</tbody>
+													</Table>
+												</div>
 												<div className="text-xl font-bold mt-8 mb-4">
 													Strengths and Weaknesses
 												</div>
-
-												<Table
-													withBorder
-													withColumnBorders
-													striped
-													className="table-auto sm:w-full"
-												>
-													<tbody>
-														<tr>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Ques.
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Topic
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Status
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Your Answer
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Correct Answer
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Percentage of students who got it right
-															</th>
-															<th className="text-left p-2 text-sm sm:text-lg">
-																Attempt order
-															</th>
-														</tr>
-
-														{res?.question.map((ques, idx) => (
-															<tr key={`${i}-${idx}`}>
-																<td className=" flex justify-center items-center">
-																	<div
-																		onClick={() => {
-																			setQuestionIndex(idx);
-																			openModal();
-																		}}
-																		className={clsx(
-																			"flex h-10 w-10 rounded-full transition cursor-pointer text-white font-semibold items-center justify-center",
-																			ques.answerStatus === "C"
-																				? "bg-green-500"
-																				: ques.answerStatus === "W"
-																				? "bg-red-400"
-																				: "bg-gray-400"
-																		)}
-																	>
-																		{idx + 1}
-																	</div>
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques.chapterName ? ques.chapterName : "--"}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques.answerStatus ? ques.answerStatus : "--"}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques.optionType == "input"
-																		? ques.usersAnswer
-																			? ques.usersAnswer
-																			: "--"
-																		: ques.usersAnswer != -1
-																		? ques.usersAnswer + 1
-																		: "--"}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{(quesList.length > 0 &&
-																		quesList[i]?.QuestionList[idx]
-																			?.correctoption) ||
-																		"--"}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{(
-																		rightPercentage[i]?.question[idx]
-																			?.writePercentage * 100 || 0
-																	).toFixed(2) + "%"}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{ques.hasOwnProperty("attemptOrder") &&
-																	ques?.attemptOrder != -1
-																		? ques.attemptOrder + 1
-																		: "--"}
-																</td>
-															</tr>
-														))}
-													</tbody>
-												</Table>
-
-												<Table
-													withBorder
-													withColumnBorders
-													striped
-													className="table-auto sm:w-full mt-12"
-												>
-													<tbody>
-														<tr>
-															<th className="text-left p-2 text-xs sm:text-lg">
-																Chapter Name
-															</th>
-															<th className="text-left p-2 text-xs sm:text-lg">
-																Scale (0-10)
-															</th>
-															<th className="text-left p-2 text-xs sm:text-lg">
-																Remarks
-															</th>
-														</tr>
-
-														{res?.chapterReport.map((chap, ind) => (
+												<div className="mx-2 table-auto overflow-x-auto">
+													<Table
+														withBorder
+														withColumnBorders
+														striped
+														className="table-auto sm:w-full"
+													>
+														<tbody>
 															<tr>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{chap.chapterName}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{chap.scale?.toFixed(2)}
-																</td>
-																<td className="text-left p-2 text-xs sm:text-lg">
-																	{chap.remarks}
-																</td>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Ques.
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Topic
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Status
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Your Answer
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Correct Answer
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Percentage of students who got it right
+																</th>
+																<th className="text-center p-2 text-sm sm:text-lg">
+																	Attempt order
+																</th>
 															</tr>
-														))}
-													</tbody>
-												</Table>
+
+															{res?.question.map((ques, idx) => (
+																<tr key={`${i}-${idx}`}>
+																	<td className=" flex justify-center items-center">
+																		<div
+																			onClick={() => {
+																				setQuestionIndex(idx);
+																				openModal();
+																			}}
+																			className={clsx(
+																				"flex h-10 w-10 rounded-full transition cursor-pointer text-white font-semibold items-center justify-center",
+																				ques.answerStatus === "C"
+																					? "bg-green-500"
+																					: ques.answerStatus === "W"
+																					? "bg-red-400"
+																					: "bg-gray-400"
+																			)}
+																		>
+																			{idx + 1}
+																		</div>
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{ques.chapterName ? ques.chapterName : "--"}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{ques.answerStatus
+																			? ques.answerStatus
+																			: "--"}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{ques.optionType == "input"
+																			? ques.usersAnswer
+																				? ques.usersAnswer
+																				: "--"
+																			: ques.usersAnswer != -1
+																			? ques.usersAnswer + 1
+																			: "--"}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{(quesList.length > 0 &&
+																			quesList[i]?.QuestionList[idx]
+																				?.correctoption) ||
+																			"--"}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{(
+																			rightPercentage[i]?.question[idx]
+																				?.writePercentage * 100 || 0
+																		).toFixed(2) + "%"}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{ques.hasOwnProperty("attemptOrder") &&
+																		ques?.attemptOrder != -1
+																			? ques.attemptOrder + 1
+																			: "--"}
+																	</td>
+																</tr>
+															))}
+														</tbody>
+													</Table>
+												</div>
+												<div className="mx-2 table-auto overflow-x-auto">
+													<Table
+														withBorder
+														withColumnBorders
+														striped
+														className="table-auto sm:w-full mt-12"
+													>
+														<tbody>
+															<tr>
+																<th className="text-center p-2 text-xs sm:text-lg">
+																	Chapter Name
+																</th>
+																<th className="text-center p-2 text-xs sm:text-lg">
+																	Scale (0-10)
+																</th>
+																<th className="text-center p-2 text-xs sm:text-lg">
+																	Remarks
+																</th>
+															</tr>
+
+															{res?.chapterReport.map((chap, ind) => (
+																<tr>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{chap.chapterName}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{chap.scale?.toFixed(2)}
+																	</td>
+																	<td className="text-center p-2 text-xs sm:text-lg">
+																		{chap.remarks}
+																	</td>
+																</tr>
+															))}
+														</tbody>
+													</Table>
+												</div>
 											</div>
 											<Divider size="sm" variant="dashed" className="mt-10" />
 										</>
@@ -675,16 +646,16 @@ const Analysis = () => {
 							</div>
 						</div>
 					</div>
-					<div className="w-1/4 h-min bg-gray-100 mt-10">
+					<div className="sm:w-1/4 w-full h-min bg-gray-100 mt-10">
 						<div className="mt-10">
-							<p className="ml-5 text-2xl text-left font-bold py-4 text-gray-700">
+							<p className="sm:ml-5 text-2xl sm:text-left text-center font-bold py-4 text-gray-700">
 								Leaderboard
 							</p>
-							<div className="h-[700px] overflow-y-scroll">
+							<div className="sm:h-[700px] h-full pb-5 overflow-y-scroll">
 								{leaderboard.map((student, i) => (
 									<div
 										key={i}
-										className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white mx-5"
+										className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white sm:mx-5 mx-2"
 									>
 										<div className="flex items-center w-full">
 											<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
@@ -711,25 +682,25 @@ const Analysis = () => {
 					</div>
 				</div>
 				<div className="mt-10 bg-gray-100 py-5">
-					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+					<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 						Performance Distribution
 					</p>
-					<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
+					<div className="flex sm:w-1/2 w-full mx-auto items-center justify-around mb-4">
 						<div className="flex items-center">
 							<div className="h-5 w-5 bg-[#8884d8]"></div>
-							<p className="ml-2">Attempted</p>
+							<p className="sm:ml-2 ml-1">Attempted</p>
 						</div>
 						<div className="flex items-center">
 							<div className="h-5 w-5 bg-[#82ca9d]"></div>
-							<p className="ml-2">Correct</p>
+							<p className="sm:ml-2 ml-1">Correct</p>
 						</div>
 						<div className="flex items-center">
 							<div className="h-5 w-5 bg-[#F43F5E]"></div>
-							<p className="ml-2">Incorrect</p>
+							<p className="sm:ml-2 ml-1">Incorrect</p>
 						</div>
 						<div className="flex items-center">
 							<div className="h-5 w-5 bg-[#64748B]"></div>
-							<p className="ml-2">Skipped</p>
+							<p className="sm:ml-2 ml-1">Skipped</p>
 						</div>
 					</div>
 					<ResponsiveContainer width="100%" height={400}>
@@ -757,11 +728,11 @@ const Analysis = () => {
 				</div>
 				{activeTimeManagmentTab && (
 					<div className="mt-14 bg-gray-100 py-5">
-						<p className="text-2xl text-left font-bold ml-10 pt-4 text-gray-700">
+						<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 pt-4 text-gray-700">
 							Know your Time Management
 						</p>
-						<div className="flex items-center justify-around">
-							<div className="w-1/3 ml-10">
+						<div className="sm:flex block sm:items-center sm:justify-between mx-2">
+							<div className="sm:w-1/3 w-full sm:ml-10">
 								<Tabs
 									value={activeTimeManagmentTab}
 									onTabChange={setActiveTimeManagmentTab}
@@ -781,7 +752,7 @@ const Analysis = () => {
 											key={section.sectionName}
 											value={section.sectionName}
 										>
-											<div className="flex justify-center">
+											<div className="flex justify-center overflow-x-auto pl-24 sm:pl-0">
 												<div>
 													<RingProgress
 														size={120}
@@ -840,91 +811,89 @@ const Analysis = () => {
 									))}
 								</Tabs>
 							</div>
-							<div className="mt-10">
-								<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
-									<div className="flex items-center">
-										<div className="h-5 w-5 bg-[#8884d8]"></div>
-										<p className="ml-2">You</p>
+							<div className="mt-10 sm:flex w-full">
+								<div>
+									<div className="flex sm:w-1/2 w-full mx-auto items-center justify-around mb-4">
+										<div className="flex items-center">
+											<div className="h-5 w-5 bg-[#8884d8]"></div>
+											<p className="ml-2">You</p>
+										</div>
+										<div className="flex items-center">
+											<div className="h-5 w-5 bg-[#82ca9d]"></div>
+											<p className="ml-2">Topper</p>
+										</div>
 									</div>
-									<div className="flex items-center">
-										<div className="h-5 w-5 bg-[#82ca9d]"></div>
-										<p className="ml-2">Topper</p>
-									</div>
+									<ResponsiveContainer width="100%" height={200}>
+										<BarChart
+											data={[
+												{
+													name: "Your Accuracy",
+													accuracy: performance?.accuracy,
+												},
+												{
+													name: "Topper Accuracy",
+													topperAccuracy: topperPerformance?.accuracy,
+												},
+											]}
+										>
+											<CartesianGrid strokeDasharray="3 3" />
+											<XAxis dataKey="name" />
+											<YAxis />
+											<Bar dataKey="accuracy" fill="#8884d8" />
+											<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+										</BarChart>
+									</ResponsiveContainer>
 								</div>
-								{/* <ResponsiveContainer width="100%" height={200}> */}
-								<BarChart
-									width={400}
-									height={200}
-									data={[
-										{
-											name: "Your Accuracy",
-											accuracy: performance?.accuracy,
-										},
-										{
-											name: "Topper Accuracy",
-											topperAccuracy: topperPerformance?.accuracy,
-										},
-									]}
-								>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="name" />
-									<YAxis />
-									{/* <Tooltip /> */}
-									<Bar dataKey="accuracy" fill="#8884d8" />
-									<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-								</BarChart>
-								{/* </ResponsiveContainer> */}
-							</div>
-							<div className="mt-10">
-								<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
-									<div className="flex items-center">
-										<div className="h-5 w-5 bg-[#8884d8]"></div>
-										<p className="ml-2">You</p>
+								<div>
+									<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
+										<div className="flex items-center">
+											<div className="h-5 w-5 bg-[#8884d8]"></div>
+											<p className="ml-2">You</p>
+										</div>
+										<div className="flex items-center">
+											<div className="h-5 w-5 bg-[#82ca9d]"></div>
+											<p className="ml-2">Topper</p>
+										</div>
 									</div>
-									<div className="flex items-center">
-										<div className="h-5 w-5 bg-[#82ca9d]"></div>
-										<p className="ml-2">Topper</p>
-									</div>
+									<ResponsiveContainer width="100%" height={200}>
+										<BarChart
+											data={[
+												{
+													name: "Your Time",
+													accuracy:
+														(analysisData?.section &&
+															analysisData?.section[0].question.reduce(
+																(sum, i) => sum + i.timeTaken,
+																0
+															)) ||
+														0,
+												},
+												{
+													name: "Topper Time",
+													topperAccuracy:
+														(topperAnalysisData?.section &&
+															topperAnalysisData?.section[0].question.reduce(
+																(sum, i) => sum + i.timeTaken,
+																0
+															)) ||
+														0,
+												},
+											]}
+										>
+											<CartesianGrid strokeDasharray="3 3" />
+											<XAxis dataKey="name" />
+											<YAxis />
+											<Bar dataKey="accuracy" fill="#8884d8" />
+											<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+										</BarChart>
+									</ResponsiveContainer>
 								</div>
-								<BarChart
-									width={400}
-									height={200}
-									data={[
-										{
-											name: "Your Time",
-											accuracy:
-												(analysisData?.section &&
-													analysisData?.section[0].question.reduce(
-														(sum, i) => sum + i.timeTaken,
-														0
-													)) ||
-												0,
-										},
-										{
-											name: "Topper Time",
-											topperAccuracy:
-												(topperAnalysisData?.section &&
-													topperAnalysisData?.section[0].question.reduce(
-														(sum, i) => sum + i.timeTaken,
-														0
-													)) ||
-												0,
-										},
-									]}
-								>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="name" />
-									<YAxis />
-									{/* <Tooltip /> */}
-									<Bar dataKey="accuracy" fill="#8884d8" />
-									<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-								</BarChart>
 							</div>
 						</div>
 					</div>
 				)}
 				<div className="mt-10">
-					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+					<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 						Compare with Topper
 					</p>
 					<div className="mx-2 sm:mx-10 table-auto overflow-x-auto">
@@ -994,20 +963,17 @@ const Analysis = () => {
 					</div>
 				</div>
 				<div className="mt-10 bg-gray-100 py-5">
-					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+					<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 						Marks Distribution
 					</p>
-					<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
+					<div className="flex sm:w-1/2 w-full mx-auto items-center justify-around mb-4">
 						<div className="flex items-center">
 							<div className="h-5 w-5 bg-[#F43F5E]"></div>
 							<p className="ml-2">You</p>
 						</div>
 					</div>
 					<div className="my-5">
-						<ResponsiveContainer
-							width={window.innerWidth > 768 ? "95%" : "85%"}
-							height={500}
-						>
+						<ResponsiveContainer width="100%" height={500}>
 							<LineChart
 								data={marksDistribution}
 								margin={{
@@ -1109,10 +1075,9 @@ const Analysis = () => {
 					</div>
 				</div>
 				<div className="my-10">
-					<p className="text-2xl text-left font-bold ml-10 py-4 text-gray-700">
+					<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 						Percentile Distribution
 					</p>
-					{/* <HighchartsReact highcharts={Highcharts} options={chartOptions} /> */}
 					<ResponsiveContainer width="100%" height={500}>
 						<LineChart
 							data={percentileDistribution}
