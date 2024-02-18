@@ -3,7 +3,7 @@ import axios from "axios";
 import ms from "ms";
 import React, { useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { FiFile, FiVideo } from "react-icons/fi";
+import { FiArrowRight, FiFile, FiVideo } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import apiClient from "../../api/apiClient";
 import Loader from "../Loader";
@@ -97,12 +97,12 @@ const MyCourses = () => {
 												<p className="uppercase tracking-wide text-xl font-bold text-gray-700">
 													{res.PackageName}
 												</p>
-												<p className="uppercase tracking-wide text-md font-bold text-gray-700">
-													{res.courseName}
-												</p>
-												{/* <p className="text-cyan-700">
-													8.5k+ Students Enrolled{" "}
-												</p> */}
+												<div className="flex items-center justify-center mt-2">
+													<p className="uppercase tracking-wide text-sm font-bold text-blue-500">
+														View Details
+													</p>
+													<FiArrowRight className="text-blue-500 text-md ml-1" />
+												</div>
 											</div>
 											<div
 												style={{ display: "none" }}

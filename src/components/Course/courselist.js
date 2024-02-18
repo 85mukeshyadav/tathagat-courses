@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import ms from "ms";
 import React from "react";
 import Marquee from "react-fast-marquee";
-import { FiFile, FiVideo } from "react-icons/fi";
+import { FiArrowRight, FiFile, FiVideo } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import apiClient from "../../api/apiClient";
 import slugify from "../../utils/slugify";
@@ -73,8 +74,20 @@ const CourseList = () => {
 												}}
 											>
 												<div className="flex justify-between items-center">
-													<div className="flex bg-blue-200 px-2 h-10 items-center justify-center rounded-md">
-														<p className="font-bold text-xl text-blue-700 p-4">
+													<div
+														className={clsx(
+															"flex px-2 h-10 items-center justify-center rounded-md",
+															res?.price == 0 ? "bg-green-200" : "bg-blue-200"
+														)}
+													>
+														<p
+															className={clsx(
+																"font-bold text-xl p-4",
+																res?.price == 0
+																	? "text-green-600"
+																	: "text-blue-600"
+															)}
+														>
 															{res?.price == 0 ? "Free" : `₹ ${res?.price}`}
 														</p>
 													</div>
@@ -99,12 +112,12 @@ const CourseList = () => {
 												<p className="uppercase tracking-wide text-2xl font-bold text-gray-700 mt-2">
 													{res.name}
 												</p>
-												<p className="uppercase tracking-wide text-md font-bold text-gray-700">
-													{res.courseName}
-												</p>
-												{/* <p className="text-cyan-700">
-													8.5k+ Students Enrolled{" "}
-												</p> */}
+												<div className="flex items-center justify-center mt-2">
+													<p className="uppercase tracking-wide text-sm font-bold text-blue-500">
+														View Details
+													</p>
+													<FiArrowRight className="text-blue-500 text-md ml-1" />
+												</div>
 											</div>
 											<div
 												style={{ display: "none" }}
