@@ -681,37 +681,35 @@ const Analysis = () => {
 						</div>
 					</div>
 					<div className="sm:w-1/4 w-full sm:block hidden h-min bg-gray-100 mt-10">
-						<div className="mt-10">
-							<p className="sm:ml-5 text-2xl sm:text-left text-center font-bold py-4 text-gray-700">
-								Leaderboard
-							</p>
-							<div className="sm:h-[700px] h-full pb-5 overflow-y-scroll">
-								{leaderboard.map((student, i) => (
-									<div
-										key={i}
-										className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white sm:mx-5 mx-2"
-									>
-										<div className="flex items-center w-full">
-											<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
-												<FiUser size={24} color="white" />
-											</div>
-											<div>
-												<p className="text-lg font-semibold text-gray-700 text-left">
-													{student?.name || "NA"}
+						<p className="sm:ml-5 text-2xl sm:text-left text-center font-bold py-4 text-gray-700">
+							Leaderboard
+						</p>
+						<div className="sm:h-[700px] h-full pb-5 overflow-y-scroll">
+							{leaderboard.map((student, i) => (
+								<div
+									key={i}
+									className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white sm:mx-5 mx-2"
+								>
+									<div className="flex items-center w-full">
+										<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
+											<FiUser size={24} color="white" />
+										</div>
+										<div>
+											<p className="text-lg font-semibold text-gray-700 text-left">
+												{student?.name || "NA"}
+											</p>
+											<div className="flex items-start">
+												<p className="text-sm font-semibold mr-4 text-gray-400">
+													Rank: {i + 1}
 												</p>
-												<div className="flex items-start">
-													<p className="text-sm font-semibold mr-4 text-gray-400">
-														Rank: {i + 1}
-													</p>
-													<p className="text-sm font-semibold text-gray-400">
-														Score: {student?.netScore}
-													</p>
-												</div>
+												<p className="text-sm font-semibold text-gray-400">
+													Score: {student?.netScore}
+												</p>
 											</div>
 										</div>
 									</div>
-								))}
-							</div>
+								</div>
+							))}
 						</div>
 					</div>
 				</div>
