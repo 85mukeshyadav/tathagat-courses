@@ -51,7 +51,7 @@ const useRazorPay = () => {
 		packageId,
 	}) => {
 		const options = {
-			key: "rzp_live_MGkjM1JRNckkm3",
+			key: "rzp_live_iJSABYLkTCnd6S",
 			currency: currency,
 			amount: amount,
 			name: "Tathagat",
