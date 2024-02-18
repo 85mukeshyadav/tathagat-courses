@@ -403,6 +403,40 @@ const Analysis = () => {
 								</div>
 							</div>
 						</div>
+						<div className="sm:hidden w-full h-min bg-gray-100 mt-10">
+							<div className="mt-10">
+								<p className="sm:ml-5 text-2xl sm:text-left text-center font-bold py-4 text-gray-700">
+									Leaderboard
+								</p>
+								<div className="sm:h-[700px] h-full pb-5 overflow-y-scroll">
+									{leaderboard.map((student, i) => (
+										<div
+											key={i}
+											className="px-4 border-b border-gray-300 py-4 shadow-sm bg-white sm:mx-5 mx-2"
+										>
+											<div className="flex items-center w-full">
+												<div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400 mr-4">
+													<FiUser size={24} color="white" />
+												</div>
+												<div>
+													<p className="text-lg font-semibold text-gray-700 text-left">
+														{student?.name || "NA"}
+													</p>
+													<div className="flex items-start">
+														<p className="text-sm font-semibold mr-4 text-gray-400">
+															Rank: {i + 1}
+														</p>
+														<p className="text-sm font-semibold text-gray-400">
+															Score: {student?.netScore}
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
 						<div className="mt-10">
 							<p className="text-2xl sm:text-left text-center font-bold sm:ml-10 py-4 text-gray-700">
 								Test Summary
@@ -646,7 +680,7 @@ const Analysis = () => {
 							</div>
 						</div>
 					</div>
-					<div className="sm:w-1/4 w-full h-min bg-gray-100 mt-10">
+					<div className="sm:w-1/4 w-full sm:block hidden h-min bg-gray-100 mt-10">
 						<div className="mt-10">
 							<p className="sm:ml-5 text-2xl sm:text-left text-center font-bold py-4 text-gray-700">
 								Leaderboard
@@ -732,162 +766,136 @@ const Analysis = () => {
 							Know your Time Management
 						</p>
 						<div className="sm:flex block sm:items-center sm:justify-between mx-2">
-							<div className="sm:w-1/3 w-full sm:ml-10">
-								<Tabs
-									value={activeTimeManagmentTab}
-									onTabChange={setActiveTimeManagmentTab}
-								>
-									<Tabs.List>
-										{analysisData?.section?.map((section) => (
-											<Tabs.Tab
-												key={section.sectionName}
-												value={section.sectionName}
-											>
-												{section.sectionName}
-											</Tabs.Tab>
-										))}
-									</Tabs.List>
+							<Tabs
+								value={activeTimeManagmentTab}
+								onTabChange={setActiveTimeManagmentTab}
+							>
+								<Tabs.List>
 									{analysisData?.section?.map((section) => (
-										<Tabs.Panel
+										<Tabs.Tab
 											key={section.sectionName}
 											value={section.sectionName}
 										>
-											<div className="flex justify-center overflow-x-auto pl-24 sm:pl-0">
-												<div>
-													<RingProgress
-														size={120}
-														thickness={10}
-														label={secondsToMinutes(
-															section.question.reduce(
-																(sum, i) => sum + i.timeTaken,
-																0
-															) || 0
-														)}
-														sections={[{ value: 100, color: "#8884d8" }]}
-													/>
-													<p>Total Time Taken</p>
-												</div>
-												<div>
-													<RingProgress
-														size={120}
-														thickness={10}
-														label={secondsToMinutes(
-															section.question
-																.filter((i) => i.answerStatus === "C")
-																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
-														)}
-														sections={[{ value: 100, color: "#8884d8" }]}
-													/>
-													<p>Correct Answers</p>
-												</div>
-												<div>
-													<RingProgress
-														size={120}
-														thickness={10}
-														label={secondsToMinutes(
-															section.question
-																.filter((i) => i.answerStatus === "W")
-																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
-														)}
-														sections={[{ value: 100, color: "#8884d8" }]}
-													/>
-													<p>Incorrect Answers</p>
-												</div>
-												<div>
-													<RingProgress
-														size={120}
-														thickness={10}
-														label={secondsToMinutes(
-															section.question
-																.filter((i) => i.usersAnswer === -1)
-																.reduce((sum, i) => sum + i.timeTaken, 0) || 0
-														)}
-														sections={[{ value: 100, color: "#8884d8" }]}
-													/>
-													<p>Unanswered</p>
-												</div>
-											</div>
-										</Tabs.Panel>
+											{section.sectionName}
+										</Tabs.Tab>
 									))}
-								</Tabs>
-							</div>
+								</Tabs.List>
+								{analysisData?.section?.map((section) => (
+									<Tabs.Panel
+										key={section.sectionName}
+										value={section.sectionName}
+									>
+										<div className="flex justify-around overflow-x-auto pl-24 sm:pl-0">
+											<div>
+												<RingProgress
+													size={120}
+													thickness={10}
+													label={secondsToMinutes(
+														section.question.reduce(
+															(sum, i) => sum + i.timeTaken,
+															0
+														) || 0
+													)}
+													sections={[{ value: 100, color: "#8884d8" }]}
+												/>
+												<p>Total Time Taken</p>
+											</div>
+											<div>
+												<RingProgress
+													size={120}
+													thickness={10}
+													label={secondsToMinutes(
+														section.question
+															.filter((i) => i.answerStatus === "C")
+															.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+													)}
+													sections={[{ value: 100, color: "#8884d8" }]}
+												/>
+												<p>Correct Answers</p>
+											</div>
+											<div>
+												<RingProgress
+													size={120}
+													thickness={10}
+													label={secondsToMinutes(
+														section.question
+															.filter((i) => i.answerStatus === "W")
+															.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+													)}
+													sections={[{ value: 100, color: "#8884d8" }]}
+												/>
+												<p>Incorrect Answers</p>
+											</div>
+											<div>
+												<RingProgress
+													size={120}
+													thickness={10}
+													label={secondsToMinutes(
+														section.question
+															.filter((i) => i.usersAnswer === -1)
+															.reduce((sum, i) => sum + i.timeTaken, 0) || 0
+													)}
+													sections={[{ value: 100, color: "#8884d8" }]}
+												/>
+												<p>Unanswered</p>
+											</div>
+										</div>
+									</Tabs.Panel>
+								))}
+							</Tabs>
 							<div className="mt-10 sm:flex w-full">
-								<div>
-									<div className="flex sm:w-1/2 w-full mx-auto items-center justify-around mb-4">
-										<div className="flex items-center">
-											<div className="h-5 w-5 bg-[#8884d8]"></div>
-											<p className="ml-2">You</p>
-										</div>
-										<div className="flex items-center">
-											<div className="h-5 w-5 bg-[#82ca9d]"></div>
-											<p className="ml-2">Topper</p>
-										</div>
-									</div>
-									<ResponsiveContainer width="100%" height={200}>
-										<BarChart
-											data={[
-												{
-													name: "Your Accuracy",
-													accuracy: performance?.accuracy,
-												},
-												{
-													name: "Topper Accuracy",
-													topperAccuracy: topperPerformance?.accuracy,
-												},
-											]}
-										>
-											<CartesianGrid strokeDasharray="3 3" />
-											<XAxis dataKey="name" />
-											<YAxis />
-											<Bar dataKey="accuracy" fill="#8884d8" />
-											<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-										</BarChart>
-									</ResponsiveContainer>
-								</div>
-								<div>
-									<div className="flex w-1/2 mx-auto items-center justify-around mb-4">
-										<div className="flex items-center">
-											<div className="h-5 w-5 bg-[#8884d8]"></div>
-											<p className="ml-2">You</p>
-										</div>
-										<div className="flex items-center">
-											<div className="h-5 w-5 bg-[#82ca9d]"></div>
-											<p className="ml-2">Topper</p>
-										</div>
-									</div>
-									<ResponsiveContainer width="100%" height={200}>
-										<BarChart
-											data={[
-												{
-													name: "Your Time",
-													accuracy:
-														(analysisData?.section &&
-															analysisData?.section[0].question.reduce(
-																(sum, i) => sum + i.timeTaken,
-																0
-															)) ||
-														0,
-												},
-												{
-													name: "Topper Time",
-													topperAccuracy:
-														(topperAnalysisData?.section &&
-															topperAnalysisData?.section[0].question.reduce(
-																(sum, i) => sum + i.timeTaken,
-																0
-															)) ||
-														0,
-												},
-											]}
-										>
-											<CartesianGrid strokeDasharray="3 3" />
-											<XAxis dataKey="name" />
-											<YAxis />
-											<Bar dataKey="accuracy" fill="#8884d8" />
-											<Bar dataKey="topperAccuracy" fill="#82ca9d" />
-										</BarChart>
-									</ResponsiveContainer>
-								</div>
+								<ResponsiveContainer width="100%" height={200}>
+									<BarChart
+										data={[
+											{
+												name: "Your Accuracy",
+												accuracy: performance?.accuracy,
+											},
+											{
+												name: "Topper Accuracy",
+												topperAccuracy: topperPerformance?.accuracy,
+											},
+										]}
+									>
+										<CartesianGrid strokeDasharray="3 3" />
+										<XAxis dataKey="name" />
+										<YAxis />
+										<Bar dataKey="accuracy" fill="#8884d8" />
+										<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+									</BarChart>
+								</ResponsiveContainer>
+								<ResponsiveContainer width="100%" height={200}>
+									<BarChart
+										data={[
+											{
+												name: "Your Time",
+												accuracy:
+													(analysisData?.section &&
+														analysisData?.section[0].question.reduce(
+															(sum, i) => sum + i.timeTaken,
+															0
+														)) ||
+													0,
+											},
+											{
+												name: "Topper Time",
+												topperAccuracy:
+													(topperAnalysisData?.section &&
+														topperAnalysisData?.section[0].question.reduce(
+															(sum, i) => sum + i.timeTaken,
+															0
+														)) ||
+													0,
+											},
+										]}
+									>
+										<CartesianGrid strokeDasharray="3 3" />
+										<XAxis dataKey="name" />
+										<YAxis />
+										<Bar dataKey="accuracy" fill="#8884d8" />
+										<Bar dataKey="topperAccuracy" fill="#82ca9d" />
+									</BarChart>
+								</ResponsiveContainer>
 							</div>
 						</div>
 					</div>
